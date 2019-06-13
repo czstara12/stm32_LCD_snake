@@ -1,0 +1,557 @@
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 2
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"sys.c"
+  12              		.text
+  13              		.section	.text.MY_NVIC_SetVectorTable,"ax",%progbits
+  14              		.align	1
+  15              		.p2align 2,,3
+  16              		.global	MY_NVIC_SetVectorTable
+  17              		.syntax unified
+  18              		.thumb
+  19              		.thumb_func
+  20              		.fpu softvfp
+  22              	MY_NVIC_SetVectorTable:
+  23              		@ args = 0, pretend = 0, frame = 0
+  24              		@ frame_needed = 0, uses_anonymous_args = 0
+  25              		@ link register save eliminated.
+  26 0000 21F06041 		bic	r1, r1, #-536870912
+  27 0004 21F07F01 		bic	r1, r1, #127
+  28 0008 014B     		ldr	r3, .L3
+  29 000a 0143     		orrs	r1, r1, r0
+  30 000c 9960     		str	r1, [r3, #8]
+  31 000e 7047     		bx	lr
+  32              	.L4:
+  33              		.align	2
+  34              	.L3:
+  35 0010 00ED00E0 		.word	-536810240
+  37              		.section	.text.MY_NVIC_PriorityGroupConfig,"ax",%progbits
+  38              		.align	1
+  39              		.p2align 2,,3
+  40              		.global	MY_NVIC_PriorityGroupConfig
+  41              		.syntax unified
+  42              		.thumb
+  43              		.thumb_func
+  44              		.fpu softvfp
+  46              	MY_NVIC_PriorityGroupConfig:
+  47              		@ args = 0, pretend = 0, frame = 0
+  48              		@ frame_needed = 0, uses_anonymous_args = 0
+  49              		@ link register save eliminated.
+  50 0000 4FF6FF01 		movw	r1, #63743
+  51 0004 C043     		mvns	r0, r0
+  52 0006 064A     		ldr	r2, .L6
+  53 0008 0002     		lsls	r0, r0, #8
+  54 000a D368     		ldr	r3, [r2, #12]
+  55 000c 00F4E060 		and	r0, r0, #1792
+  56 0010 0B40     		ands	r3, r3, r1
+  57 0012 43F0BF63 		orr	r3, r3, #100139008
+  58 0016 43F40033 		orr	r3, r3, #131072
+  59 001a 1843     		orrs	r0, r0, r3
+  60 001c D060     		str	r0, [r2, #12]
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 2
+
+
+  61 001e 7047     		bx	lr
+  62              	.L7:
+  63              		.align	2
+  64              	.L6:
+  65 0020 00ED00E0 		.word	-536810240
+  67              		.section	.text.MY_NVIC_Init,"ax",%progbits
+  68              		.align	1
+  69              		.p2align 2,,3
+  70              		.global	MY_NVIC_Init
+  71              		.syntax unified
+  72              		.thumb
+  73              		.thumb_func
+  74              		.fpu softvfp
+  76              	MY_NVIC_Init:
+  77              		@ args = 0, pretend = 0, frame = 0
+  78              		@ frame_needed = 0, uses_anonymous_args = 0
+  79 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+  80 0002 4FF6FF0E 		movw	lr, #63743
+  81 0006 DE43     		mvns	r6, r3
+  82 0008 0127     		movs	r7, #1
+  83 000a 0F24     		movs	r4, #15
+  84 000c DFF85CC0 		ldr	ip, .L10
+  85 0010 3602     		lsls	r6, r6, #8
+  86 0012 DCF80C50 		ldr	r5, [ip, #12]
+  87 0016 06F4E066 		and	r6, r6, #1792
+  88 001a 05EA0E05 		and	r5, r5, lr
+  89 001e 45F0BF65 		orr	r5, r5, #100139008
+  90 0022 45F40035 		orr	r5, r5, #131072
+  91 0026 2E43     		orrs	r6, r6, r5
+  92 0028 5509     		lsrs	r5, r2, #5
+  93 002a AD00     		lsls	r5, r5, #2
+  94 002c 05F16045 		add	r5, r5, #-536870912
+  95 0030 CCF80C60 		str	r6, [ip, #12]
+  96 0034 05F56145 		add	r5, r5, #57600
+  97 0038 2E68     		ldr	r6, [r5]
+  98 003a 02F01F0C 		and	ip, r2, #31
+  99 003e 07FA0CF7 		lsl	r7, r7, ip
+ 100 0042 3743     		orrs	r7, r7, r6
+ 101 0044 02F16042 		add	r2, r2, #-536870912
+ 102 0048 C3F10406 		rsb	r6, r3, #4
+ 103 004c 44FA03F3 		asr	r3, r4, r3
+ 104 0050 02F56142 		add	r2, r2, #57600
+ 105 0054 2F60     		str	r7, [r5]
+ 106 0056 0B40     		ands	r3, r3, r1
+ 107 0058 B040     		lsls	r0, r0, r6
+ 108 005a 92F80013 		ldrb	r1, [r2, #768]	@ zero_extendqisi2
+ 109 005e 0343     		orrs	r3, r3, r0
+ 110 0060 2340     		ands	r3, r3, r4
+ 111 0062 41EA0313 		orr	r3, r1, r3, lsl #4
+ 112 0066 82F80033 		strb	r3, [r2, #768]
+ 113 006a F0BD     		pop	{r4, r5, r6, r7, pc}
+ 114              	.L11:
+ 115              		.align	2
+ 116              	.L10:
+ 117 006c 00ED00E0 		.word	-536810240
+ 119              		.section	.text.Ex_NVIC_Config,"ax",%progbits
+ 120              		.align	1
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 3
+
+
+ 121              		.p2align 2,,3
+ 122              		.global	Ex_NVIC_Config
+ 123              		.syntax unified
+ 124              		.thumb
+ 125              		.thumb_func
+ 126              		.fpu softvfp
+ 128              	Ex_NVIC_Config:
+ 129              		@ args = 0, pretend = 0, frame = 0
+ 130              		@ frame_needed = 0, uses_anonymous_args = 0
+ 131              		@ link register save eliminated.
+ 132 0000 F0B4     		push	{r4, r5, r6, r7}
+ 133 0002 0125     		movs	r5, #1
+ 134 0004 0F27     		movs	r7, #15
+ 135 0006 144E     		ldr	r6, .L22
+ 136 0008 01F0FC03 		and	r3, r1, #252
+ 137 000c B469     		ldr	r4, [r6, #24]
+ 138 000e 03F18043 		add	r3, r3, #1073741824
+ 139 0012 2C43     		orrs	r4, r4, r5
+ 140 0014 B461     		str	r4, [r6, #24]
+ 141 0016 03F58033 		add	r3, r3, #65536
+ 142 001a 01F00304 		and	r4, r1, #3
+ 143 001e 9E68     		ldr	r6, [r3, #8]
+ 144 0020 A400     		lsls	r4, r4, #2
+ 145 0022 A740     		lsls	r7, r7, r4
+ 146 0024 26EA0706 		bic	r6, r6, r7
+ 147 0028 9E60     		str	r6, [r3, #8]
+ 148 002a 9E68     		ldr	r6, [r3, #8]
+ 149 002c A040     		lsls	r0, r0, r4
+ 150 002e 3043     		orrs	r0, r0, r6
+ 151 0030 0A4C     		ldr	r4, .L22+4
+ 152 0032 9860     		str	r0, [r3, #8]
+ 153 0034 2368     		ldr	r3, [r4]
+ 154 0036 05FA01F1 		lsl	r1, r5, r1
+ 155 003a 0B43     		orrs	r3, r3, r1
+ 156 003c D007     		lsls	r0, r2, #31
+ 157 003e 2360     		str	r3, [r4]
+ 158 0040 02D5     		bpl	.L13
+ 159 0042 E368     		ldr	r3, [r4, #12]
+ 160 0044 0B43     		orrs	r3, r3, r1
+ 161 0046 E360     		str	r3, [r4, #12]
+ 162              	.L13:
+ 163 0048 9307     		lsls	r3, r2, #30
+ 164 004a 03D5     		bpl	.L12
+ 165 004c 034B     		ldr	r3, .L22+4
+ 166 004e 9A68     		ldr	r2, [r3, #8]
+ 167 0050 1143     		orrs	r1, r1, r2
+ 168 0052 9960     		str	r1, [r3, #8]
+ 169              	.L12:
+ 170 0054 F0BC     		pop	{r4, r5, r6, r7}
+ 171 0056 7047     		bx	lr
+ 172              	.L23:
+ 173              		.align	2
+ 174              	.L22:
+ 175 0058 00100240 		.word	1073876992
+ 176 005c 00040140 		.word	1073808384
+ 178              		.section	.text.MYRCC_DeInit,"ax",%progbits
+ 179              		.align	1
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 4
+
+
+ 180              		.p2align 2,,3
+ 181              		.global	MYRCC_DeInit
+ 182              		.syntax unified
+ 183              		.thumb
+ 184              		.thumb_func
+ 185              		.fpu softvfp
+ 187              	MYRCC_DeInit:
+ 188              		@ args = 0, pretend = 0, frame = 0
+ 189              		@ frame_needed = 0, uses_anonymous_args = 0
+ 190              		@ link register save eliminated.
+ 191 0000 0022     		movs	r2, #0
+ 192 0002 1420     		movs	r0, #20
+ 193 0004 30B4     		push	{r4, r5}
+ 194 0006 4FF00065 		mov	r5, #134217728
+ 195 000a 104B     		ldr	r3, .L26
+ 196 000c 1049     		ldr	r1, .L26+4
+ 197 000e 1A61     		str	r2, [r3, #16]
+ 198 0010 DA60     		str	r2, [r3, #12]
+ 199 0012 5861     		str	r0, [r3, #20]
+ 200 0014 9A61     		str	r2, [r3, #24]
+ 201 0016 DA61     		str	r2, [r3, #28]
+ 202 0018 1868     		ldr	r0, [r3]
+ 203 001a 0E4C     		ldr	r4, .L26+8
+ 204 001c 40F00100 		orr	r0, r0, #1
+ 205 0020 1860     		str	r0, [r3]
+ 206 0022 5868     		ldr	r0, [r3, #4]
+ 207 0024 0140     		ands	r1, r1, r0
+ 208 0026 5960     		str	r1, [r3, #4]
+ 209 0028 1968     		ldr	r1, [r3]
+ 210 002a 21F08471 		bic	r1, r1, #17301504
+ 211 002e 21F48031 		bic	r1, r1, #65536
+ 212 0032 1960     		str	r1, [r3]
+ 213 0034 1968     		ldr	r1, [r3]
+ 214 0036 21F48021 		bic	r1, r1, #262144
+ 215 003a 1960     		str	r1, [r3]
+ 216 003c 5968     		ldr	r1, [r3, #4]
+ 217 003e 21F4FE01 		bic	r1, r1, #8323072
+ 218 0042 5960     		str	r1, [r3, #4]
+ 219 0044 9A60     		str	r2, [r3, #8]
+ 220 0046 A560     		str	r5, [r4, #8]
+ 221 0048 30BC     		pop	{r4, r5}
+ 222 004a 7047     		bx	lr
+ 223              	.L27:
+ 224              		.align	2
+ 225              	.L26:
+ 226 004c 00100240 		.word	1073876992
+ 227 0050 0000FFF8 		.word	-117506048
+ 228 0054 00ED00E0 		.word	-536810240
+ 230              		.section	.text.WFI_SET,"ax",%progbits
+ 231              		.align	1
+ 232              		.p2align 2,,3
+ 233              		.global	WFI_SET
+ 234              		.syntax unified
+ 235              		.thumb
+ 236              		.thumb_func
+ 237              		.fpu softvfp
+ 239              	WFI_SET:
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 5
+
+
+ 240              		@ args = 0, pretend = 0, frame = 0
+ 241              		@ frame_needed = 0, uses_anonymous_args = 0
+ 242              		@ link register save eliminated.
+ 243              		.syntax unified
+ 244              	@ 155 "SYSTEM/sys/sys.c" 1
+ 245 0000 30BF     		WFI
+ 246              	@ 0 "" 2
+ 247              		.thumb
+ 248              		.syntax unified
+ 249 0002 7047     		bx	lr
+ 251              		.section	.text.INTX_DISABLE,"ax",%progbits
+ 252              		.align	1
+ 253              		.p2align 2,,3
+ 254              		.global	INTX_DISABLE
+ 255              		.syntax unified
+ 256              		.thumb
+ 257              		.thumb_func
+ 258              		.fpu softvfp
+ 260              	INTX_DISABLE:
+ 261              		@ args = 0, pretend = 0, frame = 0
+ 262              		@ frame_needed = 0, uses_anonymous_args = 0
+ 263              		@ link register save eliminated.
+ 264              		.syntax unified
+ 265              	@ 163 "SYSTEM/sys/sys.c" 1
+ 266 0000 72B6     		CPSID   I
+ 267              	@ 0 "" 2
+ 268              	@ 164 "SYSTEM/sys/sys.c" 1
+ 269 0002 7047     		BX      LR
+ 270              	@ 0 "" 2
+ 271              		.thumb
+ 272              		.syntax unified
+ 273 0004 7047     		bx	lr
+ 275 0006 00BF     		.section	.text.INTX_ENABLE,"ax",%progbits
+ 276              		.align	1
+ 277              		.p2align 2,,3
+ 278              		.global	INTX_ENABLE
+ 279              		.syntax unified
+ 280              		.thumb
+ 281              		.thumb_func
+ 282              		.fpu softvfp
+ 284              	INTX_ENABLE:
+ 285              		@ args = 0, pretend = 0, frame = 0
+ 286              		@ frame_needed = 0, uses_anonymous_args = 0
+ 287              		@ link register save eliminated.
+ 288              		.syntax unified
+ 289              	@ 170 "SYSTEM/sys/sys.c" 1
+ 290 0000 62B6     		CPSIE   I
+ 291              	@ 0 "" 2
+ 292              	@ 171 "SYSTEM/sys/sys.c" 1
+ 293 0002 7047     		BX      LR
+ 294              	@ 0 "" 2
+ 295              		.thumb
+ 296              		.syntax unified
+ 297 0004 7047     		bx	lr
+ 299 0006 00BF     		.section	.text.MSR_MSP,"ax",%progbits
+ 300              		.align	1
+ 301              		.p2align 2,,3
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 6
+
+
+ 302              		.global	MSR_MSP
+ 303              		.syntax unified
+ 304              		.thumb
+ 305              		.thumb_func
+ 306              		.fpu softvfp
+ 308              	MSR_MSP:
+ 309              		@ args = 0, pretend = 0, frame = 0
+ 310              		@ frame_needed = 0, uses_anonymous_args = 0
+ 311              		@ link register save eliminated.
+ 312              		.syntax unified
+ 313              	@ 177 "SYSTEM/sys/sys.c" 1
+ 314 0000 80F30888 		MSR MSP, r0
+ 315              	@ 0 "" 2
+ 316              	@ 178 "SYSTEM/sys/sys.c" 1
+ 317 0004 7047     		BX r14
+ 318              	@ 0 "" 2
+ 319              		.thumb
+ 320              		.syntax unified
+ 321 0006 7047     		bx	lr
+ 323              		.section	.text.Sys_Standby,"ax",%progbits
+ 324              		.align	1
+ 325              		.p2align 2,,3
+ 326              		.global	Sys_Standby
+ 327              		.syntax unified
+ 328              		.thumb
+ 329              		.thumb_func
+ 330              		.fpu softvfp
+ 332              	Sys_Standby:
+ 333              		@ args = 0, pretend = 0, frame = 0
+ 334              		@ frame_needed = 0, uses_anonymous_args = 0
+ 335              		@ link register save eliminated.
+ 336 0000 0C48     		ldr	r0, .L33
+ 337 0002 0D49     		ldr	r1, .L33+4
+ 338 0004 0269     		ldr	r2, [r0, #16]
+ 339 0006 0D4B     		ldr	r3, .L33+8
+ 340 0008 42F00402 		orr	r2, r2, #4
+ 341 000c 0261     		str	r2, [r0, #16]
+ 342 000e CA69     		ldr	r2, [r1, #28]
+ 343 0010 42F08052 		orr	r2, r2, #268435456
+ 344 0014 CA61     		str	r2, [r1, #28]
+ 345 0016 5A68     		ldr	r2, [r3, #4]
+ 346 0018 42F48072 		orr	r2, r2, #256
+ 347 001c 5A60     		str	r2, [r3, #4]
+ 348 001e 1A68     		ldr	r2, [r3]
+ 349 0020 42F00402 		orr	r2, r2, #4
+ 350 0024 1A60     		str	r2, [r3]
+ 351 0026 1A68     		ldr	r2, [r3]
+ 352 0028 42F00202 		orr	r2, r2, #2
+ 353 002c 1A60     		str	r2, [r3]
+ 354              		.syntax unified
+ 355              	@ 155 "SYSTEM/sys/sys.c" 1
+ 356 002e 30BF     		WFI
+ 357              	@ 0 "" 2
+ 358              		.thumb
+ 359              		.syntax unified
+ 360 0030 7047     		bx	lr
+ 361              	.L34:
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 7
+
+
+ 362 0032 00BF     		.align	2
+ 363              	.L33:
+ 364 0034 00ED00E0 		.word	-536810240
+ 365 0038 00100240 		.word	1073876992
+ 366 003c 00700040 		.word	1073770496
+ 368              		.section	.text.Sys_Soft_Reset,"ax",%progbits
+ 369              		.align	1
+ 370              		.p2align 2,,3
+ 371              		.global	Sys_Soft_Reset
+ 372              		.syntax unified
+ 373              		.thumb
+ 374              		.thumb_func
+ 375              		.fpu softvfp
+ 377              	Sys_Soft_Reset:
+ 378              		@ args = 0, pretend = 0, frame = 0
+ 379              		@ frame_needed = 0, uses_anonymous_args = 0
+ 380              		@ link register save eliminated.
+ 381 0000 014B     		ldr	r3, .L36
+ 382 0002 024A     		ldr	r2, .L36+4
+ 383 0004 DA60     		str	r2, [r3, #12]
+ 384 0006 7047     		bx	lr
+ 385              	.L37:
+ 386              		.align	2
+ 387              	.L36:
+ 388 0008 00ED00E0 		.word	-536810240
+ 389 000c 0400FA05 		.word	100270084
+ 391              		.section	.text.JTAG_Set,"ax",%progbits
+ 392              		.align	1
+ 393              		.p2align 2,,3
+ 394              		.global	JTAG_Set
+ 395              		.syntax unified
+ 396              		.thumb
+ 397              		.thumb_func
+ 398              		.fpu softvfp
+ 400              	JTAG_Set:
+ 401              		@ args = 0, pretend = 0, frame = 0
+ 402              		@ frame_needed = 0, uses_anonymous_args = 0
+ 403              		@ link register save eliminated.
+ 404 0000 0749     		ldr	r1, .L39
+ 405 0002 084B     		ldr	r3, .L39+4
+ 406 0004 8A69     		ldr	r2, [r1, #24]
+ 407 0006 42F00102 		orr	r2, r2, #1
+ 408 000a 8A61     		str	r2, [r1, #24]
+ 409 000c 5A68     		ldr	r2, [r3, #4]
+ 410 000e 22F0E062 		bic	r2, r2, #117440512
+ 411 0012 5A60     		str	r2, [r3, #4]
+ 412 0014 5A68     		ldr	r2, [r3, #4]
+ 413 0016 42EA4060 		orr	r0, r2, r0, lsl #25
+ 414 001a 5860     		str	r0, [r3, #4]
+ 415 001c 7047     		bx	lr
+ 416              	.L40:
+ 417 001e 00BF     		.align	2
+ 418              	.L39:
+ 419 0020 00100240 		.word	1073876992
+ 420 0024 00000140 		.word	1073807360
+ 422              		.section	.text.Stm32_Clock_Init,"ax",%progbits
+ 423              		.align	1
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 8
+
+
+ 424              		.p2align 2,,3
+ 425              		.global	Stm32_Clock_Init
+ 426              		.syntax unified
+ 427              		.thumb
+ 428              		.thumb_func
+ 429              		.fpu softvfp
+ 431              	Stm32_Clock_Init:
+ 432              		@ args = 0, pretend = 0, frame = 0
+ 433              		@ frame_needed = 0, uses_anonymous_args = 0
+ 434              		@ link register save eliminated.
+ 435 0000 70B4     		push	{r4, r5, r6}
+ 436 0002 0021     		movs	r1, #0
+ 437 0004 1424     		movs	r4, #20
+ 438 0006 4FF00066 		mov	r6, #134217728
+ 439 000a 264B     		ldr	r3, .L51
+ 440 000c 1A46     		mov	r2, r3
+ 441 000e 1961     		str	r1, [r3, #16]
+ 442 0010 D960     		str	r1, [r3, #12]
+ 443 0012 5C61     		str	r4, [r3, #20]
+ 444 0014 9961     		str	r1, [r3, #24]
+ 445 0016 D961     		str	r1, [r3, #28]
+ 446 0018 1D68     		ldr	r5, [r3]
+ 447 001a 234C     		ldr	r4, .L51+4
+ 448 001c 45F00105 		orr	r5, r5, #1
+ 449 0020 1D60     		str	r5, [r3]
+ 450 0022 5D68     		ldr	r5, [r3, #4]
+ 451 0024 2C40     		ands	r4, r4, r5
+ 452 0026 5C60     		str	r4, [r3, #4]
+ 453 0028 1C68     		ldr	r4, [r3]
+ 454 002a 204D     		ldr	r5, .L51+8
+ 455 002c 24F08474 		bic	r4, r4, #17301504
+ 456 0030 24F48034 		bic	r4, r4, #65536
+ 457 0034 1C60     		str	r4, [r3]
+ 458 0036 1C68     		ldr	r4, [r3]
+ 459 0038 24F48024 		bic	r4, r4, #262144
+ 460 003c 1C60     		str	r4, [r3]
+ 461 003e 5C68     		ldr	r4, [r3, #4]
+ 462 0040 24F4FE04 		bic	r4, r4, #8323072
+ 463 0044 5C60     		str	r4, [r3, #4]
+ 464 0046 9960     		str	r1, [r3, #8]
+ 465 0048 AE60     		str	r6, [r5, #8]
+ 466 004a 1968     		ldr	r1, [r3]
+ 467 004c 41F48031 		orr	r1, r1, #65536
+ 468 0050 1960     		str	r1, [r3]
+ 469              	.L42:
+ 470 0052 1368     		ldr	r3, [r2]
+ 471 0054 5B0C     		lsrs	r3, r3, #17
+ 472 0056 FCD0     		beq	.L42
+ 473 0058 4FF48063 		mov	r3, #1024
+ 474 005c 5360     		str	r3, [r2, #4]
+ 475 005e 5368     		ldr	r3, [r2, #4]
+ 476 0060 0238     		subs	r0, r0, #2
+ 477 0062 C0B2     		uxtb	r0, r0
+ 478 0064 43EA8040 		orr	r0, r3, r0, lsl #18
+ 479 0068 5060     		str	r0, [r2, #4]
+ 480 006a 5368     		ldr	r3, [r2, #4]
+ 481 006c 1048     		ldr	r0, .L51+12
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 9
+
+
+ 482 006e 43F48033 		orr	r3, r3, #65536
+ 483 0072 5360     		str	r3, [r2, #4]
+ 484 0074 0368     		ldr	r3, [r0]
+ 485 0076 0B49     		ldr	r1, .L51
+ 486 0078 43F03203 		orr	r3, r3, #50
+ 487 007c 0360     		str	r3, [r0]
+ 488 007e 1368     		ldr	r3, [r2]
+ 489 0080 43F08073 		orr	r3, r3, #16777216
+ 490 0084 1360     		str	r3, [r2]
+ 491              	.L43:
+ 492 0086 0B68     		ldr	r3, [r1]
+ 493 0088 5B0E     		lsrs	r3, r3, #25
+ 494 008a FCD0     		beq	.L43
+ 495 008c 4B68     		ldr	r3, [r1, #4]
+ 496 008e 054A     		ldr	r2, .L51
+ 497 0090 43F00203 		orr	r3, r3, #2
+ 498 0094 4B60     		str	r3, [r1, #4]
+ 499              	.L44:
+ 500 0096 5368     		ldr	r3, [r2, #4]
+ 501 0098 C3F38103 		ubfx	r3, r3, #2, #2
+ 502 009c 022B     		cmp	r3, #2
+ 503 009e FAD1     		bne	.L44
+ 504 00a0 70BC     		pop	{r4, r5, r6}
+ 505 00a2 7047     		bx	lr
+ 506              	.L52:
+ 507              		.align	2
+ 508              	.L51:
+ 509 00a4 00100240 		.word	1073876992
+ 510 00a8 0000FFF8 		.word	-117506048
+ 511 00ac 00ED00E0 		.word	-536810240
+ 512 00b0 00200240 		.word	1073881088
+ 514              		.ident	"GCC: (GNU Tools for Arm Embedded Processors 7-2018-q2-update) 7.3.1 20180622 (release) [AR
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 10
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 sys.c
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:14     .text.MY_NVIC_SetVectorTable:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:22     .text.MY_NVIC_SetVectorTable:00000000 MY_NVIC_SetVectorTable
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:35     .text.MY_NVIC_SetVectorTable:00000010 $d
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:38     .text.MY_NVIC_PriorityGroupConfig:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:46     .text.MY_NVIC_PriorityGroupConfig:00000000 MY_NVIC_PriorityGroupConfig
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:65     .text.MY_NVIC_PriorityGroupConfig:00000020 $d
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:68     .text.MY_NVIC_Init:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:76     .text.MY_NVIC_Init:00000000 MY_NVIC_Init
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:117    .text.MY_NVIC_Init:0000006c $d
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:120    .text.Ex_NVIC_Config:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:128    .text.Ex_NVIC_Config:00000000 Ex_NVIC_Config
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:175    .text.Ex_NVIC_Config:00000058 $d
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:179    .text.MYRCC_DeInit:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:187    .text.MYRCC_DeInit:00000000 MYRCC_DeInit
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:226    .text.MYRCC_DeInit:0000004c $d
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:231    .text.WFI_SET:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:239    .text.WFI_SET:00000000 WFI_SET
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:252    .text.INTX_DISABLE:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:260    .text.INTX_DISABLE:00000000 INTX_DISABLE
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:276    .text.INTX_ENABLE:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:284    .text.INTX_ENABLE:00000000 INTX_ENABLE
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:300    .text.MSR_MSP:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:308    .text.MSR_MSP:00000000 MSR_MSP
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:324    .text.Sys_Standby:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:332    .text.Sys_Standby:00000000 Sys_Standby
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:364    .text.Sys_Standby:00000034 $d
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:369    .text.Sys_Soft_Reset:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:377    .text.Sys_Soft_Reset:00000000 Sys_Soft_Reset
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:388    .text.Sys_Soft_Reset:00000008 $d
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:392    .text.JTAG_Set:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:400    .text.JTAG_Set:00000000 JTAG_Set
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:419    .text.JTAG_Set:00000020 $d
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:423    .text.Stm32_Clock_Init:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:431    .text.Stm32_Clock_Init:00000000 Stm32_Clock_Init
+C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:509    .text.Stm32_Clock_Init:000000a4 $d
+
+NO UNDEFINED SYMBOLS

@@ -1,0 +1,245 @@
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccWIoX8R.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 2
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"usart.c"
+  12              		.text
+  13              		.section	.text._sys_exit,"ax",%progbits
+  14              		.align	1
+  15              		.p2align 2,,3
+  16              		.global	_sys_exit
+  17              		.syntax unified
+  18              		.thumb
+  19              		.thumb_func
+  20              		.fpu softvfp
+  22              	_sys_exit:
+  23              		@ args = 0, pretend = 0, frame = 0
+  24              		@ frame_needed = 0, uses_anonymous_args = 0
+  25              		@ link register save eliminated.
+  26 0000 7047     		bx	lr
+  28 0002 00BF     		.section	.text.fputc,"ax",%progbits
+  29              		.align	1
+  30              		.p2align 2,,3
+  31              		.global	fputc
+  32              		.syntax unified
+  33              		.thumb
+  34              		.thumb_func
+  35              		.fpu softvfp
+  37              	fputc:
+  38              		@ args = 0, pretend = 0, frame = 0
+  39              		@ frame_needed = 0, uses_anonymous_args = 0
+  40              		@ link register save eliminated.
+  41 0000 034A     		ldr	r2, .L7
+  42              	.L4:
+  43 0002 1388     		ldrh	r3, [r2]
+  44 0004 5B06     		lsls	r3, r3, #25
+  45 0006 FCD5     		bpl	.L4
+  46 0008 C3B2     		uxtb	r3, r0
+  47 000a 9380     		strh	r3, [r2, #4]	@ movhi
+  48 000c 7047     		bx	lr
+  49              	.L8:
+  50 000e 00BF     		.align	2
+  51              	.L7:
+  52 0010 00380140 		.word	1073821696
+  54              		.section	.text.USART1_IRQHandler,"ax",%progbits
+  55              		.align	1
+  56              		.p2align 2,,3
+  57              		.global	USART1_IRQHandler
+  58              		.syntax unified
+  59              		.thumb
+  60              		.thumb_func
+  61              		.fpu softvfp
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccWIoX8R.s 			page 2
+
+
+  63              	USART1_IRQHandler:
+  64              		@ args = 0, pretend = 0, frame = 0
+  65              		@ frame_needed = 0, uses_anonymous_args = 0
+  66              		@ link register save eliminated.
+  67 0000 154B     		ldr	r3, .L23
+  68 0002 1A88     		ldrh	r2, [r3]
+  69 0004 9206     		lsls	r2, r2, #26
+  70 0006 1CD5     		bpl	.L18
+  71 0008 1449     		ldr	r1, .L23+4
+  72 000a 9B88     		ldrh	r3, [r3, #4]
+  73 000c 0A88     		ldrh	r2, [r1]
+  74 000e 9BB2     		uxth	r3, r3
+  75 0010 1004     		lsls	r0, r2, #16
+  76 0012 16D4     		bmi	.L18
+  77 0014 5004     		lsls	r0, r2, #17
+  78 0016 DBB2     		uxtb	r3, r3
+  79 0018 0FD4     		bmi	.L21
+  80 001a 0D2B     		cmp	r3, #13
+  81 001c 18D0     		beq	.L22
+  82 001e 501C     		adds	r0, r2, #1
+  83 0020 10B4     		push	{r4}
+  84 0022 80B2     		uxth	r0, r0
+  85 0024 0E4C     		ldr	r4, .L23+8
+  86 0026 C2F30D02 		ubfx	r2, r2, #0, #14
+  87 002a C728     		cmp	r0, #199
+  88 002c 0880     		strh	r0, [r1]	@ movhi
+  89 002e A354     		strb	r3, [r4, r2]
+  90 0030 01D9     		bls	.L9
+  91 0032 0023     		movs	r3, #0
+  92 0034 0B80     		strh	r3, [r1]	@ movhi
+  93              	.L9:
+  94 0036 10BC     		pop	{r4}
+  95 0038 7047     		bx	lr
+  96              	.L21:
+  97 003a 0A2B     		cmp	r3, #10
+  98 003c 02D0     		beq	.L14
+  99 003e 0023     		movs	r3, #0
+ 100 0040 0B80     		strh	r3, [r1]	@ movhi
+ 101              	.L18:
+ 102 0042 7047     		bx	lr
+ 103              	.L14:
+ 104 0044 6FEA4242 		mvn	r2, r2, lsl #17
+ 105 0048 6FEA5242 		mvn	r2, r2, lsr #17
+ 106 004c 0A80     		strh	r2, [r1]	@ movhi
+ 107 004e 7047     		bx	lr
+ 108              	.L22:
+ 109 0050 42F48042 		orr	r2, r2, #16384
+ 110 0054 0A80     		strh	r2, [r1]	@ movhi
+ 111 0056 7047     		bx	lr
+ 112              	.L24:
+ 113              		.align	2
+ 114              	.L23:
+ 115 0058 00380140 		.word	1073821696
+ 116 005c 00000000 		.word	.LANCHOR0
+ 117 0060 00000000 		.word	USART_RX_BUF
+ 119              		.global	__aeabi_ui2f
+ 120              		.global	__aeabi_fdiv
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccWIoX8R.s 			page 3
+
+
+ 121              		.global	__aeabi_f2uiz
+ 122              		.global	__aeabi_i2f
+ 123              		.global	__aeabi_fsub
+ 124              		.global	__aeabi_fmul
+ 125              		.section	.text.uart_init,"ax",%progbits
+ 126              		.align	1
+ 127              		.p2align 2,,3
+ 128              		.global	uart_init
+ 129              		.syntax unified
+ 130              		.thumb
+ 131              		.thumb_func
+ 132              		.fpu softvfp
+ 134              	uart_init:
+ 135              		@ args = 0, pretend = 0, frame = 0
+ 136              		@ frame_needed = 0, uses_anonymous_args = 0
+ 137 0000 284B     		ldr	r3, .L27
+ 138 0002 70B5     		push	{r4, r5, r6, lr}
+ 139 0004 03FB00F0 		mul	r0, r3, r0
+ 140 0008 0D46     		mov	r5, r1
+ 141 000a FFF7FEFF 		bl	__aeabi_ui2f
+ 142 000e 0446     		mov	r4, r0
+ 143 0010 2801     		lsls	r0, r5, #4
+ 144 0012 FFF7FEFF 		bl	__aeabi_ui2f
+ 145 0016 0146     		mov	r1, r0
+ 146 0018 2046     		mov	r0, r4
+ 147 001a FFF7FEFF 		bl	__aeabi_fdiv
+ 148 001e 0546     		mov	r5, r0
+ 149 0020 FFF7FEFF 		bl	__aeabi_f2uiz
+ 150 0024 84B2     		uxth	r4, r0
+ 151 0026 2046     		mov	r0, r4
+ 152 0028 FFF7FEFF 		bl	__aeabi_i2f
+ 153 002c 0146     		mov	r1, r0
+ 154 002e 2846     		mov	r0, r5
+ 155 0030 FFF7FEFF 		bl	__aeabi_fsub
+ 156 0034 4FF08341 		mov	r1, #1098907648
+ 157 0038 FFF7FEFF 		bl	__aeabi_fmul
+ 158 003c FFF7FEFF 		bl	__aeabi_f2uiz
+ 159 0040 194B     		ldr	r3, .L27+4
+ 160 0042 0321     		movs	r1, #3
+ 161 0044 9A69     		ldr	r2, [r3, #24]
+ 162 0046 00EB0414 		add	r4, r0, r4, lsl #4
+ 163 004a 42F00402 		orr	r2, r2, #4
+ 164 004e 9A61     		str	r2, [r3, #24]
+ 165 0050 9869     		ldr	r0, [r3, #24]
+ 166 0052 164A     		ldr	r2, .L27+8
+ 167 0054 40F48040 		orr	r0, r0, #16384
+ 168 0058 9861     		str	r0, [r3, #24]
+ 169 005a 5068     		ldr	r0, [r2, #4]
+ 170 005c 144D     		ldr	r5, .L27+12
+ 171 005e 20F47F60 		bic	r0, r0, #4080
+ 172 0062 5060     		str	r0, [r2, #4]
+ 173 0064 5068     		ldr	r0, [r2, #4]
+ 174 0066 A4B2     		uxth	r4, r4
+ 175 0068 40F40B60 		orr	r0, r0, #2224
+ 176 006c 5060     		str	r0, [r2, #4]
+ 177 006e DA68     		ldr	r2, [r3, #12]
+ 178 0070 0846     		mov	r0, r1
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccWIoX8R.s 			page 4
+
+
+ 179 0072 42F48042 		orr	r2, r2, #16384
+ 180 0076 DA60     		str	r2, [r3, #12]
+ 181 0078 DA68     		ldr	r2, [r3, #12]
+ 182 007a 22F48042 		bic	r2, r2, #16384
+ 183 007e DA60     		str	r2, [r3, #12]
+ 184 0080 2C81     		strh	r4, [r5, #8]	@ movhi
+ 185 0082 AA89     		ldrh	r2, [r5, #12]
+ 186 0084 0223     		movs	r3, #2
+ 187 0086 42F40052 		orr	r2, r2, #8192
+ 188 008a 42F00C02 		orr	r2, r2, #12
+ 189 008e AA81     		strh	r2, [r5, #12]	@ movhi
+ 190 0090 AC89     		ldrh	r4, [r5, #12]
+ 191 0092 2522     		movs	r2, #37
+ 192 0094 44F02004 		orr	r4, r4, #32
+ 193 0098 AC81     		strh	r4, [r5, #12]	@ movhi
+ 194 009a BDE87040 		pop	{r4, r5, r6, lr}
+ 195 009e FFF7FEBF 		b	MY_NVIC_Init
+ 196              	.L28:
+ 197 00a2 00BF     		.align	2
+ 198              	.L27:
+ 199 00a4 40420F00 		.word	1000000
+ 200 00a8 00100240 		.word	1073876992
+ 201 00ac 00080140 		.word	1073809408
+ 202 00b0 00380140 		.word	1073821696
+ 204              		.global	USART_RX_STA
+ 205              		.comm	USART_RX_BUF,200,4
+ 206              		.comm	__stdout,104,4
+ 207              		.section	.bss.USART_RX_STA,"aw",%nobits
+ 208              		.align	1
+ 209              		.set	.LANCHOR0,. + 0
+ 212              	USART_RX_STA:
+ 213 0000 0000     		.space	2
+ 214              		.ident	"GCC: (GNU Tools for Arm Embedded Processors 7-2018-q2-update) 7.3.1 20180622 (release) [AR
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccWIoX8R.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 usart.c
+C:\Users\czsta\AppData\Local\Temp\ccWIoX8R.s:14     .text._sys_exit:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccWIoX8R.s:22     .text._sys_exit:00000000 _sys_exit
+C:\Users\czsta\AppData\Local\Temp\ccWIoX8R.s:29     .text.fputc:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccWIoX8R.s:37     .text.fputc:00000000 fputc
+C:\Users\czsta\AppData\Local\Temp\ccWIoX8R.s:52     .text.fputc:00000010 $d
+C:\Users\czsta\AppData\Local\Temp\ccWIoX8R.s:55     .text.USART1_IRQHandler:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccWIoX8R.s:63     .text.USART1_IRQHandler:00000000 USART1_IRQHandler
+C:\Users\czsta\AppData\Local\Temp\ccWIoX8R.s:115    .text.USART1_IRQHandler:00000058 $d
+                            *COM*:000000c8 USART_RX_BUF
+C:\Users\czsta\AppData\Local\Temp\ccWIoX8R.s:126    .text.uart_init:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccWIoX8R.s:134    .text.uart_init:00000000 uart_init
+C:\Users\czsta\AppData\Local\Temp\ccWIoX8R.s:199    .text.uart_init:000000a4 $d
+C:\Users\czsta\AppData\Local\Temp\ccWIoX8R.s:212    .bss.USART_RX_STA:00000000 USART_RX_STA
+                            *COM*:00000068 __stdout
+C:\Users\czsta\AppData\Local\Temp\ccWIoX8R.s:208    .bss.USART_RX_STA:00000000 $d
+
+UNDEFINED SYMBOLS
+__aeabi_ui2f
+__aeabi_fdiv
+__aeabi_f2uiz
+__aeabi_i2f
+__aeabi_fsub
+__aeabi_fmul
+MY_NVIC_Init
