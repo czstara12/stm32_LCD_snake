@@ -1,0 +1,2372 @@
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 2
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"AI.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.ai2,"ax",%progbits
+  16              		.align	1
+  17              		.p2align 2,,3
+  18              		.global	ai2
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	ai2:
+  25              	.LFB2:
+  26              		.file 1 "USER/AI.c"
+   1:USER/AI.c     **** ﻿#include "AI.h"
+   2:USER/AI.c     **** 
+   3:USER/AI.c     **** Direction ai(short const map[][WIDTH] //地图
+   4:USER/AI.c     **** 			 ,
+   5:USER/AI.c     **** 			 short size //蛇长
+   6:USER/AI.c     **** 			 ,
+   7:USER/AI.c     **** 			 short x, short y //蛇头坐标
+   8:USER/AI.c     **** 			 ,
+   9:USER/AI.c     **** 			 int qiantao //嵌套模式 0表示正常搜寻 属于入口调用 1表示路径搜索 用于判
+  10:USER/AI.c     **** )
+  11:USER/AI.c     **** 
+  12:USER/AI.c     **** {
+  13:USER/AI.c     **** 	if (qiantao == 0 || qiantao == 2)
+  14:USER/AI.c     **** 	{
+  15:USER/AI.c     **** 		int waynum = 0;
+  16:USER/AI.c     **** 		if (map[y - 1][x] == 0 || map[y - 1][x] == 1 || map[y - 1][x] == -1)
+  17:USER/AI.c     **** 			waynum++;
+  18:USER/AI.c     **** 		if (map[y][x - 1] == 0 || map[y][x - 1] == 1 || map[y][x - 1] == -1)
+  19:USER/AI.c     **** 			waynum++;
+  20:USER/AI.c     **** 		if (map[y + 1][x] == 0 || map[y + 1][x] == 1 || map[y + 1][x] == -1)
+  21:USER/AI.c     **** 			waynum++;
+  22:USER/AI.c     **** 		if (map[y][x + 1] == 0 || map[y][x + 1] == 1 || map[y][x + 1] == -1)
+  23:USER/AI.c     **** 			waynum++;
+  24:USER/AI.c     **** 		if (waynum == 0)
+  25:USER/AI.c     **** 			return d_error;
+  26:USER/AI.c     **** 		if (waynum == 1)
+  27:USER/AI.c     **** 		{
+  28:USER/AI.c     **** 			if (map[y - 1][x] == 0 || map[y - 1][x] == 1 || map[y - 1][x] == -1)
+  29:USER/AI.c     **** 				return d_up;
+  30:USER/AI.c     **** 			else if (map[y][x - 1] == 0 || map[y][x - 1] == 1 || map[y][x - 1] == -1)
+  31:USER/AI.c     **** 				return d_left;
+  32:USER/AI.c     **** 			else if (map[y + 1][x] == 0 || map[y + 1][x] == 1 || map[y + 1][x] == -1)
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 2
+
+
+  33:USER/AI.c     **** 				return d_down;
+  34:USER/AI.c     **** 			else if (map[y][x + 1] == 0 || map[y][x + 1] == 1 || map[y][x + 1] == -1)
+  35:USER/AI.c     **** 				return d_right;
+  36:USER/AI.c     **** 			else
+  37:USER/AI.c     **** 				return d_error;
+  38:USER/AI.c     **** 		}
+  39:USER/AI.c     **** 	}
+  40:USER/AI.c     **** 	//if (size > (WIDTH - 2)*(HEIGHT - 2)*0.95)
+  41:USER/AI.c     **** 	//	return ai2(map, size, x, y);
+  42:USER/AI.c     **** 	//}
+  43:USER/AI.c     **** 	/*if (size > (HEIGHT - 2)*(WIDTH - 2) * 95 / 100)
+  44:USER/AI.c     **** 	{
+  45:USER/AI.c     **** 		int foodx = 0, foody = 0;
+  46:USER/AI.c     **** 		for (foodx = 0; map[foody][foodx] != -1; foodx++)
+  47:USER/AI.c     **** 			for (foody = 0; map[foody][foodx] != -1; foody++)
+  48:USER/AI.c     **** 				return ai2(map, size, foodx, foody);
+  49:USER/AI.c     **** 	}*/
+  50:USER/AI.c     **** 
+  51:USER/AI.c     **** 	DFSmap dmap[HEIGHT][WIDTH];
+  52:USER/AI.c     **** 	DFSmap *p_start = NULL;
+  53:USER/AI.c     **** 
+  54:USER/AI.c     **** 	short const *pa;
+  55:USER/AI.c     **** 	DFSmap *pb;
+  56:USER/AI.c     **** 	for (pa = map[0], pb = dmap[0]; pb <= &dmap[HEIGHT - 1][WIDTH - 1]; pa++, pb++)
+  57:USER/AI.c     **** 	{
+  58:USER/AI.c     **** 		pb->active = pb->d = pb->nopen = pb->s = pb->sign = pb->w = pb->a = false;
+  59:USER/AI.c     **** 		if (*pa != 0)
+  60:USER/AI.c     **** 		{
+  61:USER/AI.c     **** 			if (*pa == -1)
+  62:USER/AI.c     **** 			{
+  63:USER/AI.c     **** 				pb->active = true;
+  64:USER/AI.c     **** 				pb->sign = true;
+  65:USER/AI.c     **** 			}
+  66:USER/AI.c     **** 			else if (*pa == size)
+  67:USER/AI.c     **** 			{
+  68:USER/AI.c     **** 				p_start = pb;
+  69:USER/AI.c     **** 				pb->nopen = false;
+  70:USER/AI.c     **** 			}
+  71:USER/AI.c     **** 			else if (qiantao == 1 && *pa == 1)
+  72:USER/AI.c     **** 			{
+  73:USER/AI.c     **** 				pb->nopen = false;
+  74:USER/AI.c     **** 				pb->active = true;
+  75:USER/AI.c     **** 				pb->sign = true;
+  76:USER/AI.c     **** 			}
+  77:USER/AI.c     **** 			else
+  78:USER/AI.c     **** 				pb->nopen = true;
+  79:USER/AI.c     **** 		}
+  80:USER/AI.c     **** 	}
+  81:USER/AI.c     **** 
+  82:USER/AI.c     **** 	int num = 1;
+  83:USER/AI.c     **** 	if (p_start == NULL)
+  84:USER/AI.c     **** 	{
+  85:USER/AI.c     **** 		//std::cerr << "错误" << __FILE__ << __LINE__ << __FUNCTION__ << std::endl;
+  86:USER/AI.c     **** 		exit(-1);
+  87:USER/AI.c     **** 	}
+  88:USER/AI.c     **** 	while (p_start->sign == false && num != 0)
+  89:USER/AI.c     **** 	{
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 3
+
+
+  90:USER/AI.c     **** 		num = 0;
+  91:USER/AI.c     **** 		DFSmap *pdmap;
+  92:USER/AI.c     **** 		for (pdmap = &dmap[0][0]; pdmap <= &dmap[HEIGHT - 1][WIDTH - 1]; pdmap++)
+  93:USER/AI.c     **** 		{
+  94:USER/AI.c     **** 			if (pdmap->active == true)
+  95:USER/AI.c     **** 			{
+  96:USER/AI.c     **** 				num++;
+  97:USER/AI.c     **** 				if ((pdmap - WIDTH)->nopen == false)
+  98:USER/AI.c     **** 					if ((pdmap - WIDTH)->sign == false)
+  99:USER/AI.c     **** 					{
+ 100:USER/AI.c     **** 						(pdmap - WIDTH)->s = true;
+ 101:USER/AI.c     **** 						(pdmap - WIDTH)->active = true;
+ 102:USER/AI.c     **** 					}
+ 103:USER/AI.c     **** 				if ((pdmap - 1)->nopen == false)
+ 104:USER/AI.c     **** 					if ((pdmap - 1)->sign == false)
+ 105:USER/AI.c     **** 					{
+ 106:USER/AI.c     **** 						(pdmap - 1)->d = true;
+ 107:USER/AI.c     **** 						(pdmap - 1)->active = true;
+ 108:USER/AI.c     **** 					}
+ 109:USER/AI.c     **** 				if ((pdmap + 1)->nopen == false)
+ 110:USER/AI.c     **** 					if ((pdmap + 1)->sign == false)
+ 111:USER/AI.c     **** 					{
+ 112:USER/AI.c     **** 						(pdmap + 1)->a = true;
+ 113:USER/AI.c     **** 						(pdmap + 1)->active = true;
+ 114:USER/AI.c     **** 					}
+ 115:USER/AI.c     **** 				if ((pdmap + WIDTH)->nopen == false)
+ 116:USER/AI.c     **** 					if ((pdmap + WIDTH)->sign == false)
+ 117:USER/AI.c     **** 					{
+ 118:USER/AI.c     **** 						(pdmap + WIDTH)->w = true;
+ 119:USER/AI.c     **** 						(pdmap + WIDTH)->active = true;
+ 120:USER/AI.c     **** 					}
+ 121:USER/AI.c     **** 				pdmap->active = false;
+ 122:USER/AI.c     **** 				pdmap->sign = true;
+ 123:USER/AI.c     **** 			}
+ 124:USER/AI.c     **** 		}
+ 125:USER/AI.c     **** 	}
+ 126:USER/AI.c     **** 	// if (num == 0) {//没有搜索到直接路径 食物生成在蛇圈以外
+ 127:USER/AI.c     **** 	// 	//if (qiantao == 0)
+ 128:USER/AI.c     **** 	// 		//MessageBox(NULL, "没路了1", "error", MB_OK);
+ 129:USER/AI.c     **** 	// 	return d_error;
+ 130:USER/AI.c     **** 	// }
+ 131:USER/AI.c     **** 	// else if (qiantao == 1)
+ 132:USER/AI.c     **** 	// {
+ 133:USER/AI.c     **** 	// 	if (p_start->w == true)return d_up;
+ 134:USER/AI.c     **** 	// 	else if (p_start->a == true)return d_left;
+ 135:USER/AI.c     **** 	// 	else if (p_start->s == true)return d_down;
+ 136:USER/AI.c     **** 	// 	else if (p_start->d == true)return d_right;
+ 137:USER/AI.c     **** 	// }
+ 138:USER/AI.c     **** 	// else if (simulate(map, p_start, size, x, y) == 0)
+ 139:USER/AI.c     **** 	// 	;//MessageBox(NULL, "没路了2", "error", MB_OK);
+ 140:USER/AI.c     **** 	// else
+ 141:USER/AI.c     **** 	// 	if (p_start->w == true)return d_up;
+ 142:USER/AI.c     **** 	// 	else if (p_start->a == true)return d_left;
+ 143:USER/AI.c     **** 	// 	else if (p_start->s == true)return d_down;
+ 144:USER/AI.c     **** 	// 	else if (p_start->d == true)return d_right;
+ 145:USER/AI.c     **** 
+ 146:USER/AI.c     **** 	// if (p_start->w == true)
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 4
+
+
+ 147:USER/AI.c     **** 	// 	return d_up;
+ 148:USER/AI.c     **** 	// else if (p_start->a == true)
+ 149:USER/AI.c     **** 	// 	return d_left;
+ 150:USER/AI.c     **** 	// else if (p_start->s == true)
+ 151:USER/AI.c     **** 	// 	return d_down;
+ 152:USER/AI.c     **** 	// else if (p_start->d == true)
+ 153:USER/AI.c     **** 	// 	return d_right;
+ 154:USER/AI.c     **** 
+ 155:USER/AI.c     **** 	if (qiantao == 1 || qiantao == 2) //模拟函数用来判断模拟情况 防止反复归递
+ 156:USER/AI.c     **** 	{
+ 157:USER/AI.c     **** 		if (p_start->w == true)
+ 158:USER/AI.c     **** 			return d_up;
+ 159:USER/AI.c     **** 		else if (p_start->a == true)
+ 160:USER/AI.c     **** 			return d_left;
+ 161:USER/AI.c     **** 		else if (p_start->s == true)
+ 162:USER/AI.c     **** 			return d_down;
+ 163:USER/AI.c     **** 		else if (p_start->d == true)
+ 164:USER/AI.c     **** 			return d_right;
+ 165:USER/AI.c     **** 	}
+ 166:USER/AI.c     **** 	else if (num == 0)
+ 167:USER/AI.c     **** 	{ //没有搜索到直接路径 食物生成在蛇圈以外
+ 168:USER/AI.c     **** 		return ai2(map, size, x, y);
+ 169:USER/AI.c     **** 	}
+ 170:USER/AI.c     **** 	else if ((rand() % 2 == 0 ? simulate(map, p_start, size, x, y) : simulate2(map, p_start, size, x, 
+ 171:USER/AI.c     **** 	{
+ 172:USER/AI.c     **** 
+ 173:USER/AI.c     **** 		return ai2(map, size, x, y);
+ 174:USER/AI.c     **** 	}
+ 175:USER/AI.c     **** 	else //剩的就是既能找到又安全的路了
+ 176:USER/AI.c     **** 	{
+ 177:USER/AI.c     **** 		if (p_start->w == true)
+ 178:USER/AI.c     **** 			return d_up;
+ 179:USER/AI.c     **** 		else if (p_start->a == true)
+ 180:USER/AI.c     **** 			return d_left;
+ 181:USER/AI.c     **** 		else if (p_start->s == true)
+ 182:USER/AI.c     **** 			return d_down;
+ 183:USER/AI.c     **** 		else if (p_start->d == true)
+ 184:USER/AI.c     **** 			return d_right;
+ 185:USER/AI.c     **** 	}
+ 186:USER/AI.c     **** 
+ 187:USER/AI.c     **** 	return d_error;
+ 188:USER/AI.c     **** }
+ 189:USER/AI.c     **** int simulate(const short map[][WIDTH], DFSmap *p_start, short size, short x, short y)
+ 190:USER/AI.c     **** {
+ 191:USER/AI.c     **** 	short vir_map[HEIGHT][WIDTH], endx = 0, endy = 0;
+ 192:USER/AI.c     **** 	for (int h = 0; h < HEIGHT; h++)
+ 193:USER/AI.c     **** 		for (int w = 0; w < WIDTH; w++)
+ 194:USER/AI.c     **** 			vir_map[h][w] = map[h][w];
+ 195:USER/AI.c     **** 	//Direction dire;
+ 196:USER/AI.c     **** 	DFSmap *pn = p_start;
+ 197:USER/AI.c     **** 	short *pv = &vir_map[y][x];
+ 198:USER/AI.c     **** 	while (1)
+ 199:USER/AI.c     **** 	{
+ 200:USER/AI.c     **** 		if (pn->w == true)
+ 201:USER/AI.c     **** 		{
+ 202:USER/AI.c     **** 			pn -= WIDTH;
+ 203:USER/AI.c     **** 			pv -= WIDTH;
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 5
+
+
+ 204:USER/AI.c     **** 		}
+ 205:USER/AI.c     **** 		else if (pn->a == true)
+ 206:USER/AI.c     **** 		{
+ 207:USER/AI.c     **** 			pn -= 1;
+ 208:USER/AI.c     **** 			pv -= 1;
+ 209:USER/AI.c     **** 		}
+ 210:USER/AI.c     **** 		else if (pn->s == true)
+ 211:USER/AI.c     **** 		{
+ 212:USER/AI.c     **** 			pn += WIDTH;
+ 213:USER/AI.c     **** 			pv += WIDTH;
+ 214:USER/AI.c     **** 		}
+ 215:USER/AI.c     **** 		else if (pn->d == true)
+ 216:USER/AI.c     **** 		{
+ 217:USER/AI.c     **** 			pn += 1;
+ 218:USER/AI.c     **** 			pv += 1;
+ 219:USER/AI.c     **** 		}
+ 220:USER/AI.c     **** 		if (*pv != -1)
+ 221:USER/AI.c     **** 		{
+ 222:USER/AI.c     **** 			*pv = size + 1;
+ 223:USER/AI.c     **** 			for (int a = 0; a < HEIGHT; a++)
+ 224:USER/AI.c     **** 				for (int b = 0; b < WIDTH; b++)
+ 225:USER/AI.c     **** 					vir_map[a][b] = (vir_map[a][b] > 0 ? vir_map[a][b] - 1 : vir_map[a][b]);
+ 226:USER/AI.c     **** 		}
+ 227:USER/AI.c     **** 		else
+ 228:USER/AI.c     **** 		{
+ 229:USER/AI.c     **** 			*pv = size + 1;
+ 230:USER/AI.c     **** 			break;
+ 231:USER/AI.c     **** 		}
+ 232:USER/AI.c     **** 	} //模拟走一遍
+ 233:USER/AI.c     **** 	for (short h = 0; h < HEIGHT; h++)
+ 234:USER/AI.c     **** 		for (short w = 0; w < WIDTH; w++)
+ 235:USER/AI.c     **** 			if (vir_map[h][w] == 1)
+ 236:USER/AI.c     **** 			{
+ 237:USER/AI.c     **** 				endx = w;
+ 238:USER/AI.c     **** 				endy = h;
+ 239:USER/AI.c     **** 				h = HEIGHT;
+ 240:USER/AI.c     **** 				w = WIDTH;
+ 241:USER/AI.c     **** 			}
+ 242:USER/AI.c     **** 	if (ai(vir_map, size + 1, endx, endy, 1) != d_error)
+ 243:USER/AI.c     **** 		return 1;
+ 244:USER/AI.c     **** 	else
+ 245:USER/AI.c     **** 		return 0;
+ 246:USER/AI.c     **** }
+ 247:USER/AI.c     **** 
+ 248:USER/AI.c     **** Direction ai2(short const map[][WIDTH] //地图
+ 249:USER/AI.c     **** 			  ,
+ 250:USER/AI.c     **** 			  short size //蛇长
+ 251:USER/AI.c     **** 			  ,
+ 252:USER/AI.c     **** 			  short x, short y)
+ 253:USER/AI.c     **** {
+  27              		.loc 1 253 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 1536
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              	.LVL0:
+  32 0000 2DE9F043 		push	{r4, r5, r6, r7, r8, r9, lr}
+  33              	.LCFI0:
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 6
+
+
+  34              		.cfi_def_cfa_offset 28
+  35              		.cfi_offset 4, -28
+  36              		.cfi_offset 5, -24
+  37              		.cfi_offset 6, -20
+  38              		.cfi_offset 7, -16
+  39              		.cfi_offset 8, -12
+  40              		.cfi_offset 9, -8
+  41              		.cfi_offset 14, -4
+  42 0004 ADF2046D 		subw	sp, sp, #1540
+  43              	.LCFI1:
+  44              		.cfi_def_cfa_offset 1568
+  45              		.loc 1 253 0
+  46 0008 9046     		mov	r8, r2
+  47 000a 6F46     		mov	r7, sp
+  48              	.LBB4:
+  49              	.LBB5:
+ 254:USER/AI.c     **** 	short ai2map[HEIGHT][WIDTH];
+ 255:USER/AI.c     **** 	for (int he = 0; he < HEIGHT; he++)
+ 256:USER/AI.c     **** 		for (int wi = 0; wi < WIDTH; wi++)
+ 257:USER/AI.c     **** 		{
+ 258:USER/AI.c     **** 			if (map[he][wi] == 0)
+ 259:USER/AI.c     **** 				ai2map[he][wi] = 0;
+ 260:USER/AI.c     **** 			else if (map[he][wi] == 1)
+ 261:USER/AI.c     **** 				ai2map[he][wi] = 1;
+ 262:USER/AI.c     **** 			else if (map[he][wi] == -1)
+ 263:USER/AI.c     **** 				ai2map[he][wi] = 0;
+ 264:USER/AI.c     **** 			else
+ 265:USER/AI.c     **** 				ai2map[he][wi] = -1;
+  50              		.loc 1 265 0
+  51 000c 4FF6FF76 		movw	r6, #65535
+ 263:USER/AI.c     **** 			else
+  52              		.loc 1 263 0
+  53 0010 4FF0000C 		mov	ip, #0
+  54 0014 0238     		subs	r0, r0, #2
+  55              	.LVL1:
+  56 0016 0DF5C06E 		add	lr, sp, #1536
+  57              	.LVL2:
+  58              	.L2:
+  59 001a 00F13005 		add	r5, r0, #48
+  60              	.LBE5:
+  61              	.LBE4:
+ 253:USER/AI.c     **** 	short ai2map[HEIGHT][WIDTH];
+  62              		.loc 1 253 0
+  63 001e 3C46     		mov	r4, r7
+  64 0020 0AE0     		b	.L7
+  65              	.LVL3:
+  66              	.L3:
+  67              	.LBB7:
+  68              	.LBB6:
+ 260:USER/AI.c     **** 				ai2map[he][wi] = 1;
+  69              		.loc 1 260 0
+  70 0022 0129     		cmp	r1, #1
+  71 0024 0CD0     		beq	.L55
+ 262:USER/AI.c     **** 				ai2map[he][wi] = 0;
+  72              		.loc 1 262 0
+  73 0026 0131     		adds	r1, r1, #1
+ 263:USER/AI.c     **** 			else
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 7
+
+
+  74              		.loc 1 263 0
+  75 0028 0CBF     		ite	eq
+  76 002a A4F800C0 		strheq	ip, [r4]	@ movhi
+  77              		.loc 1 265 0
+  78 002e 2680     		strhne	r6, [r4]	@ movhi
+ 256:USER/AI.c     **** 		{
+  79              		.loc 1 256 0
+  80 0030 A842     		cmp	r0, r5
+  81 0032 04F10204 		add	r4, r4, #2
+  82 0036 08D0     		beq	.L57
+  83              	.L7:
+ 258:USER/AI.c     **** 				ai2map[he][wi] = 0;
+  84              		.loc 1 258 0
+  85 0038 30F9021F 		ldrsh	r1, [r0, #2]!
+  86 003c 0029     		cmp	r1, #0
+  87 003e F0D1     		bne	.L3
+  88              	.L55:
+ 256:USER/AI.c     **** 		{
+  89              		.loc 1 256 0
+  90 0040 A842     		cmp	r0, r5
+ 261:USER/AI.c     **** 			else if (map[he][wi] == -1)
+  91              		.loc 1 261 0
+  92 0042 2180     		strh	r1, [r4]	@ movhi
+  93 0044 04F10204 		add	r4, r4, #2
+ 256:USER/AI.c     **** 		{
+  94              		.loc 1 256 0
+  95 0048 F6D1     		bne	.L7
+  96              	.L57:
+  97 004a 3037     		adds	r7, r7, #48
+  98              	.LBE6:
+ 255:USER/AI.c     **** 		for (int wi = 0; wi < WIDTH; wi++)
+  99              		.loc 1 255 0 discriminator 2
+ 100 004c 7745     		cmp	r7, lr
+ 101 004e E4D1     		bne	.L2
+ 102              	.LBE7:
+ 266:USER/AI.c     **** 		}
+ 267:USER/AI.c     **** 	int num = 0, count = 0;
+ 103              		.loc 1 267 0
+ 104 0050 0026     		movs	r6, #0
+ 105              	.LVL4:
+ 106              	.L8:
+ 268:USER/AI.c     **** 	do
+ 269:USER/AI.c     **** 	{
+ 270:USER/AI.c     **** 		num = 0;
+ 271:USER/AI.c     **** 		count++;
+ 107              		.loc 1 271 0
+ 108 0052 0022     		movs	r2, #0
+ 270:USER/AI.c     **** 		count++;
+ 109              		.loc 1 270 0
+ 110 0054 9446     		mov	ip, r2
+ 111              		.loc 1 271 0
+ 112 0056 0136     		adds	r6, r6, #1
+ 113              	.LVL5:
+ 114              	.LBB8:
+ 115              	.LBB9:
+ 272:USER/AI.c     **** 		for (int he = 0; he < HEIGHT; he++)
+ 273:USER/AI.c     **** 			for (int wi = 0; wi < WIDTH; wi++)
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 8
+
+
+ 274:USER/AI.c     **** 			{
+ 275:USER/AI.c     **** 				if (ai2map[he][wi] == count)
+ 276:USER/AI.c     **** 				{
+ 277:USER/AI.c     **** 					if (he > 0) //这四个判断条件正常情况下不会失败 加它是为了去掉警告
+ 278:USER/AI.c     **** 						ai2map[he - 1][wi] = ai2map[he - 1][wi] == 0 ? count + 1 : ai2map[he - 1][wi];
+ 279:USER/AI.c     **** 					if (wi > 0)
+ 280:USER/AI.c     **** 						ai2map[he][wi - 1] = ai2map[he][wi - 1] == 0 ? count + 1 : ai2map[he][wi - 1];
+ 116              		.loc 1 280 0
+ 117 0058 06F1010E 		add	lr, r6, #1
+ 118 005c 0FFA8EFE 		sxth	lr, lr
+ 119 0060 0CAF     		add	r7, sp, #48
+ 120              	.LVL6:
+ 121              	.L9:
+ 122 0062 002A     		cmp	r2, #0
+ 123 0064 5CD0     		beq	.L18
+ 124 0066 A7F13000 		sub	r0, r7, #48
+ 125              	.LBE9:
+ 126              	.LBE8:
+ 267:USER/AI.c     **** 	do
+ 127              		.loc 1 267 0
+ 128 006a 0021     		movs	r1, #0
+ 129 006c 02E0     		b	.L16
+ 130              	.LVL7:
+ 131              	.L10:
+ 132 006e 0131     		adds	r1, r1, #1
+ 133              	.LVL8:
+ 134              	.LBB12:
+ 135              	.LBB10:
+ 273:USER/AI.c     **** 			{
+ 136              		.loc 1 273 0 discriminator 2
+ 137 0070 1829     		cmp	r1, #24
+ 138 0072 24D0     		beq	.L29
+ 139              	.LVL9:
+ 140              	.L16:
+ 275:USER/AI.c     **** 				{
+ 141              		.loc 1 275 0
+ 142 0074 30F9024B 		ldrsh	r4, [r0], #2
+ 143 0078 B442     		cmp	r4, r6
+ 144 007a F8D1     		bne	.L10
+ 278:USER/AI.c     **** 					if (wi > 0)
+ 145              		.loc 1 278 0
+ 146 007c 30F9325C 		ldrsh	r5, [r0, #-50]
+ 147 0080 002D     		cmp	r5, #0
+ 148 0082 08BF     		it	eq
+ 149 0084 7546     		moveq	r5, lr
+ 150 0086 20F8325C 		strh	r5, [r0, #-50]	@ movhi
+ 279:USER/AI.c     **** 						ai2map[he][wi - 1] = ai2map[he][wi - 1] == 0 ? count + 1 : ai2map[he][wi - 1];
+ 151              		.loc 1 279 0
+ 152 008a 31B1     		cbz	r1, .L12
+ 153              		.loc 1 280 0
+ 154 008c 30F9045C 		ldrsh	r5, [r0, #-4]
+ 155 0090 0DB9     		cbnz	r5, .L13
+ 156              		.loc 1 280 0 is_stmt 0 discriminator 1
+ 157 0092 651C     		adds	r5, r4, #1
+ 158 0094 2DB2     		sxth	r5, r5
+ 159              	.L13:
+ 160              		.loc 1 280 0 discriminator 4
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 9
+
+
+ 161 0096 20F8045C 		strh	r5, [r0, #-4]	@ movhi
+ 162              	.L12:
+ 281:USER/AI.c     **** 					if (wi < WIDTH)
+ 282:USER/AI.c     **** 						ai2map[he][wi + 1] = ai2map[he][wi + 1] == 0 ? count + 1 : ai2map[he][wi + 1];
+ 163              		.loc 1 282 0 is_stmt 1
+ 164 009a B0F90050 		ldrsh	r5, [r0]
+ 165 009e 0DB9     		cbnz	r5, .L14
+ 166              		.loc 1 282 0 is_stmt 0 discriminator 1
+ 167 00a0 651C     		adds	r5, r4, #1
+ 168 00a2 2DB2     		sxth	r5, r5
+ 169              	.L14:
+ 170              		.loc 1 282 0 discriminator 4
+ 171 00a4 0580     		strh	r5, [r0]	@ movhi
+ 283:USER/AI.c     **** 					if (he < HEIGHT)
+ 284:USER/AI.c     **** 						ai2map[he + 1][wi] = ai2map[he + 1][wi] == 0 ? count + 1 : ai2map[he + 1][wi];
+ 172              		.loc 1 284 0 is_stmt 1 discriminator 4
+ 173 00a6 37F91150 		ldrsh	r5, [r7, r1, lsl #1]
+ 174 00aa 0DB9     		cbnz	r5, .L15
+ 175              		.loc 1 284 0 is_stmt 0 discriminator 1
+ 176 00ac 0134     		adds	r4, r4, #1
+ 177 00ae 25B2     		sxth	r5, r4
+ 178              	.L15:
+ 179              		.loc 1 284 0 discriminator 4
+ 180 00b0 27F81150 		strh	r5, [r7, r1, lsl #1]	@ movhi
+ 181 00b4 0131     		adds	r1, r1, #1
+ 182              	.LVL10:
+ 273:USER/AI.c     **** 			{
+ 183              		.loc 1 273 0 is_stmt 1 discriminator 4
+ 184 00b6 1829     		cmp	r1, #24
+ 285:USER/AI.c     **** 					num++;
+ 185              		.loc 1 285 0 discriminator 4
+ 186 00b8 0CF1010C 		add	ip, ip, #1
+ 187              	.LVL11:
+ 273:USER/AI.c     **** 			{
+ 188              		.loc 1 273 0 discriminator 4
+ 189 00bc DAD1     		bne	.L16
+ 190              	.LVL12:
+ 191              	.L29:
+ 192 00be 0132     		adds	r2, r2, #1
+ 193              	.LVL13:
+ 194              	.LBE10:
+ 272:USER/AI.c     **** 			for (int wi = 0; wi < WIDTH; wi++)
+ 195              		.loc 1 272 0 discriminator 2
+ 196 00c0 202A     		cmp	r2, #32
+ 197 00c2 07F13007 		add	r7, r7, #48
+ 198 00c6 CCD1     		bne	.L9
+ 199              	.LBE12:
+ 286:USER/AI.c     **** 				}
+ 287:USER/AI.c     **** 			}
+ 288:USER/AI.c     **** 	} while (num != 0);
+ 200              		.loc 1 288 0
+ 201 00c8 BCF1000F 		cmp	ip, #0
+ 202 00cc C1D1     		bne	.L8
+ 289:USER/AI.c     **** 	//Direction retdir = d_error;
+ 290:USER/AI.c     **** 	if (ai2map[y - 1][x] >= ai2map[y][x - 1] && ai2map[y - 1][x] != -1) //1
+ 203              		.loc 1 290 0
+ 204 00ce 581E     		subs	r0, r3, #1
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 10
+
+
+ 205 00d0 03EB4301 		add	r1, r3, r3, lsl #1
+ 206 00d4 C900     		lsls	r1, r1, #3
+ 207 00d6 00EB4000 		add	r0, r0, r0, lsl #1
+ 208 00da 08F1FF34 		add	r4, r8, #-1
+ 209 00de 08EBC000 		add	r0, r8, r0, lsl #3
+ 210 00e2 0C44     		add	r4, r4, r1
+ 211 00e4 3DF91050 		ldrsh	r5, [sp, r0, lsl #1]
+ 212 00e8 0133     		adds	r3, r3, #1
+ 213              	.LVL14:
+ 214 00ea 3DF91440 		ldrsh	r4, [sp, r4, lsl #1]
+ 215 00ee 08F10100 		add	r0, r8, #1
+ 216 00f2 03EB4303 		add	r3, r3, r3, lsl #1
+ 217 00f6 08EBC303 		add	r3, r8, r3, lsl #3
+ 218 00fa 0144     		add	r1, r1, r0
+ 219 00fc A542     		cmp	r5, r4
+ 220 00fe 3DF91330 		ldrsh	r3, [sp, r3, lsl #1]
+ 221 0102 3DF91100 		ldrsh	r0, [sp, r1, lsl #1]
+ 222 0106 2FDB     		blt	.L30
+ 223              		.loc 1 290 0 is_stmt 0 discriminator 1
+ 224 0108 691C     		adds	r1, r5, #1
+ 225 010a 2DD0     		beq	.L30
+ 291:USER/AI.c     **** 	{
+ 292:USER/AI.c     **** 		if (ai2map[y - 1][x] >= ai2map[y + 1][x]) //1
+ 226              		.loc 1 292 0 is_stmt 1
+ 227 010c 9D42     		cmp	r5, r3
+ 228 010e 42DB     		blt	.L31
+ 293:USER/AI.c     **** 		{
+ 294:USER/AI.c     **** 			if (ai2map[y - 1][x] >= ai2map[y][x + 1])
+ 295:USER/AI.c     **** 				return d_up;
+ 229              		.loc 1 295 0
+ 230 0110 8542     		cmp	r5, r0
+ 231 0112 B4BF     		ite	lt
+ 232 0114 0320     		movlt	r0, #3
+ 233 0116 0020     		movge	r0, #0
+ 234              	.LVL15:
+ 235              	.L32:
+ 296:USER/AI.c     **** 			else
+ 297:USER/AI.c     **** 				return d_right;
+ 298:USER/AI.c     **** 		}
+ 299:USER/AI.c     **** 		else //3
+ 300:USER/AI.c     **** 		{
+ 301:USER/AI.c     **** 			if (ai2map[y + 1][x] >= ai2map[y][x + 1])
+ 302:USER/AI.c     **** 				return d_down;
+ 303:USER/AI.c     **** 			else
+ 304:USER/AI.c     **** 				return d_right;
+ 305:USER/AI.c     **** 		}
+ 306:USER/AI.c     **** 	}
+ 307:USER/AI.c     **** 	else //2
+ 308:USER/AI.c     **** 	{
+ 309:USER/AI.c     **** 		if (ai2map[y][x - 1] >= ai2map[y + 1][x] && ai2map[y][x - 1] != -1) //2
+ 310:USER/AI.c     **** 		{
+ 311:USER/AI.c     **** 			if (ai2map[y][x - 1] >= ai2map[y][x + 1])
+ 312:USER/AI.c     **** 				return d_left;
+ 313:USER/AI.c     **** 			else
+ 314:USER/AI.c     **** 				return d_right;
+ 315:USER/AI.c     **** 		}
+ 316:USER/AI.c     **** 		else //3
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 11
+
+
+ 317:USER/AI.c     **** 		{
+ 318:USER/AI.c     **** 			if (ai2map[y + 1][x] >= ai2map[y][x + 1] && ai2map[y + 1][x] != -1)
+ 319:USER/AI.c     **** 				return d_down;
+ 320:USER/AI.c     **** 			else if (ai2map[y][x + 1] != -1)
+ 321:USER/AI.c     **** 				return d_right;
+ 322:USER/AI.c     **** 		}
+ 323:USER/AI.c     **** 	}
+ 324:USER/AI.c     **** 	return d_error;
+ 325:USER/AI.c     **** }
+ 236              		.loc 1 325 0
+ 237 0118 0DF2046D 		addw	sp, sp, #1540
+ 238              	.LCFI2:
+ 239              		.cfi_remember_state
+ 240              		.cfi_def_cfa_offset 28
+ 241              		@ sp needed
+ 242 011c BDE8F083 		pop	{r4, r5, r6, r7, r8, r9, pc}
+ 243              	.LVL16:
+ 244              	.L18:
+ 245              	.LCFI3:
+ 246              		.cfi_restore_state
+ 247 0120 6846     		mov	r0, sp
+ 270:USER/AI.c     **** 		count++;
+ 248              		.loc 1 270 0
+ 249 0122 1146     		mov	r1, r2
+ 250 0124 02E0     		b	.L28
+ 251              	.LVL17:
+ 252              	.L19:
+ 253 0126 0131     		adds	r1, r1, #1
+ 254              	.LVL18:
+ 255              	.LBB13:
+ 256              	.LBB11:
+ 273:USER/AI.c     **** 			{
+ 257              		.loc 1 273 0
+ 258 0128 1829     		cmp	r1, #24
+ 259 012a C8D0     		beq	.L29
+ 260              	.LVL19:
+ 261              	.L28:
+ 275:USER/AI.c     **** 				{
+ 262              		.loc 1 275 0
+ 263 012c 30F9024B 		ldrsh	r4, [r0], #2
+ 264 0130 A642     		cmp	r6, r4
+ 265 0132 F8D1     		bne	.L19
+ 279:USER/AI.c     **** 						ai2map[he][wi - 1] = ai2map[he][wi - 1] == 0 ? count + 1 : ai2map[he][wi - 1];
+ 266              		.loc 1 279 0
+ 267 0134 31B1     		cbz	r1, .L26
+ 280:USER/AI.c     **** 					if (wi < WIDTH)
+ 268              		.loc 1 280 0
+ 269 0136 30F9045C 		ldrsh	r5, [r0, #-4]
+ 270 013a 002D     		cmp	r5, #0
+ 271 013c 08BF     		it	eq
+ 272 013e 7546     		moveq	r5, lr
+ 273 0140 20F8045C 		strh	r5, [r0, #-4]	@ movhi
+ 274              	.L26:
+ 282:USER/AI.c     **** 					if (he < HEIGHT)
+ 275              		.loc 1 282 0
+ 276 0144 B0F90050 		ldrsh	r5, [r0]
+ 277 0148 04F10109 		add	r9, r4, #1
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 12
+
+
+ 278 014c 0DB9     		cbnz	r5, .L24
+ 279 014e 0FFA89F5 		sxth	r5, r9
+ 280              	.L24:
+ 281 0152 0580     		strh	r5, [r0]	@ movhi
+ 284:USER/AI.c     **** 					num++;
+ 282              		.loc 1 284 0
+ 283 0154 37F91150 		ldrsh	r5, [r7, r1, lsl #1]
+ 284 0158 0134     		adds	r4, r4, #1
+ 285 015a 05B9     		cbnz	r5, .L23
+ 286 015c 25B2     		sxth	r5, r4
+ 287              	.L23:
+ 288 015e 27F81150 		strh	r5, [r7, r1, lsl #1]	@ movhi
+ 285:USER/AI.c     **** 				}
+ 289              		.loc 1 285 0
+ 290 0162 0CF1010C 		add	ip, ip, #1
+ 291              	.LVL20:
+ 292 0166 DEE7     		b	.L19
+ 293              	.LVL21:
+ 294              	.L30:
+ 295              	.LBE11:
+ 296              	.LBE13:
+ 309:USER/AI.c     **** 		{
+ 297              		.loc 1 309 0
+ 298 0168 9C42     		cmp	r4, r3
+ 299 016a 06DB     		blt	.L33
+ 309:USER/AI.c     **** 		{
+ 300              		.loc 1 309 0 is_stmt 0 discriminator 1
+ 301 016c 621C     		adds	r2, r4, #1
+ 302              	.LVL22:
+ 303 016e 04D0     		beq	.L33
+ 312:USER/AI.c     **** 			else
+ 304              		.loc 1 312 0 is_stmt 1
+ 305 0170 8442     		cmp	r4, r0
+ 306 0172 B4BF     		ite	lt
+ 307 0174 0320     		movlt	r0, #3
+ 308 0176 0220     		movge	r0, #2
+ 309 0178 CEE7     		b	.L32
+ 310              	.L33:
+ 318:USER/AI.c     **** 				return d_down;
+ 311              		.loc 1 318 0
+ 312 017a 8342     		cmp	r3, r0
+ 313 017c 03DB     		blt	.L34
+ 318:USER/AI.c     **** 				return d_down;
+ 314              		.loc 1 318 0 is_stmt 0 discriminator 1
+ 315 017e 0133     		adds	r3, r3, #1
+ 316 0180 01D0     		beq	.L34
+ 302:USER/AI.c     **** 			else
+ 317              		.loc 1 302 0 is_stmt 1
+ 318 0182 0120     		movs	r0, #1
+ 319 0184 C8E7     		b	.L32
+ 320              	.L34:
+ 324:USER/AI.c     **** }
+ 321              		.loc 1 324 0
+ 322 0186 431C     		adds	r3, r0, #1
+ 323 0188 14BF     		ite	ne
+ 324 018a 0320     		movne	r0, #3
+ 325 018c 0420     		moveq	r0, #4
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 13
+
+
+ 326              		.loc 1 325 0
+ 327 018e 0DF2046D 		addw	sp, sp, #1540
+ 328              	.LCFI4:
+ 329              		.cfi_remember_state
+ 330              		.cfi_def_cfa_offset 28
+ 331              		@ sp needed
+ 332 0192 BDE8F083 		pop	{r4, r5, r6, r7, r8, r9, pc}
+ 333              	.LVL23:
+ 334              	.L31:
+ 335              	.LCFI5:
+ 336              		.cfi_restore_state
+ 302:USER/AI.c     **** 			else
+ 337              		.loc 1 302 0
+ 338 0196 8342     		cmp	r3, r0
+ 339 0198 B4BF     		ite	lt
+ 340 019a 0320     		movlt	r0, #3
+ 341 019c 0120     		movge	r0, #1
+ 342 019e BBE7     		b	.L32
+ 343              		.cfi_endproc
+ 344              	.LFE2:
+ 346              		.section	.text.simulate2,"ax",%progbits
+ 347              		.align	1
+ 348              		.p2align 2,,3
+ 349              		.global	simulate2
+ 350              		.syntax unified
+ 351              		.thumb
+ 352              		.thumb_func
+ 353              		.fpu softvfp
+ 355              	simulate2:
+ 356              	.LFB3:
+ 326:USER/AI.c     **** 
+ 327:USER/AI.c     **** int simulate2(const short map[][WIDTH], DFSmap *p_start, short size, short x, short y)
+ 328:USER/AI.c     **** {
+ 357              		.loc 1 328 0
+ 358              		.cfi_startproc
+ 359              		@ args = 4, pretend = 0, frame = 6928
+ 360              		@ frame_needed = 0, uses_anonymous_args = 0
+ 361              	.LVL24:
+ 362 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 363              	.LCFI6:
+ 364              		.cfi_def_cfa_offset 36
+ 365              		.cfi_offset 4, -36
+ 366              		.cfi_offset 5, -32
+ 367              		.cfi_offset 6, -28
+ 368              		.cfi_offset 7, -24
+ 369              		.cfi_offset 8, -20
+ 370              		.cfi_offset 9, -16
+ 371              		.cfi_offset 10, -12
+ 372              		.cfi_offset 11, -8
+ 373              		.cfi_offset 14, -4
+ 374 0004 ADF5D85D 		sub	sp, sp, #6912
+ 375              	.LCFI7:
+ 376              		.cfi_def_cfa_offset 6948
+ 377 0008 87B0     		sub	sp, sp, #28
+ 378              	.LCFI8:
+ 379              		.cfi_def_cfa_offset 6976
+ 380 000a 0DF11809 		add	r9, sp, #24
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 14
+
+
+ 381              		.loc 1 328 0
+ 382 000e 4C46     		mov	r4, r9
+ 383 0010 0146     		mov	r1, r0
+ 384              	.LVL25:
+ 385 0012 0492     		str	r2, [sp, #16]
+ 386 0014 1A46     		mov	r2, r3
+ 387              	.LVL26:
+ 388 0016 0DF5DA53 		add	r3, sp, #6976
+ 389              	.LVL27:
+ 390 001a B3F90030 		ldrsh	r3, [r3]
+ 391              	.LVL28:
+ 392 001e 0DF5C36A 		add	r10, sp, #1560
+ 393              	.LVL29:
+ 394              	.L60:
+ 395 0022 2046     		mov	r0, r4
+ 396 0024 01F13005 		add	r5, r1, #48
+ 397              	.L59:
+ 398 0028 D1F800E0 		ldr	lr, [r1]	@ unaligned
+ 399 002c D1F804C0 		ldr	ip, [r1, #4]	@ unaligned
+ 400 0030 8F68     		ldr	r7, [r1, #8]	@ unaligned
+ 401 0032 CE68     		ldr	r6, [r1, #12]	@ unaligned
+ 402 0034 1031     		adds	r1, r1, #16
+ 403 0036 A942     		cmp	r1, r5
+ 404 0038 C0F800E0 		str	lr, [r0]	@ unaligned
+ 405 003c C0F804C0 		str	ip, [r0, #4]	@ unaligned
+ 406 0040 8760     		str	r7, [r0, #8]	@ unaligned
+ 407 0042 C660     		str	r6, [r0, #12]	@ unaligned
+ 408 0044 00F11000 		add	r0, r0, #16
+ 409 0048 EED1     		bne	.L59
+ 410 004a 3034     		adds	r4, r4, #48
+ 411              	.LBB22:
+ 329:USER/AI.c     **** 	short vir_map[HEIGHT][WIDTH]; // endx, endy;
+ 330:USER/AI.c     **** 	for (int h = 0; h < HEIGHT; h++)
+ 412              		.loc 1 330 0
+ 413 004c A245     		cmp	r10, r4
+ 414 004e E8D1     		bne	.L60
+ 415              	.LBE22:
+ 416              	.LBB23:
+ 417              	.LBB24:
+  78:USER/AI.c     **** 		}
+ 418              		.loc 1 78 0
+ 419 0050 0124     		movs	r4, #1
+ 420              	.LBB25:
+  26:USER/AI.c     **** 		{
+ 421              		.loc 1 26 0
+ 422 0052 0020     		movs	r0, #0
+ 423              	.LBE25:
+ 424              	.LBE24:
+ 425              	.LBE23:
+ 331:USER/AI.c     **** 		for (int w = 0; w < WIDTH; w++)
+ 332:USER/AI.c     **** 			vir_map[h][w] = map[h][w];
+ 333:USER/AI.c     **** 	//Direction dire;
+ 334:USER/AI.c     **** 	//short * pv = &vir_map[y][x];
+ 335:USER/AI.c     **** 	while (1)
+ 336:USER/AI.c     **** 	{
+ 337:USER/AI.c     **** 		switch (ai(vir_map, size, x, y, 2))
+ 338:USER/AI.c     **** 		{
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 15
+
+
+ 339:USER/AI.c     **** 		case d_up:
+ 340:USER/AI.c     **** 			y = y - 1;
+ 341:USER/AI.c     **** 			break;
+ 342:USER/AI.c     **** 		case d_down:
+ 343:USER/AI.c     **** 			y = y + 1;
+ 344:USER/AI.c     **** 			break;
+ 345:USER/AI.c     **** 		case d_left:
+ 346:USER/AI.c     **** 			x = x - 1;
+ 347:USER/AI.c     **** 			break;
+ 348:USER/AI.c     **** 		case d_right:
+ 349:USER/AI.c     **** 			x = x + 1;
+ 350:USER/AI.c     **** 			break;
+ 351:USER/AI.c     **** 		case d_error:
+ 352:USER/AI.c     **** 			exit(1);
+ 353:USER/AI.c     **** 		}
+ 354:USER/AI.c     **** 		if (vir_map[y][x] == 0 || vir_map[y][x] == 1)
+ 355:USER/AI.c     **** 		{
+ 356:USER/AI.c     **** 			vir_map[y][x] = size + 1;
+ 426              		.loc 1 356 0
+ 427 0054 049D     		ldr	r5, [sp, #16]
+ 428 0056 03FA04F1 		lsl	r1, r3, r4
+ 429 005a 0391     		str	r1, [sp, #12]
+ 430 005c 2544     		add	r5, r5, r4
+ 431 005e 0DF5D851 		add	r1, sp, #6912
+ 432 0062 1131     		adds	r1, r1, #17
+ 433 0064 0595     		str	r5, [sp, #20]
+ 434 0066 09F5C66C 		add	ip, r9, #1584
+ 435              	.LVL30:
+ 436              	.L61:
+ 437              	.LBB35:
+ 438              	.LBB30:
+ 439              	.LBB26:
+  16:USER/AI.c     **** 			waynum++;
+ 440              		.loc 1 16 0
+ 441 006a 039D     		ldr	r5, [sp, #12]
+ 442 006c 0DF5D857 		add	r7, sp, #6912
+ 443 0070 EE18     		adds	r6, r5, r3
+ 444 0072 1837     		adds	r7, r7, #24
+ 445 0074 5500     		lsls	r5, r2, #1
+ 446 0076 3601     		lsls	r6, r6, #4
+ 447 0078 2F44     		add	r7, r7, r5
+ 448 007a 07EB060E 		add	lr, r7, r6
+ 449 007e AEF5D95E 		sub	lr, lr, #6944
+ 450 0082 3EF8108C 		ldrh	r8, [lr, #-16]
+ 451 0086 3544     		add	r5, r5, r6
+ 452 0088 08F10108 		add	r8, r8, #1
+ 453 008c 1FFA88F8 		uxth	r8, r8
+ 454 0090 B8F1020F 		cmp	r8, #2
+ 455 0094 98BF     		it	ls
+ 456 0096 4FF0010B 		movls	fp, #1
+ 457 009a 4D44     		add	r5, r5, r9
+  20:USER/AI.c     **** 			waynum++;
+ 458              		.loc 1 20 0
+ 459 009c 3E44     		add	r6, r6, r7
+  18:USER/AI.c     **** 			waynum++;
+ 460              		.loc 1 18 0
+ 461 009e 35F802EC 		ldrh	lr, [r5, #-2]
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 16
+
+
+  20:USER/AI.c     **** 			waynum++;
+ 462              		.loc 1 20 0
+ 463 00a2 A6F5D656 		sub	r6, r6, #6848
+ 464 00a6 36F8106C 		ldrh	r6, [r6, #-16]
+  18:USER/AI.c     **** 			waynum++;
+ 465              		.loc 1 18 0
+ 466 00aa 0EF1010E 		add	lr, lr, #1
+ 467 00ae 1FFA8EFE 		uxth	lr, lr
+  20:USER/AI.c     **** 			waynum++;
+ 468              		.loc 1 20 0
+ 469 00b2 06F10106 		add	r6, r6, #1
+  16:USER/AI.c     **** 			waynum++;
+ 470              		.loc 1 16 0
+ 471 00b6 88BF     		it	hi
+ 472 00b8 4FF0000B 		movhi	fp, #0
+ 473              	.LVL31:
+  20:USER/AI.c     **** 			waynum++;
+ 474              		.loc 1 20 0
+ 475 00bc B6B2     		uxth	r6, r6
+  18:USER/AI.c     **** 			waynum++;
+ 476              		.loc 1 18 0
+ 477 00be BEF1020F 		cmp	lr, #2
+  19:USER/AI.c     **** 		if (map[y + 1][x] == 0 || map[y + 1][x] == 1 || map[y + 1][x] == -1)
+ 478              		.loc 1 19 0
+ 479 00c2 98BF     		it	ls
+ 480 00c4 0BF1010B 		addls	fp, fp, #1
+ 481              	.LVL32:
+  20:USER/AI.c     **** 			waynum++;
+ 482              		.loc 1 20 0
+ 483 00c8 022E     		cmp	r6, #2
+  22:USER/AI.c     **** 			waynum++;
+ 484              		.loc 1 22 0
+ 485 00ca 6D88     		ldrh	r5, [r5, #2]
+  20:USER/AI.c     **** 			waynum++;
+ 486              		.loc 1 20 0
+ 487 00cc 5ED8     		bhi	.L63
+  22:USER/AI.c     **** 			waynum++;
+ 488              		.loc 1 22 0
+ 489 00ce 0135     		adds	r5, r5, #1
+ 490 00d0 ADB2     		uxth	r5, r5
+ 491 00d2 022D     		cmp	r5, #2
+  21:USER/AI.c     **** 		if (map[y][x + 1] == 0 || map[y][x + 1] == 1 || map[y][x + 1] == -1)
+ 492              		.loc 1 21 0
+ 493 00d4 0BF1010B 		add	fp, fp, #1
+ 494              	.LVL33:
+  22:USER/AI.c     **** 			waynum++;
+ 495              		.loc 1 22 0
+ 496 00d8 01D8     		bhi	.L65
+ 497              	.L64:
+  23:USER/AI.c     **** 		if (waynum == 0)
+ 498              		.loc 1 23 0
+ 499 00da 0BF1010B 		add	fp, fp, #1
+ 500              	.LVL34:
+ 501              	.L65:
+  26:USER/AI.c     **** 		{
+ 502              		.loc 1 26 0
+ 503 00de BBF1010F 		cmp	fp, #1
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 17
+
+
+ 504 00e2 00F09780 		beq	.L113
+ 505 00e6 4F46     		mov	r7, r9
+ 506 00e8 4FF0000E 		mov	lr, #0
+ 507 00ec 5546     		mov	r5, r10
+ 508 00ee DDF81080 		ldr	r8, [sp, #16]
+ 509              	.L67:
+ 510              	.LVL35:
+ 511              	.LBE26:
+  59:USER/AI.c     **** 		{
+ 512              		.loc 1 59 0
+ 513 00f2 37F9026B 		ldrsh	r6, [r7], #2
+ 514              	.LVL36:
+  58:USER/AI.c     **** 		if (*pa != 0)
+ 515              		.loc 1 58 0
+ 516 00f6 2871     		strb	r0, [r5, #4]
+ 517 00f8 A871     		strb	r0, [r5, #6]
+ 518 00fa 2860     		str	r0, [r5]	@ unaligned
+ 519 00fc 6871     		strb	r0, [r5, #5]
+  59:USER/AI.c     **** 		{
+ 520              		.loc 1 59 0
+ 521 00fe 36B1     		cbz	r6, .L73
+  61:USER/AI.c     **** 			{
+ 522              		.loc 1 61 0
+ 523 0100 B6F1FF3F 		cmp	r6, #-1
+ 524 0104 7ED0     		beq	.L114
+  66:USER/AI.c     **** 			{
+ 525              		.loc 1 66 0
+ 526 0106 4645     		cmp	r6, r8
+ 527 0108 0CBF     		ite	eq
+ 528 010a AE46     		moveq	lr, r5
+  78:USER/AI.c     **** 		}
+ 529              		.loc 1 78 0
+ 530 010c AC71     		strbne	r4, [r5, #6]
+ 531              	.L73:
+ 532              	.LVL37:
+  56:USER/AI.c     **** 	{
+ 533              		.loc 1 56 0
+ 534 010e 0735     		adds	r5, r5, #7
+ 535              	.LVL38:
+ 536 0110 8D42     		cmp	r5, r1
+ 537 0112 EED9     		bls	.L67
+ 538              	.LVL39:
+  83:USER/AI.c     **** 	{
+ 539              		.loc 1 83 0
+ 540 0114 BEF1000F 		cmp	lr, #0
+ 541 0118 00F0AC80 		beq	.L115
+  82:USER/AI.c     **** 	if (p_start == NULL)
+ 542              		.loc 1 82 0
+ 543 011c 0127     		movs	r7, #1
+ 544              	.LVL40:
+ 545 011e 9B46     		mov	fp, r3
+ 546              	.LVL41:
+ 547              	.L75:
+  88:USER/AI.c     **** 	{
+ 548              		.loc 1 88 0
+ 549 0120 9EF80450 		ldrb	r5, [lr, #4]	@ zero_extendqisi2
+ 550 0124 002D     		cmp	r5, #0
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 18
+
+
+ 551 0126 3BD1     		bne	.L82
+ 552 0128 D7B3     		cbz	r7, .L82
+ 553              	.LBB27:
+  90:USER/AI.c     **** 		DFSmap *pdmap;
+ 554              		.loc 1 90 0
+ 555 012a 2F46     		mov	r7, r5
+ 556              	.LVL42:
+  92:USER/AI.c     **** 		{
+ 557              		.loc 1 92 0
+ 558 012c 5546     		mov	r5, r10
+ 559 012e 02E0     		b	.L81
+ 560              	.LVL43:
+ 561              	.L76:
+ 562 0130 0735     		adds	r5, r5, #7
+ 563              	.LVL44:
+ 564 0132 8D42     		cmp	r5, r1
+ 565 0134 F4D8     		bhi	.L75
+ 566              	.LVL45:
+ 567              	.L81:
+  94:USER/AI.c     **** 			{
+ 568              		.loc 1 94 0
+ 569 0136 6B79     		ldrb	r3, [r5, #5]	@ zero_extendqisi2
+ 570 0138 012B     		cmp	r3, #1
+ 571 013a F9D1     		bne	.L76
+  97:USER/AI.c     **** 					if ((pdmap - WIDTH)->sign == false)
+ 572              		.loc 1 97 0
+ 573 013c 15F8A26C 		ldrb	r6, [r5, #-162]	@ zero_extendqisi2
+  96:USER/AI.c     **** 				if ((pdmap - WIDTH)->nopen == false)
+ 574              		.loc 1 96 0
+ 575 0140 0137     		adds	r7, r7, #1
+ 576              	.LVL46:
+  97:USER/AI.c     **** 					if ((pdmap - WIDTH)->sign == false)
+ 577              		.loc 1 97 0
+ 578 0142 36B9     		cbnz	r6, .L77
+  98:USER/AI.c     **** 					{
+ 579              		.loc 1 98 0
+ 580 0144 15F8A46C 		ldrb	r6, [r5, #-164]	@ zero_extendqisi2
+ 581 0148 1EB9     		cbnz	r6, .L77
+ 100:USER/AI.c     **** 						(pdmap - WIDTH)->active = true;
+ 582              		.loc 1 100 0
+ 583 014a 05F8A73C 		strb	r3, [r5, #-167]
+ 101:USER/AI.c     **** 					}
+ 584              		.loc 1 101 0
+ 585 014e 05F8A33C 		strb	r3, [r5, #-163]
+ 586              	.L77:
+ 103:USER/AI.c     **** 					if ((pdmap - 1)->sign == false)
+ 587              		.loc 1 103 0
+ 588 0152 15F8013C 		ldrb	r3, [r5, #-1]	@ zero_extendqisi2
+ 589 0156 33B9     		cbnz	r3, .L78
+ 104:USER/AI.c     **** 					{
+ 590              		.loc 1 104 0
+ 591 0158 15F8033C 		ldrb	r3, [r5, #-3]	@ zero_extendqisi2
+ 592 015c 1BB9     		cbnz	r3, .L78
+ 106:USER/AI.c     **** 						(pdmap - 1)->active = true;
+ 593              		.loc 1 106 0
+ 594 015e 05F8044C 		strb	r4, [r5, #-4]
+ 107:USER/AI.c     **** 					}
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 19
+
+
+ 595              		.loc 1 107 0
+ 596 0162 05F8024C 		strb	r4, [r5, #-2]
+ 597              	.L78:
+ 109:USER/AI.c     **** 					if ((pdmap + 1)->sign == false)
+ 598              		.loc 1 109 0
+ 599 0166 6B7B     		ldrb	r3, [r5, #13]	@ zero_extendqisi2
+ 600 0168 1BB9     		cbnz	r3, .L79
+ 110:USER/AI.c     **** 					{
+ 601              		.loc 1 110 0
+ 602 016a EB7A     		ldrb	r3, [r5, #11]	@ zero_extendqisi2
+ 603 016c 0BB9     		cbnz	r3, .L79
+ 112:USER/AI.c     **** 						(pdmap + 1)->active = true;
+ 604              		.loc 1 112 0
+ 605 016e 6C72     		strb	r4, [r5, #9]
+ 113:USER/AI.c     **** 					}
+ 606              		.loc 1 113 0
+ 607 0170 2C73     		strb	r4, [r5, #12]
+ 608              	.L79:
+ 115:USER/AI.c     **** 					if ((pdmap + WIDTH)->sign == false)
+ 609              		.loc 1 115 0
+ 610 0172 95F8AE30 		ldrb	r3, [r5, #174]	@ zero_extendqisi2
+ 611 0176 33B9     		cbnz	r3, .L80
+ 116:USER/AI.c     **** 					{
+ 612              		.loc 1 116 0
+ 613 0178 95F8AC30 		ldrb	r3, [r5, #172]	@ zero_extendqisi2
+ 614 017c 1BB9     		cbnz	r3, .L80
+ 118:USER/AI.c     **** 						(pdmap + WIDTH)->active = true;
+ 615              		.loc 1 118 0
+ 616 017e 85F8A840 		strb	r4, [r5, #168]
+ 119:USER/AI.c     **** 					}
+ 617              		.loc 1 119 0
+ 618 0182 85F8AD40 		strb	r4, [r5, #173]
+ 619              	.L80:
+ 121:USER/AI.c     **** 				pdmap->sign = true;
+ 620              		.loc 1 121 0
+ 621 0186 6871     		strb	r0, [r5, #5]
+ 122:USER/AI.c     **** 			}
+ 622              		.loc 1 122 0
+ 623 0188 2C71     		strb	r4, [r5, #4]
+ 624 018a D1E7     		b	.L76
+ 625              	.LVL47:
+ 626              	.L63:
+ 627              	.LBE27:
+ 628              	.LBB28:
+  22:USER/AI.c     **** 			waynum++;
+ 629              		.loc 1 22 0
+ 630 018c 0135     		adds	r5, r5, #1
+ 631 018e ADB2     		uxth	r5, r5
+ 632 0190 022D     		cmp	r5, #2
+ 633 0192 A2D9     		bls	.L64
+  24:USER/AI.c     **** 			return d_error;
+ 634              		.loc 1 24 0
+ 635 0194 BBF1000F 		cmp	fp, #0
+ 636 0198 A1D1     		bne	.L65
+ 637              	.LVL48:
+ 638              	.L72:
+ 639              	.LBE28:
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 20
+
+
+ 640              	.LBE30:
+ 641              	.LBE35:
+ 352:USER/AI.c     **** 		}
+ 642              		.loc 1 352 0
+ 643 019a 0120     		movs	r0, #1
+ 644 019c FFF7FEFF 		bl	exit
+ 645              	.LVL49:
+ 646              	.L82:
+ 647              	.LBB36:
+ 648              	.LBB31:
+ 157:USER/AI.c     **** 			return d_up;
+ 649              		.loc 1 157 0
+ 650 01a0 9EF80050 		ldrb	r5, [lr]	@ zero_extendqisi2
+ 651 01a4 5B46     		mov	r3, fp
+ 652 01a6 012D     		cmp	r5, #1
+ 653 01a8 2FD0     		beq	.L68
+ 159:USER/AI.c     **** 			return d_left;
+ 654              		.loc 1 159 0
+ 655 01aa 9EF80250 		ldrb	r5, [lr, #2]	@ zero_extendqisi2
+ 656 01ae 012D     		cmp	r5, #1
+ 657 01b0 57D0     		beq	.L69
+ 161:USER/AI.c     **** 			return d_down;
+ 658              		.loc 1 161 0
+ 659 01b2 9EF80150 		ldrb	r5, [lr, #1]	@ zero_extendqisi2
+ 660 01b6 012D     		cmp	r5, #1
+ 661 01b8 57D0     		beq	.L70
+ 163:USER/AI.c     **** 			return d_right;
+ 662              		.loc 1 163 0
+ 663 01ba 9EF80350 		ldrb	r5, [lr, #3]	@ zero_extendqisi2
+ 664 01be 012D     		cmp	r5, #1
+ 665 01c0 EBD1     		bne	.L72
+ 666              	.LVL50:
+ 667              	.L71:
+ 668              	.LBE31:
+ 669              	.LBE36:
+ 349:USER/AI.c     **** 			break;
+ 670              		.loc 1 349 0
+ 671 01c2 0132     		adds	r2, r2, #1
+ 672              	.LVL51:
+ 673 01c4 039D     		ldr	r5, [sp, #12]
+ 674 01c6 12B2     		sxth	r2, r2
+ 675              	.LVL52:
+ 676              	.L83:
+ 354:USER/AI.c     **** 		{
+ 677              		.loc 1 354 0
+ 678 01c8 1D44     		add	r5, r5, r3
+ 679 01ca 02EBC505 		add	r5, r2, r5, lsl #3
+ 680 01ce 39F91560 		ldrsh	r6, [r9, r5, lsl #1]
+ 681 01d2 B7B2     		uxth	r7, r6
+ 682 01d4 012F     		cmp	r7, #1
+ 683 01d6 28D9     		bls	.L116
+ 357:USER/AI.c     **** 			for (int a = 0; a < HEIGHT; a++)
+ 358:USER/AI.c     **** 				for (int b = 0; b < WIDTH; b++)
+ 359:USER/AI.c     **** 					vir_map[a][b] = (vir_map[a][b] > 0 ? vir_map[a][b] - 1 : vir_map[a][b]);
+ 360:USER/AI.c     **** 		}
+ 361:USER/AI.c     **** 		else if (vir_map[y][x] == -1)
+ 684              		.loc 1 361 0
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 21
+
+
+ 685 01d8 0136     		adds	r6, r6, #1
+ 686 01da 7FF446AF 		bne	.L61
+ 362:USER/AI.c     **** 		{
+ 363:USER/AI.c     **** 			size++;
+ 364:USER/AI.c     **** 			vir_map[y][x] = size;
+ 365:USER/AI.c     **** 			break;
+ 366:USER/AI.c     **** 		}
+ 367:USER/AI.c     **** 
+ 368:USER/AI.c     **** 		//if (*pv != -1)
+ 369:USER/AI.c     **** 		//{
+ 370:USER/AI.c     **** 		//	*pv = size + 1;
+ 371:USER/AI.c     **** 		//	for (int a = 0; a < HEIGHT; a++)
+ 372:USER/AI.c     **** 		//		for (int b = 0; b < HEIGHT; b++)
+ 373:USER/AI.c     **** 		//			vir_map[a][b] = (vir_map[a][b] > 0 ? vir_map[a][b] - 1 : vir_map[a][b]);
+ 374:USER/AI.c     **** 		//}
+ 375:USER/AI.c     **** 		//else
+ 376:USER/AI.c     **** 		//{
+ 377:USER/AI.c     **** 		//	*pv = size + 1;
+ 378:USER/AI.c     **** 		//	break;
+ 379:USER/AI.c     **** 		//}
+ 380:USER/AI.c     **** 	} //模拟走一遍
+ 381:USER/AI.c     **** 	//for (short h = 0; h < HEIGHT; h++)
+ 382:USER/AI.c     **** 	//	for (short w = 0; w < WIDTH; w++)
+ 383:USER/AI.c     **** 	//		if (vir_map[h][w] == 1)
+ 384:USER/AI.c     **** 	//		{
+ 385:USER/AI.c     **** 	//			endx = w;
+ 386:USER/AI.c     **** 	//			endy = h;
+ 387:USER/AI.c     **** 	//			h = HEIGHT;
+ 388:USER/AI.c     **** 	//			w = WIDTH;
+ 389:USER/AI.c     **** 	//		}
+ 390:USER/AI.c     **** 	if (ai(vir_map, size, x, y, 1) != d_error)
+ 687              		.loc 1 390 0
+ 688 01de 0121     		movs	r1, #1
+ 363:USER/AI.c     **** 			vir_map[y][x] = size;
+ 689              		.loc 1 363 0
+ 690 01e0 0498     		ldr	r0, [sp, #16]
+ 691              		.loc 1 390 0
+ 692 01e2 0091     		str	r1, [sp]
+ 363:USER/AI.c     **** 			vir_map[y][x] = size;
+ 693              		.loc 1 363 0
+ 694 01e4 0844     		add	r0, r0, r1
+ 695 01e6 00B2     		sxth	r0, r0
+ 696              	.LVL53:
+ 697              		.loc 1 390 0
+ 698 01e8 0146     		mov	r1, r0
+ 364:USER/AI.c     **** 			break;
+ 699              		.loc 1 364 0
+ 700 01ea 29F81500 		strh	r0, [r9, r5, lsl #1]	@ movhi
+ 701              		.loc 1 390 0
+ 702 01ee 4846     		mov	r0, r9
+ 703              	.LVL54:
+ 704 01f0 FFF7FEFF 		bl	ai
+ 705              	.LVL55:
+ 391:USER/AI.c     **** 		return 1;
+ 392:USER/AI.c     **** 	else
+ 393:USER/AI.c     **** 		return 0;
+ 394:USER/AI.c     **** 	return 0;
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 22
+
+
+ 395:USER/AI.c     **** }...
+ 706              		.loc 1 395 0
+ 707 01f4 0438     		subs	r0, r0, #4
+ 708 01f6 18BF     		it	ne
+ 709 01f8 0120     		movne	r0, #1
+ 710 01fa 0DF5D85D 		add	sp, sp, #6912
+ 711 01fe 07B0     		add	sp, sp, #28
+ 712              	.LCFI9:
+ 713              		.cfi_remember_state
+ 714              		.cfi_def_cfa_offset 36
+ 715              		@ sp needed
+ 716 0200 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 717              	.LVL56:
+ 718              	.L114:
+ 719              	.LCFI10:
+ 720              		.cfi_restore_state
+ 721              	.LBB37:
+ 722              	.LBB32:
+  63:USER/AI.c     **** 				pb->active = true;
+ 723              		.loc 1 63 0
+ 724 0204 6C71     		strb	r4, [r5, #5]
+  64:USER/AI.c     **** 				pb->sign = true;
+ 725              		.loc 1 64 0
+ 726 0206 2C71     		strb	r4, [r5, #4]
+ 727 0208 81E7     		b	.L73
+ 728              	.LVL57:
+ 729              	.L68:
+ 730              	.LBE32:
+ 731              	.LBE37:
+ 340:USER/AI.c     **** 			y = y - 1;
+ 732              		.loc 1 340 0
+ 733 020a 013B     		subs	r3, r3, #1
+ 734 020c 1BB2     		sxth	r3, r3
+ 735              	.LVL58:
+ 736 020e 5D00     		lsls	r5, r3, #1
+ 737 0210 0395     		str	r5, [sp, #12]
+ 341:USER/AI.c     **** 			break;
+ 738              		.loc 1 341 0
+ 739 0212 D9E7     		b	.L83
+ 740              	.LVL59:
+ 741              	.L113:
+ 742              	.LBB38:
+ 743              	.LBB33:
+ 744              	.LBB29:
+  28:USER/AI.c     **** 			if (map[y - 1][x] == 0 || map[y - 1][x] == 1 || map[y - 1][x] == -1)
+ 745              		.loc 1 28 0
+ 746 0214 B8F1020F 		cmp	r8, #2
+ 747 0218 F7D9     		bls	.L68
+  30:USER/AI.c     **** 			else if (map[y][x - 1] == 0 || map[y][x - 1] == 1 || map[y][x - 1] == -1)
+ 748              		.loc 1 30 0
+ 749 021a BEF1020F 		cmp	lr, #2
+ 750 021e 20D9     		bls	.L69
+  32:USER/AI.c     **** 			else if (map[y + 1][x] == 0 || map[y + 1][x] == 1 || map[y + 1][x] == -1)
+ 751              		.loc 1 32 0
+ 752 0220 022E     		cmp	r6, #2
+ 753 0222 22D9     		bls	.L70
+  34:USER/AI.c     **** 			else if (map[y][x + 1] == 0 || map[y][x + 1] == 1 || map[y][x + 1] == -1)
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 23
+
+
+ 754              		.loc 1 34 0
+ 755 0224 022D     		cmp	r5, #2
+ 756 0226 CCD9     		bls	.L71
+ 757 0228 B7E7     		b	.L72
+ 758              	.LVL60:
+ 759              	.L116:
+ 760              	.LBE29:
+ 761              	.LBE33:
+ 762              	.LBE38:
+ 356:USER/AI.c     **** 			vir_map[y][x] = size + 1;
+ 763              		.loc 1 356 0
+ 764 022a 059E     		ldr	r6, [sp, #20]
+ 765 022c 09F13007 		add	r7, r9, #48
+ 766 0230 29F81560 		strh	r6, [r9, r5, lsl #1]	@ movhi
+ 767              	.LVL61:
+ 768              	.L89:
+ 769 0234 A7F13006 		sub	r6, r7, #48
+ 770              	.LVL62:
+ 771              	.L85:
+ 772              	.LBB39:
+ 773              	.LBB40:
+ 359:USER/AI.c     **** 					vir_map[a][b] = (vir_map[a][b] > 0 ? vir_map[a][b] - 1 : vir_map[a][b]);
+ 774              		.loc 1 359 0
+ 775 0238 36F9025B 		ldrsh	r5, [r6], #2
+ 776 023c 002D     		cmp	r5, #0
+ 777 023e 08DD     		ble	.L86
+ 778 0240 013D     		subs	r5, r5, #1
+ 358:USER/AI.c     **** 				for (int b = 0; b < WIDTH; b++)
+ 779              		.loc 1 358 0
+ 780 0242 BE42     		cmp	r6, r7
+ 359:USER/AI.c     **** 					vir_map[a][b] = (vir_map[a][b] > 0 ? vir_map[a][b] - 1 : vir_map[a][b]);
+ 781              		.loc 1 359 0
+ 782 0244 26F8025C 		strh	r5, [r6, #-2]	@ movhi
+ 358:USER/AI.c     **** 				for (int b = 0; b < WIDTH; b++)
+ 783              		.loc 1 358 0
+ 784 0248 F6D1     		bne	.L85
+ 785 024a 3037     		adds	r7, r7, #48
+ 786              	.LBE40:
+ 357:USER/AI.c     **** 			for (int a = 0; a < HEIGHT; a++)
+ 787              		.loc 1 357 0
+ 788 024c BC45     		cmp	ip, r7
+ 789 024e F1D1     		bne	.L89
+ 790 0250 0BE7     		b	.L61
+ 791              	.L86:
+ 792              	.LBB41:
+ 358:USER/AI.c     **** 				for (int b = 0; b < WIDTH; b++)
+ 793              		.loc 1 358 0
+ 794 0252 BE42     		cmp	r6, r7
+ 359:USER/AI.c     **** 					vir_map[a][b] = (vir_map[a][b] > 0 ? vir_map[a][b] - 1 : vir_map[a][b]);
+ 795              		.loc 1 359 0
+ 796 0254 26F8025C 		strh	r5, [r6, #-2]	@ movhi
+ 358:USER/AI.c     **** 				for (int b = 0; b < WIDTH; b++)
+ 797              		.loc 1 358 0
+ 798 0258 EED1     		bne	.L85
+ 799 025a 3037     		adds	r7, r7, #48
+ 800              	.LBE41:
+ 357:USER/AI.c     **** 			for (int a = 0; a < HEIGHT; a++)
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 24
+
+
+ 801              		.loc 1 357 0
+ 802 025c BC45     		cmp	ip, r7
+ 803 025e E9D1     		bne	.L89
+ 804 0260 03E7     		b	.L61
+ 805              	.LVL63:
+ 806              	.L69:
+ 807              	.LBE39:
+ 346:USER/AI.c     **** 			x = x - 1;
+ 808              		.loc 1 346 0
+ 809 0262 013A     		subs	r2, r2, #1
+ 810              	.LVL64:
+ 811 0264 12B2     		sxth	r2, r2
+ 812              	.LVL65:
+ 813 0266 039D     		ldr	r5, [sp, #12]
+ 347:USER/AI.c     **** 			break;
+ 814              		.loc 1 347 0
+ 815 0268 AEE7     		b	.L83
+ 816              	.LVL66:
+ 817              	.L70:
+ 343:USER/AI.c     **** 			y = y + 1;
+ 818              		.loc 1 343 0
+ 819 026a 0133     		adds	r3, r3, #1
+ 820 026c 1BB2     		sxth	r3, r3
+ 821              	.LVL67:
+ 822 026e 5D00     		lsls	r5, r3, #1
+ 823 0270 0395     		str	r5, [sp, #12]
+ 344:USER/AI.c     **** 			break;
+ 824              		.loc 1 344 0
+ 825 0272 A9E7     		b	.L83
+ 826              	.LVL68:
+ 827              	.L115:
+ 828              	.LBB42:
+ 829              	.LBB34:
+  86:USER/AI.c     **** 		exit(-1);
+ 830              		.loc 1 86 0
+ 831 0274 4FF0FF30 		mov	r0, #-1
+ 832 0278 FFF7FEFF 		bl	exit
+ 833              	.LVL69:
+ 834              	.LBE34:
+ 835              	.LBE42:
+ 836              		.cfi_endproc
+ 837              	.LFE3:
+ 839              		.section	.text.ai,"ax",%progbits
+ 840              		.align	1
+ 841              		.p2align 2,,3
+ 842              		.global	ai
+ 843              		.syntax unified
+ 844              		.thumb
+ 845              		.thumb_func
+ 846              		.fpu softvfp
+ 848              	ai:
+ 849              	.LFB0:
+  12:USER/AI.c     **** {
+ 850              		.loc 1 12 0
+ 851              		.cfi_startproc
+ 852              		@ args = 4, pretend = 0, frame = 5376
+ 853              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 25
+
+
+ 854              	.LVL70:
+ 855 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 856              	.LCFI11:
+ 857              		.cfi_def_cfa_offset 36
+ 858              		.cfi_offset 4, -36
+ 859              		.cfi_offset 5, -32
+ 860              		.cfi_offset 6, -28
+ 861              		.cfi_offset 7, -24
+ 862              		.cfi_offset 8, -20
+ 863              		.cfi_offset 9, -16
+ 864              		.cfi_offset 10, -12
+ 865              		.cfi_offset 11, -8
+ 866              		.cfi_offset 14, -4
+ 867 0004 ADF5A85D 		sub	sp, sp, #5376
+ 868              	.LCFI12:
+ 869              		.cfi_def_cfa_offset 5412
+ 870 0008 83B0     		sub	sp, sp, #12
+ 871              	.LCFI13:
+ 872              		.cfi_def_cfa_offset 5424
+  12:USER/AI.c     **** {
+ 873              		.loc 1 12 0
+ 874 000a 0DF5A954 		add	r4, sp, #5408
+ 875 000e 1034     		adds	r4, r4, #16
+ 876 0010 D4F800C0 		ldr	ip, [r4]
+ 877 0014 9946     		mov	r9, r3
+  13:USER/AI.c     **** 	if (qiantao == 0 || qiantao == 2)
+ 878              		.loc 1 13 0
+ 879 0016 3CF00203 		bics	r3, ip, #2
+ 880              	.LVL71:
+ 881 001a 37D1     		bne	.L118
+ 882              	.LVL72:
+ 883              	.LBB43:
+  16:USER/AI.c     **** 		if (map[y - 1][x] == 0 || map[y - 1][x] == 1 || map[y - 1][x] == -1)
+ 884              		.loc 1 16 0
+ 885 001c 09EB4904 		add	r4, r9, r9, lsl #1
+ 886 0020 2401     		lsls	r4, r4, #4
+ 887 0022 4FEA420E 		lsl	lr, r2, #1
+ 888 0026 0619     		adds	r6, r0, r4
+ 889 0028 06EB0E03 		add	r3, r6, lr
+ 890 002c 33F8303C 		ldrh	r3, [r3, #-48]
+ 891 0030 7444     		add	r4, r4, lr
+ 892 0032 0133     		adds	r3, r3, #1
+ 893 0034 9BB2     		uxth	r3, r3
+ 894 0036 022B     		cmp	r3, #2
+ 895 0038 98BF     		it	ls
+ 896 003a 0127     		movls	r7, #1
+ 897 003c 0444     		add	r4, r4, r0
+  18:USER/AI.c     **** 		if (map[y][x - 1] == 0 || map[y][x - 1] == 1 || map[y][x - 1] == -1)
+ 898              		.loc 1 18 0
+ 899 003e 34F8025C 		ldrh	r5, [r4, #-2]
+  20:USER/AI.c     **** 		if (map[y + 1][x] == 0 || map[y + 1][x] == 1 || map[y + 1][x] == -1)
+ 900              		.loc 1 20 0
+ 901 0042 7644     		add	r6, r6, lr
+ 902 0044 368E     		ldrh	r6, [r6, #48]
+  18:USER/AI.c     **** 		if (map[y][x - 1] == 0 || map[y][x - 1] == 1 || map[y][x - 1] == -1)
+ 903              		.loc 1 18 0
+ 904 0046 05F10105 		add	r5, r5, #1
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 26
+
+
+ 905 004a ADB2     		uxth	r5, r5
+  20:USER/AI.c     **** 		if (map[y + 1][x] == 0 || map[y + 1][x] == 1 || map[y + 1][x] == -1)
+ 906              		.loc 1 20 0
+ 907 004c 06F10106 		add	r6, r6, #1
+  16:USER/AI.c     **** 		if (map[y - 1][x] == 0 || map[y - 1][x] == 1 || map[y - 1][x] == -1)
+ 908              		.loc 1 16 0
+ 909 0050 88BF     		it	hi
+ 910 0052 0027     		movhi	r7, #0
+ 911              	.LVL73:
+  20:USER/AI.c     **** 		if (map[y + 1][x] == 0 || map[y + 1][x] == 1 || map[y + 1][x] == -1)
+ 912              		.loc 1 20 0
+ 913 0054 B6B2     		uxth	r6, r6
+  18:USER/AI.c     **** 		if (map[y][x - 1] == 0 || map[y][x - 1] == 1 || map[y][x - 1] == -1)
+ 914              		.loc 1 18 0
+ 915 0056 022D     		cmp	r5, #2
+  19:USER/AI.c     **** 			waynum++;
+ 916              		.loc 1 19 0
+ 917 0058 98BF     		it	ls
+ 918 005a 0137     		addls	r7, r7, #1
+ 919              	.LVL74:
+  20:USER/AI.c     **** 		if (map[y + 1][x] == 0 || map[y + 1][x] == 1 || map[y + 1][x] == -1)
+ 920              		.loc 1 20 0
+ 921 005c 022E     		cmp	r6, #2
+  22:USER/AI.c     **** 		if (map[y][x + 1] == 0 || map[y][x + 1] == 1 || map[y][x + 1] == -1)
+ 922              		.loc 1 22 0
+ 923 005e 6488     		ldrh	r4, [r4, #2]
+  20:USER/AI.c     **** 		if (map[y + 1][x] == 0 || map[y + 1][x] == 1 || map[y + 1][x] == -1)
+ 924              		.loc 1 20 0
+ 925 0060 0AD9     		bls	.L209
+  22:USER/AI.c     **** 		if (map[y][x + 1] == 0 || map[y][x + 1] == 1 || map[y][x + 1] == -1)
+ 926              		.loc 1 22 0
+ 927 0062 0134     		adds	r4, r4, #1
+ 928 0064 A4B2     		uxth	r4, r4
+ 929 0066 022C     		cmp	r4, #2
+ 930 0068 0CD9     		bls	.L121
+  24:USER/AI.c     **** 		if (waynum == 0)
+ 931              		.loc 1 24 0
+ 932 006a 67B9     		cbnz	r7, .L122
+ 933              	.LVL75:
+ 934              	.L124:
+  37:USER/AI.c     **** 				return d_error;
+ 935              		.loc 1 37 0
+ 936 006c 0420     		movs	r0, #4
+ 937              	.L198:
+ 938              	.LBE43:
+ 188:USER/AI.c     **** }
+ 939              		.loc 1 188 0
+ 940 006e 0DF5A85D 		add	sp, sp, #5376
+ 941 0072 03B0     		add	sp, sp, #12
+ 942              	.LCFI14:
+ 943              		.cfi_remember_state
+ 944              		.cfi_def_cfa_offset 36
+ 945              		@ sp needed
+ 946 0074 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 947              	.LVL76:
+ 948              	.L209:
+ 949              	.LCFI15:
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 27
+
+
+ 950              		.cfi_restore_state
+ 951              	.LBB44:
+  22:USER/AI.c     **** 		if (map[y][x + 1] == 0 || map[y][x + 1] == 1 || map[y][x + 1] == -1)
+ 952              		.loc 1 22 0
+ 953 0078 0134     		adds	r4, r4, #1
+ 954 007a A4B2     		uxth	r4, r4
+ 955 007c 022C     		cmp	r4, #2
+  21:USER/AI.c     **** 			waynum++;
+ 956              		.loc 1 21 0
+ 957 007e 07F10107 		add	r7, r7, #1
+ 958              	.LVL77:
+  22:USER/AI.c     **** 		if (map[y][x + 1] == 0 || map[y][x + 1] == 1 || map[y][x + 1] == -1)
+ 959              		.loc 1 22 0
+ 960 0082 00D8     		bhi	.L122
+ 961              	.L121:
+  23:USER/AI.c     **** 			waynum++;
+ 962              		.loc 1 23 0
+ 963 0084 0137     		adds	r7, r7, #1
+ 964              	.LVL78:
+ 965              	.L122:
+  26:USER/AI.c     **** 		if (waynum == 1)
+ 966              		.loc 1 26 0
+ 967 0086 012F     		cmp	r7, #1
+ 968 0088 00F0C480 		beq	.L210
+ 969              	.LVL79:
+ 970              	.L118:
+ 971 008c BCF1010F 		cmp	ip, #1
+ 972              	.LBE44:
+  12:USER/AI.c     **** {
+ 973              		.loc 1 12 0
+ 974 0090 4FF00007 		mov	r7, #0
+ 975 0094 0DF1080E 		add	lr, sp, #8
+ 976 0098 59D0     		beq	.L129
+  58:USER/AI.c     **** 		pb->active = pb->d = pb->nopen = pb->s = pb->sign = pb->w = pb->a = false;
+ 977              		.loc 1 58 0
+ 978 009a 3D46     		mov	r5, r7
+  12:USER/AI.c     **** {
+ 979              		.loc 1 12 0
+ 980 009c 7446     		mov	r4, lr
+  63:USER/AI.c     **** 				pb->active = true;
+ 981              		.loc 1 63 0
+ 982 009e 4FF0010A 		mov	r10, #1
+ 983 00a2 0DF5A856 		add	r6, sp, #5376
+ 984 00a6 A0F10208 		sub	r8, r0, #2
+ 985 00aa 0136     		adds	r6, r6, #1
+ 986              	.L132:
+ 987              	.LVL80:
+  59:USER/AI.c     **** 		if (*pa != 0)
+ 988              		.loc 1 59 0
+ 989 00ac 38F9023F 		ldrsh	r3, [r8, #2]!
+ 990              	.LVL81:
+  58:USER/AI.c     **** 		pb->active = pb->d = pb->nopen = pb->s = pb->sign = pb->w = pb->a = false;
+ 991              		.loc 1 58 0
+ 992 00b0 2571     		strb	r5, [r4, #4]
+ 993 00b2 A571     		strb	r5, [r4, #6]
+ 994 00b4 2560     		str	r5, [r4]	@ unaligned
+ 995 00b6 6571     		strb	r5, [r4, #5]
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 28
+
+
+  59:USER/AI.c     **** 		if (*pa != 0)
+ 996              		.loc 1 59 0
+ 997 00b8 3BB1     		cbz	r3, .L130
+  61:USER/AI.c     **** 			if (*pa == -1)
+ 998              		.loc 1 61 0
+ 999 00ba B3F1FF3F 		cmp	r3, #-1
+ 1000 00be 64D0     		beq	.L131
+  66:USER/AI.c     **** 			else if (*pa == size)
+ 1001              		.loc 1 66 0
+ 1002 00c0 9942     		cmp	r1, r3
+ 1003 00c2 00F09D80 		beq	.L158
+  78:USER/AI.c     **** 				pb->nopen = true;
+ 1004              		.loc 1 78 0
+ 1005 00c6 84F806A0 		strb	r10, [r4, #6]
+ 1006              	.L130:
+ 1007              	.LVL82:
+  56:USER/AI.c     **** 	for (pa = map[0], pb = dmap[0]; pb <= &dmap[HEIGHT - 1][WIDTH - 1]; pa++, pb++)
+ 1008              		.loc 1 56 0
+ 1009 00ca 0734     		adds	r4, r4, #7
+ 1010              	.LVL83:
+ 1011 00cc B442     		cmp	r4, r6
+ 1012 00ce EDD9     		bls	.L132
+ 1013              	.LVL84:
+ 1014              	.L133:
+ 1015 00d0 9346     		mov	fp, r2
+ 1016 00d2 8A46     		mov	r10, r1
+ 1017 00d4 8046     		mov	r8, r0
+  83:USER/AI.c     **** 	if (p_start == NULL)
+ 1018              		.loc 1 83 0
+ 1019 00d6 002F     		cmp	r7, #0
+ 1020 00d8 00F0BD80 		beq	.L211
+  82:USER/AI.c     **** 	int num = 1;
+ 1021              		.loc 1 82 0
+ 1022 00dc 0123     		movs	r3, #1
+ 1023              	.LBB45:
+ 121:USER/AI.c     **** 				pdmap->active = false;
+ 1024              		.loc 1 121 0
+ 1025 00de 0020     		movs	r0, #0
+ 1026              	.LVL85:
+ 122:USER/AI.c     **** 				pdmap->sign = true;
+ 1027              		.loc 1 122 0
+ 1028 00e0 1A46     		mov	r2, r3
+ 1029              	.LVL86:
+ 1030              	.L138:
+ 1031              	.LBE45:
+  88:USER/AI.c     **** 	while (p_start->sign == false && num != 0)
+ 1032              		.loc 1 88 0
+ 1033 00e2 3979     		ldrb	r1, [r7, #4]	@ zero_extendqisi2
+ 1034 00e4 0029     		cmp	r1, #0
+ 1035 00e6 55D1     		bne	.L145
+  88:USER/AI.c     **** 	while (p_start->sign == false && num != 0)
+ 1036              		.loc 1 88 0 is_stmt 0 discriminator 1
+ 1037 00e8 002B     		cmp	r3, #0
+ 1038 00ea 79D0     		beq	.L212
+ 1039              	.LBB46:
+  90:USER/AI.c     **** 		num = 0;
+ 1040              		.loc 1 90 0 is_stmt 1
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 29
+
+
+ 1041 00ec 0B46     		mov	r3, r1
+ 1042              	.LVL87:
+  92:USER/AI.c     **** 		for (pdmap = &dmap[0][0]; pdmap <= &dmap[HEIGHT - 1][WIDTH - 1]; pdmap++)
+ 1043              		.loc 1 92 0
+ 1044 00ee 7446     		mov	r4, lr
+ 1045 00f0 02E0     		b	.L144
+ 1046              	.LVL88:
+ 1047              	.L139:
+  92:USER/AI.c     **** 		for (pdmap = &dmap[0][0]; pdmap <= &dmap[HEIGHT - 1][WIDTH - 1]; pdmap++)
+ 1048              		.loc 1 92 0 is_stmt 0 discriminator 2
+ 1049 00f2 0734     		adds	r4, r4, #7
+ 1050              	.LVL89:
+ 1051 00f4 B442     		cmp	r4, r6
+ 1052 00f6 F4D8     		bhi	.L138
+ 1053              	.LVL90:
+ 1054              	.L144:
+  94:USER/AI.c     **** 			if (pdmap->active == true)
+ 1055              		.loc 1 94 0 is_stmt 1
+ 1056 00f8 6579     		ldrb	r5, [r4, #5]	@ zero_extendqisi2
+ 1057 00fa 012D     		cmp	r5, #1
+ 1058 00fc F9D1     		bne	.L139
+  97:USER/AI.c     **** 				if ((pdmap - WIDTH)->nopen == false)
+ 1059              		.loc 1 97 0
+ 1060 00fe 14F8A21C 		ldrb	r1, [r4, #-162]	@ zero_extendqisi2
+  96:USER/AI.c     **** 				num++;
+ 1061              		.loc 1 96 0
+ 1062 0102 0133     		adds	r3, r3, #1
+ 1063              	.LVL91:
+  97:USER/AI.c     **** 				if ((pdmap - WIDTH)->nopen == false)
+ 1064              		.loc 1 97 0
+ 1065 0104 31B9     		cbnz	r1, .L140
+  98:USER/AI.c     **** 					if ((pdmap - WIDTH)->sign == false)
+ 1066              		.loc 1 98 0
+ 1067 0106 14F8A41C 		ldrb	r1, [r4, #-164]	@ zero_extendqisi2
+ 1068 010a 19B9     		cbnz	r1, .L140
+ 100:USER/AI.c     **** 						(pdmap - WIDTH)->s = true;
+ 1069              		.loc 1 100 0
+ 1070 010c 04F8A75C 		strb	r5, [r4, #-167]
+ 101:USER/AI.c     **** 						(pdmap - WIDTH)->active = true;
+ 1071              		.loc 1 101 0
+ 1072 0110 04F8A35C 		strb	r5, [r4, #-163]
+ 1073              	.L140:
+ 103:USER/AI.c     **** 				if ((pdmap - 1)->nopen == false)
+ 1074              		.loc 1 103 0
+ 1075 0114 14F8011C 		ldrb	r1, [r4, #-1]	@ zero_extendqisi2
+ 1076 0118 31B9     		cbnz	r1, .L141
+ 104:USER/AI.c     **** 					if ((pdmap - 1)->sign == false)
+ 1077              		.loc 1 104 0
+ 1078 011a 14F8031C 		ldrb	r1, [r4, #-3]	@ zero_extendqisi2
+ 1079 011e 19B9     		cbnz	r1, .L141
+ 106:USER/AI.c     **** 						(pdmap - 1)->d = true;
+ 1080              		.loc 1 106 0
+ 1081 0120 04F8042C 		strb	r2, [r4, #-4]
+ 107:USER/AI.c     **** 						(pdmap - 1)->active = true;
+ 1082              		.loc 1 107 0
+ 1083 0124 04F8022C 		strb	r2, [r4, #-2]
+ 1084              	.L141:
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 30
+
+
+ 109:USER/AI.c     **** 				if ((pdmap + 1)->nopen == false)
+ 1085              		.loc 1 109 0
+ 1086 0128 617B     		ldrb	r1, [r4, #13]	@ zero_extendqisi2
+ 1087 012a 19B9     		cbnz	r1, .L142
+ 110:USER/AI.c     **** 					if ((pdmap + 1)->sign == false)
+ 1088              		.loc 1 110 0
+ 1089 012c E17A     		ldrb	r1, [r4, #11]	@ zero_extendqisi2
+ 1090 012e 09B9     		cbnz	r1, .L142
+ 112:USER/AI.c     **** 						(pdmap + 1)->a = true;
+ 1091              		.loc 1 112 0
+ 1092 0130 6272     		strb	r2, [r4, #9]
+ 113:USER/AI.c     **** 						(pdmap + 1)->active = true;
+ 1093              		.loc 1 113 0
+ 1094 0132 2273     		strb	r2, [r4, #12]
+ 1095              	.L142:
+ 115:USER/AI.c     **** 				if ((pdmap + WIDTH)->nopen == false)
+ 1096              		.loc 1 115 0
+ 1097 0134 94F8AE10 		ldrb	r1, [r4, #174]	@ zero_extendqisi2
+ 1098 0138 31B9     		cbnz	r1, .L143
+ 116:USER/AI.c     **** 					if ((pdmap + WIDTH)->sign == false)
+ 1099              		.loc 1 116 0
+ 1100 013a 94F8AC10 		ldrb	r1, [r4, #172]	@ zero_extendqisi2
+ 1101 013e 19B9     		cbnz	r1, .L143
+ 118:USER/AI.c     **** 						(pdmap + WIDTH)->w = true;
+ 1102              		.loc 1 118 0
+ 1103 0140 84F8A820 		strb	r2, [r4, #168]
+ 119:USER/AI.c     **** 						(pdmap + WIDTH)->active = true;
+ 1104              		.loc 1 119 0
+ 1105 0144 84F8AD20 		strb	r2, [r4, #173]
+ 1106              	.L143:
+ 121:USER/AI.c     **** 				pdmap->active = false;
+ 1107              		.loc 1 121 0
+ 1108 0148 6071     		strb	r0, [r4, #5]
+ 122:USER/AI.c     **** 				pdmap->sign = true;
+ 1109              		.loc 1 122 0
+ 1110 014a 2271     		strb	r2, [r4, #4]
+ 1111 014c D1E7     		b	.L139
+ 1112              	.LVL92:
+ 1113              	.L129:
+ 1114              	.LBE46:
+  58:USER/AI.c     **** 		pb->active = pb->d = pb->nopen = pb->s = pb->sign = pb->w = pb->a = false;
+ 1115              		.loc 1 58 0
+ 1116 014e 3B46     		mov	r3, r7
+  66:USER/AI.c     **** 			else if (*pa == size)
+ 1117              		.loc 1 66 0
+ 1118 0150 7446     		mov	r4, lr
+  78:USER/AI.c     **** 				pb->nopen = true;
+ 1119              		.loc 1 78 0
+ 1120 0152 E246     		mov	r10, ip
+ 1121 0154 0DF5A856 		add	r6, sp, #5376
+ 1122 0158 A0F10208 		sub	r8, r0, #2
+ 1123 015c 0136     		adds	r6, r6, #1
+ 1124              	.L137:
+ 1125              	.LVL93:
+  59:USER/AI.c     **** 		if (*pa != 0)
+ 1126              		.loc 1 59 0
+ 1127 015e 38F9025F 		ldrsh	r5, [r8, #2]!
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 31
+
+
+ 1128              	.LVL94:
+  58:USER/AI.c     **** 		pb->active = pb->d = pb->nopen = pb->s = pb->sign = pb->w = pb->a = false;
+ 1129              		.loc 1 58 0
+ 1130 0162 2371     		strb	r3, [r4, #4]
+ 1131 0164 A371     		strb	r3, [r4, #6]
+ 1132 0166 2360     		str	r3, [r4]	@ unaligned
+ 1133 0168 6371     		strb	r3, [r4, #5]
+  59:USER/AI.c     **** 		if (*pa != 0)
+ 1134              		.loc 1 59 0
+ 1135 016a 55B1     		cbz	r5, .L134
+  61:USER/AI.c     **** 			if (*pa == -1)
+ 1136              		.loc 1 61 0
+ 1137 016c B5F1FF3F 		cmp	r5, #-1
+ 1138 0170 48D0     		beq	.L213
+  66:USER/AI.c     **** 			else if (*pa == size)
+ 1139              		.loc 1 66 0
+ 1140 0172 8D42     		cmp	r5, r1
+ 1141 0174 62D0     		beq	.L159
+  71:USER/AI.c     **** 			else if (qiantao == 1 && *pa == 1)
+ 1142              		.loc 1 71 0 discriminator 1
+ 1143 0176 012D     		cmp	r5, #1
+  74:USER/AI.c     **** 				pb->active = true;
+ 1144              		.loc 1 74 0 discriminator 1
+ 1145 0178 06BF     		itte	eq
+ 1146 017a 6571     		strbeq	r5, [r4, #5]
+  75:USER/AI.c     **** 				pb->sign = true;
+ 1147              		.loc 1 75 0 discriminator 1
+ 1148 017c 2571     		strbeq	r5, [r4, #4]
+  78:USER/AI.c     **** 				pb->nopen = true;
+ 1149              		.loc 1 78 0 discriminator 1
+ 1150 017e 84F806A0 		strbne	r10, [r4, #6]
+ 1151              	.L134:
+ 1152              	.LVL95:
+  56:USER/AI.c     **** 	for (pa = map[0], pb = dmap[0]; pb <= &dmap[HEIGHT - 1][WIDTH - 1]; pa++, pb++)
+ 1153              		.loc 1 56 0 discriminator 2
+ 1154 0182 0734     		adds	r4, r4, #7
+ 1155              	.LVL96:
+ 1156 0184 B442     		cmp	r4, r6
+ 1157 0186 EAD9     		bls	.L137
+ 1158 0188 A2E7     		b	.L133
+ 1159              	.LVL97:
+ 1160              	.L131:
+  63:USER/AI.c     **** 				pb->active = true;
+ 1161              		.loc 1 63 0
+ 1162 018a 84F805A0 		strb	r10, [r4, #5]
+  64:USER/AI.c     **** 				pb->sign = true;
+ 1163              		.loc 1 64 0
+ 1164 018e 84F804A0 		strb	r10, [r4, #4]
+ 1165 0192 9AE7     		b	.L130
+ 1166              	.LVL98:
+ 1167              	.L145:
+ 155:USER/AI.c     **** 	if (qiantao == 1 || qiantao == 2) //模拟函数用来判断模拟情况 防止反复归递
+ 1168              		.loc 1 155 0
+ 1169 0194 0CF1FF3C 		add	ip, ip, #-1
+ 1170 0198 BCF1010F 		cmp	ip, #1
+ 1171 019c 11D9     		bls	.L155
+ 166:USER/AI.c     **** 	else if (num == 0)
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 32
+
+
+ 1172              		.loc 1 166 0
+ 1173 019e 23B3     		cbz	r3, .L205
+ 170:USER/AI.c     **** 	else if ((rand() % 2 == 0 ? simulate(map, p_start, size, x, y) : simulate2(map, p_start, size, x, 
+ 1174              		.loc 1 170 0
+ 1175 01a0 FFF7FEFF 		bl	rand
+ 1176              	.LVL99:
+ 1177 01a4 10F0010F 		tst	r0, #1
+ 1178 01a8 CDF80090 		str	r9, [sp]
+ 1179 01ac 5B46     		mov	r3, fp
+ 1180 01ae 5246     		mov	r2, r10
+ 1181 01b0 3946     		mov	r1, r7
+ 1182 01b2 4046     		mov	r0, r8
+ 1183 01b4 47D1     		bne	.L153
+ 1184              	.LVL100:
+ 170:USER/AI.c     **** 	else if ((rand() % 2 == 0 ? simulate(map, p_start, size, x, y) : simulate2(map, p_start, size, x, 
+ 1185              		.loc 1 170 0 is_stmt 0 discriminator 1
+ 1186 01b6 FFF7FEFF 		bl	simulate
+ 1187              	.LVL101:
+ 1188 01ba B0FA80F0 		clz	r0, r0
+ 1189 01be 4009     		lsrs	r0, r0, #5
+ 1190 01c0 98B9     		cbnz	r0, .L205
+ 1191              	.L155:
+ 177:USER/AI.c     **** 		if (p_start->w == true)
+ 1192              		.loc 1 177 0 is_stmt 1
+ 1193 01c2 3B78     		ldrb	r3, [r7]	@ zero_extendqisi2
+ 1194 01c4 012B     		cmp	r3, #1
+ 1195 01c6 33D0     		beq	.L148
+ 179:USER/AI.c     **** 		else if (p_start->a == true)
+ 1196              		.loc 1 179 0
+ 1197 01c8 BB78     		ldrb	r3, [r7, #2]	@ zero_extendqisi2
+ 1198 01ca 012B     		cmp	r3, #1
+ 1199 01cc 2CD0     		beq	.L149
+ 181:USER/AI.c     **** 		else if (p_start->s == true)
+ 1200              		.loc 1 181 0
+ 1201 01ce 7B78     		ldrb	r3, [r7, #1]	@ zero_extendqisi2
+ 1202 01d0 012B     		cmp	r3, #1
+ 1203 01d2 2BD0     		beq	.L150
+ 183:USER/AI.c     **** 		else if (p_start->d == true)
+ 1204              		.loc 1 183 0
+ 1205 01d4 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 1206 01d6 012B     		cmp	r3, #1
+ 1207 01d8 7FF448AF 		bne	.L124
+ 1208              	.LVL102:
+ 1209              	.L151:
+ 1210              	.LBB47:
+  35:USER/AI.c     **** 				return d_right;
+ 1211              		.loc 1 35 0
+ 1212 01dc 0320     		movs	r0, #3
+ 1213 01de 46E7     		b	.L198
+ 1214              	.LVL103:
+ 1215              	.L212:
+ 1216              	.LBE47:
+ 155:USER/AI.c     **** 	if (qiantao == 1 || qiantao == 2) //模拟函数用来判断模拟情况 防止反复归递
+ 1217              		.loc 1 155 0
+ 1218 01e0 0CF1FF3C 		add	ip, ip, #-1
+ 1219 01e4 BCF1010F 		cmp	ip, #1
+ 1220 01e8 EBD9     		bls	.L155
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 33
+
+
+ 1221              	.LVL104:
+ 1222              	.L205:
+ 173:USER/AI.c     **** 		return ai2(map, size, x, y);
+ 1223              		.loc 1 173 0
+ 1224 01ea 4B46     		mov	r3, r9
+ 1225 01ec 5A46     		mov	r2, fp
+ 1226 01ee 5146     		mov	r1, r10
+ 1227 01f0 4046     		mov	r0, r8
+ 1228 01f2 FFF7FEFF 		bl	ai2
+ 1229              	.LVL105:
+ 188:USER/AI.c     **** }
+ 1230              		.loc 1 188 0
+ 1231 01f6 0DF5A85D 		add	sp, sp, #5376
+ 1232 01fa 03B0     		add	sp, sp, #12
+ 1233              	.LCFI16:
+ 1234              		.cfi_remember_state
+ 1235              		.cfi_def_cfa_offset 36
+ 1236              		@ sp needed
+ 1237 01fc BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 1238              	.LVL106:
+ 1239              	.L158:
+ 1240              	.LCFI17:
+ 1241              		.cfi_restore_state
+  66:USER/AI.c     **** 			else if (*pa == size)
+ 1242              		.loc 1 66 0
+ 1243 0200 2746     		mov	r7, r4
+ 1244 0202 62E7     		b	.L130
+ 1245              	.L213:
+  63:USER/AI.c     **** 				pb->active = true;
+ 1246              		.loc 1 63 0
+ 1247 0204 84F805A0 		strb	r10, [r4, #5]
+  64:USER/AI.c     **** 				pb->sign = true;
+ 1248              		.loc 1 64 0
+ 1249 0208 84F804A0 		strb	r10, [r4, #4]
+ 1250              	.LVL107:
+  56:USER/AI.c     **** 	for (pa = map[0], pb = dmap[0]; pb <= &dmap[HEIGHT - 1][WIDTH - 1]; pa++, pb++)
+ 1251              		.loc 1 56 0
+ 1252 020c 0734     		adds	r4, r4, #7
+ 1253              	.LVL108:
+ 1254 020e B442     		cmp	r4, r6
+ 1255 0210 A5D9     		bls	.L137
+ 1256 0212 5DE7     		b	.L133
+ 1257              	.LVL109:
+ 1258              	.L210:
+ 1259              	.LBB48:
+  28:USER/AI.c     **** 			if (map[y - 1][x] == 0 || map[y - 1][x] == 1 || map[y - 1][x] == -1)
+ 1260              		.loc 1 28 0
+ 1261 0214 022B     		cmp	r3, #2
+ 1262 0216 0BD9     		bls	.L148
+  30:USER/AI.c     **** 			else if (map[y][x - 1] == 0 || map[y][x - 1] == 1 || map[y][x - 1] == -1)
+ 1263              		.loc 1 30 0
+ 1264 0218 022D     		cmp	r5, #2
+ 1265 021a 05D9     		bls	.L149
+  32:USER/AI.c     **** 			else if (map[y + 1][x] == 0 || map[y + 1][x] == 1 || map[y + 1][x] == -1)
+ 1266              		.loc 1 32 0
+ 1267 021c 022E     		cmp	r6, #2
+ 1268 021e 05D9     		bls	.L150
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 34
+
+
+  34:USER/AI.c     **** 			else if (map[y][x + 1] == 0 || map[y][x + 1] == 1 || map[y][x + 1] == -1)
+ 1269              		.loc 1 34 0
+ 1270 0220 022C     		cmp	r4, #2
+ 1271 0222 3FF623AF 		bhi	.L124
+ 1272 0226 D9E7     		b	.L151
+ 1273              	.LVL110:
+ 1274              	.L149:
+  31:USER/AI.c     **** 				return d_left;
+ 1275              		.loc 1 31 0
+ 1276 0228 0220     		movs	r0, #2
+ 1277 022a 20E7     		b	.L198
+ 1278              	.L150:
+  33:USER/AI.c     **** 				return d_down;
+ 1279              		.loc 1 33 0
+ 1280 022c 0120     		movs	r0, #1
+ 1281 022e 1EE7     		b	.L198
+ 1282              	.L148:
+  29:USER/AI.c     **** 				return d_up;
+ 1283              		.loc 1 29 0
+ 1284 0230 0020     		movs	r0, #0
+ 1285              	.LBE48:
+ 188:USER/AI.c     **** }
+ 1286              		.loc 1 188 0
+ 1287 0232 0DF5A85D 		add	sp, sp, #5376
+ 1288 0236 03B0     		add	sp, sp, #12
+ 1289              	.LCFI18:
+ 1290              		.cfi_remember_state
+ 1291              		.cfi_def_cfa_offset 36
+ 1292              		@ sp needed
+ 1293 0238 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 1294              	.LVL111:
+ 1295              	.L159:
+ 1296              	.LCFI19:
+ 1297              		.cfi_restore_state
+ 1298 023c 2746     		mov	r7, r4
+ 1299              	.LVL112:
+  56:USER/AI.c     **** 	for (pa = map[0], pb = dmap[0]; pb <= &dmap[HEIGHT - 1][WIDTH - 1]; pa++, pb++)
+ 1300              		.loc 1 56 0
+ 1301 023e 0734     		adds	r4, r4, #7
+ 1302              	.LVL113:
+ 1303 0240 B442     		cmp	r4, r6
+ 1304 0242 8CD9     		bls	.L137
+ 1305 0244 44E7     		b	.L133
+ 1306              	.LVL114:
+ 1307              	.L153:
+ 170:USER/AI.c     **** 	else if ((rand() % 2 == 0 ? simulate(map, p_start, size, x, y) : simulate2(map, p_start, size, x, 
+ 1308              		.loc 1 170 0 discriminator 2
+ 1309 0246 FFF7FEFF 		bl	simulate2
+ 1310              	.LVL115:
+ 1311 024a B0FA80F0 		clz	r0, r0
+ 1312 024e 4009     		lsrs	r0, r0, #5
+ 1313 0250 0028     		cmp	r0, #0
+ 1314 0252 B6D0     		beq	.L155
+ 1315 0254 C9E7     		b	.L205
+ 1316              	.LVL116:
+ 1317              	.L211:
+  86:USER/AI.c     **** 		exit(-1);
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 35
+
+
+ 1318              		.loc 1 86 0
+ 1319 0256 4FF0FF30 		mov	r0, #-1
+ 1320              	.LVL117:
+ 1321 025a FFF7FEFF 		bl	exit
+ 1322              	.LVL118:
+ 1323              		.cfi_endproc
+ 1324              	.LFE0:
+ 1326 025e 00BF     		.section	.text.simulate,"ax",%progbits
+ 1327              		.align	1
+ 1328              		.p2align 2,,3
+ 1329              		.global	simulate
+ 1330              		.syntax unified
+ 1331              		.thumb
+ 1332              		.thumb_func
+ 1333              		.fpu softvfp
+ 1335              	simulate:
+ 1336              	.LFB1:
+ 190:USER/AI.c     **** {
+ 1337              		.loc 1 190 0
+ 1338              		.cfi_startproc
+ 1339              		@ args = 4, pretend = 0, frame = 1536
+ 1340              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1341              	.LVL119:
+ 1342 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
+ 1343              	.LCFI20:
+ 1344              		.cfi_def_cfa_offset 32
+ 1345              		.cfi_offset 4, -32
+ 1346              		.cfi_offset 5, -28
+ 1347              		.cfi_offset 6, -24
+ 1348              		.cfi_offset 7, -20
+ 1349              		.cfi_offset 8, -16
+ 1350              		.cfi_offset 9, -12
+ 1351              		.cfi_offset 10, -8
+ 1352              		.cfi_offset 14, -4
+ 1353 0004 ADF5C16D 		sub	sp, sp, #1544
+ 1354              	.LCFI21:
+ 1355              		.cfi_def_cfa_offset 1576
+ 190:USER/AI.c     **** {
+ 1356              		.loc 1 190 0
+ 1357 0008 BDF92896 		ldrsh	r9, [sp, #1576]
+ 1358 000c 02AD     		add	r5, sp, #8
+ 1359 000e 0DF5C16A 		add	r10, sp, #1544
+ 1360              	.LVL120:
+ 1361              	.L216:
+ 1362 0012 2C46     		mov	r4, r5
+ 1363 0014 00F13006 		add	r6, r0, #48
+ 1364              	.L215:
+ 1365 0018 D0F80080 		ldr	r8, [r0]	@ unaligned
+ 1366 001c D0F804E0 		ldr	lr, [r0, #4]	@ unaligned
+ 1367 0020 D0F808C0 		ldr	ip, [r0, #8]	@ unaligned
+ 1368 0024 C768     		ldr	r7, [r0, #12]	@ unaligned
+ 1369 0026 1030     		adds	r0, r0, #16
+ 1370 0028 B042     		cmp	r0, r6
+ 1371 002a C4F80080 		str	r8, [r4]	@ unaligned
+ 1372 002e C4F804E0 		str	lr, [r4, #4]	@ unaligned
+ 1373 0032 C4F808C0 		str	ip, [r4, #8]	@ unaligned
+ 1374 0036 E760     		str	r7, [r4, #12]	@ unaligned
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 36
+
+
+ 1375 0038 04F11004 		add	r4, r4, #16
+ 1376 003c ECD1     		bne	.L215
+ 1377 003e 3035     		adds	r5, r5, #48
+ 1378              	.LBB49:
+ 192:USER/AI.c     **** 	for (int h = 0; h < HEIGHT; h++)
+ 1379              		.loc 1 192 0
+ 1380 0040 5545     		cmp	r5, r10
+ 1381 0042 E6D1     		bne	.L216
+ 1382              	.LVL121:
+ 1383              	.LBE49:
+ 197:USER/AI.c     **** 	short *pv = &vir_map[y][x];
+ 1384              		.loc 1 197 0
+ 1385 0044 09EB4909 		add	r9, r9, r9, lsl #1
+ 1386 0048 03EBC903 		add	r3, r3, r9, lsl #3
+ 1387              	.LVL122:
+ 1388 004c 02A8     		add	r0, sp, #8
+ 1389 004e 00EB4306 		add	r6, r0, r3, lsl #1
+ 1390              	.LVL123:
+ 200:USER/AI.c     **** 		if (pn->w == true)
+ 1391              		.loc 1 200 0
+ 1392 0052 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 1393 0054 0132     		adds	r2, r2, #1
+ 1394              	.LVL124:
+ 1395 0056 012B     		cmp	r3, #1
+ 1396 0058 17B2     		sxth	r7, r2
+ 1397 005a 00F5C665 		add	r5, r0, #1584
+ 1398 005e 22D0     		beq	.L240
+ 1399              	.LVL125:
+ 1400              	.L217:
+ 205:USER/AI.c     **** 		else if (pn->a == true)
+ 1401              		.loc 1 205 0
+ 1402 0060 8B78     		ldrb	r3, [r1, #2]	@ zero_extendqisi2
+ 1403 0062 012B     		cmp	r3, #1
+ 1404 0064 52D0     		beq	.L241
+ 210:USER/AI.c     **** 		else if (pn->s == true)
+ 1405              		.loc 1 210 0
+ 1406 0066 4B78     		ldrb	r3, [r1, #1]	@ zero_extendqisi2
+ 1407 0068 012B     		cmp	r3, #1
+ 1408 006a 52D0     		beq	.L242
+ 215:USER/AI.c     **** 		else if (pn->d == true)
+ 1409              		.loc 1 215 0
+ 1410 006c CB78     		ldrb	r3, [r1, #3]	@ zero_extendqisi2
+ 1411 006e 012B     		cmp	r3, #1
+ 217:USER/AI.c     **** 			pn += 1;
+ 1412              		.loc 1 217 0
+ 1413 0070 04BF     		itt	eq
+ 1414 0072 0731     		addeq	r1, r1, #7
+ 1415              	.LVL126:
+ 218:USER/AI.c     **** 			pv += 1;
+ 1416              		.loc 1 218 0
+ 1417 0074 0236     		addeq	r6, r6, #2
+ 1418              	.LVL127:
+ 1419              	.L218:
+ 220:USER/AI.c     **** 		if (*pv != -1)
+ 1420              		.loc 1 220 0
+ 1421 0076 B6F90030 		ldrsh	r3, [r6]
+ 222:USER/AI.c     **** 			*pv = size + 1;
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 37
+
+
+ 1422              		.loc 1 222 0
+ 1423 007a 3780     		strh	r7, [r6]	@ movhi
+ 220:USER/AI.c     **** 		if (*pv != -1)
+ 1424              		.loc 1 220 0
+ 1425 007c 0133     		adds	r3, r3, #1
+ 1426 007e 19D0     		beq	.L221
+ 1427              	.L243:
+ 1428              	.LVL128:
+ 1429 0080 0EAC     		add	r4, sp, #56
+ 1430              	.LVL129:
+ 1431              	.L226:
+ 1432 0082 A4F13003 		sub	r3, r4, #48
+ 1433              	.LVL130:
+ 1434              	.L222:
+ 1435              	.LBB50:
+ 1436              	.LBB51:
+ 225:USER/AI.c     **** 					vir_map[a][b] = (vir_map[a][b] > 0 ? vir_map[a][b] - 1 : vir_map[a][b]);
+ 1437              		.loc 1 225 0
+ 1438 0086 33F9022B 		ldrsh	r2, [r3], #2
+ 1439 008a 002A     		cmp	r2, #0
+ 1440 008c 02F1FF30 		add	r0, r2, #-1
+ 1441 0090 34DD     		ble	.L223
+ 224:USER/AI.c     **** 				for (int b = 0; b < WIDTH; b++)
+ 1442              		.loc 1 224 0
+ 1443 0092 A342     		cmp	r3, r4
+ 225:USER/AI.c     **** 					vir_map[a][b] = (vir_map[a][b] > 0 ? vir_map[a][b] - 1 : vir_map[a][b]);
+ 1444              		.loc 1 225 0
+ 1445 0094 23F8020C 		strh	r0, [r3, #-2]	@ movhi
+ 224:USER/AI.c     **** 				for (int b = 0; b < WIDTH; b++)
+ 1446              		.loc 1 224 0
+ 1447 0098 F5D1     		bne	.L222
+ 1448 009a 3034     		adds	r4, r4, #48
+ 1449              	.LBE51:
+ 223:USER/AI.c     **** 			for (int a = 0; a < HEIGHT; a++)
+ 1450              		.loc 1 223 0
+ 1451 009c AC42     		cmp	r4, r5
+ 1452 009e F0D1     		bne	.L226
+ 1453              	.L244:
+ 1454              	.LBE50:
+ 200:USER/AI.c     **** 		if (pn->w == true)
+ 1455              		.loc 1 200 0
+ 1456 00a0 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 1457 00a2 012B     		cmp	r3, #1
+ 1458 00a4 DCD1     		bne	.L217
+ 1459              	.L240:
+ 203:USER/AI.c     **** 			pv -= WIDTH;
+ 1460              		.loc 1 203 0
+ 1461 00a6 303E     		subs	r6, r6, #48
+ 1462              	.LVL131:
+ 220:USER/AI.c     **** 		if (*pv != -1)
+ 1463              		.loc 1 220 0
+ 1464 00a8 B6F90030 		ldrsh	r3, [r6]
+ 202:USER/AI.c     **** 			pn -= WIDTH;
+ 1465              		.loc 1 202 0
+ 1466 00ac A839     		subs	r1, r1, #168
+ 1467              	.LVL132:
+ 220:USER/AI.c     **** 		if (*pv != -1)
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 38
+
+
+ 1468              		.loc 1 220 0
+ 1469 00ae 0133     		adds	r3, r3, #1
+ 222:USER/AI.c     **** 			*pv = size + 1;
+ 1470              		.loc 1 222 0
+ 1471 00b0 3780     		strh	r7, [r6]	@ movhi
+ 220:USER/AI.c     **** 		if (*pv != -1)
+ 1472              		.loc 1 220 0
+ 1473 00b2 E5D1     		bne	.L243
+ 1474              	.L221:
+ 1475              	.LVL133:
+ 1476              	.LBB53:
+ 233:USER/AI.c     **** 	for (short h = 0; h < HEIGHT; h++)
+ 1477              		.loc 1 233 0
+ 1478 00b4 0023     		movs	r3, #0
+ 1479              	.LVL134:
+ 1480              	.L228:
+ 1481              	.LBE53:
+ 190:USER/AI.c     **** {
+ 1482              		.loc 1 190 0
+ 1483 00b6 0020     		movs	r0, #0
+ 1484 00b8 03EB4304 		add	r4, r3, r3, lsl #1
+ 1485 00bc 02AA     		add	r2, sp, #8
+ 1486 00be 02EB0414 		add	r4, r2, r4, lsl #4
+ 1487 00c2 023C     		subs	r4, r4, #2
+ 1488              	.LVL135:
+ 1489              	.L230:
+ 1490              	.LBB55:
+ 1491              	.LBB54:
+ 235:USER/AI.c     **** 			if (vir_map[h][w] == 1)
+ 1492              		.loc 1 235 0
+ 1493 00c4 34F9021F 		ldrsh	r1, [r4, #2]!
+ 1494 00c8 02B2     		sxth	r2, r0
+ 1495              	.LVL136:
+ 1496 00ca 0129     		cmp	r1, #1
+ 1497 00cc 00F10100 		add	r0, r0, #1
+ 1498 00d0 07D0     		beq	.L229
+ 234:USER/AI.c     **** 		for (short w = 0; w < WIDTH; w++)
+ 1499              		.loc 1 234 0 discriminator 2
+ 1500 00d2 1828     		cmp	r0, #24
+ 1501 00d4 F6D1     		bne	.L230
+ 1502 00d6 0133     		adds	r3, r3, #1
+ 1503 00d8 1BB2     		sxth	r3, r3
+ 1504              	.LVL137:
+ 1505              	.LBE54:
+ 233:USER/AI.c     **** 	for (short h = 0; h < HEIGHT; h++)
+ 1506              		.loc 1 233 0
+ 1507 00da 202B     		cmp	r3, #32
+ 1508 00dc EBD1     		bne	.L228
+ 1509 00de 0023     		movs	r3, #0
+ 1510 00e0 1A46     		mov	r2, r3
+ 1511              	.L229:
+ 1512              	.LVL138:
+ 1513              	.LBE55:
+ 242:USER/AI.c     **** 	if (ai(vir_map, size + 1, endx, endy, 1) != d_error)
+ 1514              		.loc 1 242 0
+ 1515 00e2 0124     		movs	r4, #1
+ 1516 00e4 3946     		mov	r1, r7
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 39
+
+
+ 1517 00e6 02A8     		add	r0, sp, #8
+ 1518 00e8 0094     		str	r4, [sp]
+ 1519 00ea FFF7FEFF 		bl	ai
+ 1520              	.LVL139:
+ 246:USER/AI.c     **** }
+ 1521              		.loc 1 246 0
+ 1522 00ee 0438     		subs	r0, r0, #4
+ 1523 00f0 18BF     		it	ne
+ 1524 00f2 0120     		movne	r0, #1
+ 1525 00f4 0DF5C16D 		add	sp, sp, #1544
+ 1526              	.LCFI22:
+ 1527              		.cfi_remember_state
+ 1528              		.cfi_def_cfa_offset 32
+ 1529              		@ sp needed
+ 1530 00f8 BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, r10, pc}
+ 1531              	.LVL140:
+ 1532              	.L223:
+ 1533              	.LCFI23:
+ 1534              		.cfi_restore_state
+ 1535              	.LBB56:
+ 1536              	.LBB52:
+ 224:USER/AI.c     **** 				for (int b = 0; b < WIDTH; b++)
+ 1537              		.loc 1 224 0
+ 1538 00fc A342     		cmp	r3, r4
+ 225:USER/AI.c     **** 					vir_map[a][b] = (vir_map[a][b] > 0 ? vir_map[a][b] - 1 : vir_map[a][b]);
+ 1539              		.loc 1 225 0
+ 1540 00fe 23F8022C 		strh	r2, [r3, #-2]	@ movhi
+ 224:USER/AI.c     **** 				for (int b = 0; b < WIDTH; b++)
+ 1541              		.loc 1 224 0
+ 1542 0102 C0D1     		bne	.L222
+ 1543 0104 3034     		adds	r4, r4, #48
+ 1544              	.LBE52:
+ 223:USER/AI.c     **** 			for (int a = 0; a < HEIGHT; a++)
+ 1545              		.loc 1 223 0
+ 1546 0106 AC42     		cmp	r4, r5
+ 1547 0108 BBD1     		bne	.L226
+ 1548 010a C9E7     		b	.L244
+ 1549              	.L241:
+ 1550              	.LBE56:
+ 207:USER/AI.c     **** 			pn -= 1;
+ 1551              		.loc 1 207 0
+ 1552 010c 0739     		subs	r1, r1, #7
+ 1553              	.LVL141:
+ 208:USER/AI.c     **** 			pv -= 1;
+ 1554              		.loc 1 208 0
+ 1555 010e 023E     		subs	r6, r6, #2
+ 1556              	.LVL142:
+ 1557 0110 B1E7     		b	.L218
+ 1558              	.L242:
+ 212:USER/AI.c     **** 			pn += WIDTH;
+ 1559              		.loc 1 212 0
+ 1560 0112 A831     		adds	r1, r1, #168
+ 1561              	.LVL143:
+ 213:USER/AI.c     **** 			pv += WIDTH;
+ 1562              		.loc 1 213 0
+ 1563 0114 3036     		adds	r6, r6, #48
+ 1564              	.LVL144:
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 40
+
+
+ 1565 0116 AEE7     		b	.L218
+ 1566              		.cfi_endproc
+ 1567              	.LFE1:
+ 1569              		.text
+ 1570              	.Letext0:
+ 1571              		.file 2 "USER/public.h"
+ 1572              		.file 3 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\sys\\lock.h"
+ 1573              		.file 4 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\sys\\_types.h"
+ 1574              		.file 5 "d:\\gnu tools arm embedded\\7 2018-q2-update\\lib\\gcc\\arm-none-eabi\\7.3.1\\include\\st
+ 1575              		.file 6 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\sys\\reent.h"
+ 1576              		.file 7 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\stdlib.h"
+ 1577              		.file 8 "USER/AI.h"
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s 			page 41
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 AI.c
+C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s:16     .text.ai2:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s:24     .text.ai2:00000000 ai2
+C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s:347    .text.simulate2:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s:355    .text.simulate2:00000000 simulate2
+C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s:848    .text.ai:00000000 ai
+C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s:840    .text.ai:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s:1335   .text.simulate:00000000 simulate
+C:\Users\czsta\AppData\Local\Temp\cc0NYwwq.s:1327   .text.simulate:00000000 $t
+
+UNDEFINED SYMBOLS
+exit
+rand

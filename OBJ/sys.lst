@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 1
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -13,545 +13,1227 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 1
   10              		.eabi_attribute 18, 4
   11              		.file	"sys.c"
   12              		.text
-  13              		.section	.text.MY_NVIC_SetVectorTable,"ax",%progbits
-  14              		.align	1
-  15              		.p2align 2,,3
-  16              		.global	MY_NVIC_SetVectorTable
-  17              		.syntax unified
-  18              		.thumb
-  19              		.thumb_func
-  20              		.fpu softvfp
-  22              	MY_NVIC_SetVectorTable:
-  23              		@ args = 0, pretend = 0, frame = 0
-  24              		@ frame_needed = 0, uses_anonymous_args = 0
-  25              		@ link register save eliminated.
-  26 0000 21F06041 		bic	r1, r1, #-536870912
-  27 0004 21F07F01 		bic	r1, r1, #127
-  28 0008 014B     		ldr	r3, .L3
-  29 000a 0143     		orrs	r1, r1, r0
-  30 000c 9960     		str	r1, [r3, #8]
-  31 000e 7047     		bx	lr
-  32              	.L4:
-  33              		.align	2
-  34              	.L3:
-  35 0010 00ED00E0 		.word	-536810240
-  37              		.section	.text.MY_NVIC_PriorityGroupConfig,"ax",%progbits
-  38              		.align	1
-  39              		.p2align 2,,3
-  40              		.global	MY_NVIC_PriorityGroupConfig
-  41              		.syntax unified
-  42              		.thumb
-  43              		.thumb_func
-  44              		.fpu softvfp
-  46              	MY_NVIC_PriorityGroupConfig:
-  47              		@ args = 0, pretend = 0, frame = 0
-  48              		@ frame_needed = 0, uses_anonymous_args = 0
-  49              		@ link register save eliminated.
-  50 0000 4FF6FF01 		movw	r1, #63743
-  51 0004 C043     		mvns	r0, r0
-  52 0006 064A     		ldr	r2, .L6
-  53 0008 0002     		lsls	r0, r0, #8
-  54 000a D368     		ldr	r3, [r2, #12]
-  55 000c 00F4E060 		and	r0, r0, #1792
-  56 0010 0B40     		ands	r3, r3, r1
-  57 0012 43F0BF63 		orr	r3, r3, #100139008
-  58 0016 43F40033 		orr	r3, r3, #131072
-  59 001a 1843     		orrs	r0, r0, r3
-  60 001c D060     		str	r0, [r2, #12]
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 2
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.MY_NVIC_SetVectorTable,"ax",%progbits
+  16              		.align	1
+  17              		.p2align 2,,3
+  18              		.global	MY_NVIC_SetVectorTable
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	MY_NVIC_SetVectorTable:
+  25              	.LFB29:
+  26              		.file 1 "SYSTEM/sys/sys.c"
+   1:SYSTEM/sys/sys.c **** ﻿#include "sys.h"
+   2:SYSTEM/sys/sys.c **** //////////////////////////////////////////////////////////////////////////////////
+   3:SYSTEM/sys/sys.c **** //本程序只供学习使用，未经作者许可，不得用于其它任何用途
+   4:SYSTEM/sys/sys.c **** //ALIENTEK STM32开发板
+   5:SYSTEM/sys/sys.c **** //系统时钟初始化（适合STM32F10x系列）
+   6:SYSTEM/sys/sys.c **** //正点原子@ALIENTEK
+   7:SYSTEM/sys/sys.c **** //技术论坛:www.openedv.com
+   8:SYSTEM/sys/sys.c **** //创建日期:2010/1/1
+   9:SYSTEM/sys/sys.c **** //版本：V1.9
+  10:SYSTEM/sys/sys.c **** //版权所有，盗版必究。
+  11:SYSTEM/sys/sys.c **** //Copyright(C) 广州市星翼电子科技有限公司 2009-2019
+  12:SYSTEM/sys/sys.c **** //All rights reserved
+  13:SYSTEM/sys/sys.c **** //********************************************************************************
+  14:SYSTEM/sys/sys.c **** //V1.4修改说明
+  15:SYSTEM/sys/sys.c **** //把NVIC KO了,没有使用任何库文件!
+  16:SYSTEM/sys/sys.c **** //加入了JTAG_Set函数
+  17:SYSTEM/sys/sys.c **** //V1.5 20120322
+  18:SYSTEM/sys/sys.c **** //增加void INTX_DISABLE(void)和void INTX_ENABLE(void)两个函数
+  19:SYSTEM/sys/sys.c **** //V1.6 20120412
+  20:SYSTEM/sys/sys.c **** //1,增加MSR_MSP函数
+  21:SYSTEM/sys/sys.c **** //2,修改VECT_TAB_RAM的默认偏移,设置为0.
+  22:SYSTEM/sys/sys.c **** //V1.7 20120818
+  23:SYSTEM/sys/sys.c **** //1,添加ucos支持配置宏SYSTEM_SUPPORT_UCOS
+  24:SYSTEM/sys/sys.c **** //2,修改了注释
+  25:SYSTEM/sys/sys.c **** //3,去掉了不常用函数BKP_Write
+  26:SYSTEM/sys/sys.c **** //V1.8 20131120
+  27:SYSTEM/sys/sys.c **** //1,修改头文件为stm32f10x.h,不再使用stm32f10x_lib.h及其相关头文件
+  28:SYSTEM/sys/sys.c **** //V1.9 20150109
+  29:SYSTEM/sys/sys.c **** //1,修改头文件为MY_NVIC_Init函数部分代码以支持向量号大于63的中断的设置
+  30:SYSTEM/sys/sys.c **** //2,修改WFI_SET/INTX_DISABLE/INTX_ENABLE等函数的实现方式
+  31:SYSTEM/sys/sys.c **** //V2.0 20150322
+  32:SYSTEM/sys/sys.c **** //修改SYSTEM_SUPPORT_UCOS为SYSTEM_SUPPORT_OS
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 2
 
 
-  61 001e 7047     		bx	lr
-  62              	.L7:
-  63              		.align	2
-  64              	.L6:
-  65 0020 00ED00E0 		.word	-536810240
-  67              		.section	.text.MY_NVIC_Init,"ax",%progbits
-  68              		.align	1
-  69              		.p2align 2,,3
-  70              		.global	MY_NVIC_Init
-  71              		.syntax unified
-  72              		.thumb
-  73              		.thumb_func
-  74              		.fpu softvfp
-  76              	MY_NVIC_Init:
-  77              		@ args = 0, pretend = 0, frame = 0
-  78              		@ frame_needed = 0, uses_anonymous_args = 0
-  79 0000 F0B5     		push	{r4, r5, r6, r7, lr}
-  80 0002 4FF6FF0E 		movw	lr, #63743
-  81 0006 DE43     		mvns	r6, r3
-  82 0008 0127     		movs	r7, #1
-  83 000a 0F24     		movs	r4, #15
-  84 000c DFF85CC0 		ldr	ip, .L10
-  85 0010 3602     		lsls	r6, r6, #8
-  86 0012 DCF80C50 		ldr	r5, [ip, #12]
-  87 0016 06F4E066 		and	r6, r6, #1792
-  88 001a 05EA0E05 		and	r5, r5, lr
-  89 001e 45F0BF65 		orr	r5, r5, #100139008
-  90 0022 45F40035 		orr	r5, r5, #131072
-  91 0026 2E43     		orrs	r6, r6, r5
-  92 0028 5509     		lsrs	r5, r2, #5
-  93 002a AD00     		lsls	r5, r5, #2
-  94 002c 05F16045 		add	r5, r5, #-536870912
-  95 0030 CCF80C60 		str	r6, [ip, #12]
-  96 0034 05F56145 		add	r5, r5, #57600
-  97 0038 2E68     		ldr	r6, [r5]
-  98 003a 02F01F0C 		and	ip, r2, #31
-  99 003e 07FA0CF7 		lsl	r7, r7, ip
- 100 0042 3743     		orrs	r7, r7, r6
- 101 0044 02F16042 		add	r2, r2, #-536870912
- 102 0048 C3F10406 		rsb	r6, r3, #4
- 103 004c 44FA03F3 		asr	r3, r4, r3
- 104 0050 02F56142 		add	r2, r2, #57600
- 105 0054 2F60     		str	r7, [r5]
- 106 0056 0B40     		ands	r3, r3, r1
- 107 0058 B040     		lsls	r0, r0, r6
- 108 005a 92F80013 		ldrb	r1, [r2, #768]	@ zero_extendqisi2
- 109 005e 0343     		orrs	r3, r3, r0
- 110 0060 2340     		ands	r3, r3, r4
- 111 0062 41EA0313 		orr	r3, r1, r3, lsl #4
- 112 0066 82F80033 		strb	r3, [r2, #768]
- 113 006a F0BD     		pop	{r4, r5, r6, r7, pc}
- 114              	.L11:
- 115              		.align	2
- 116              	.L10:
- 117 006c 00ED00E0 		.word	-536810240
- 119              		.section	.text.Ex_NVIC_Config,"ax",%progbits
- 120              		.align	1
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 3
+  33:SYSTEM/sys/sys.c **** //////////////////////////////////////////////////////////////////////////////////
+  34:SYSTEM/sys/sys.c **** 
+  35:SYSTEM/sys/sys.c **** //设置向量表偏移地址
+  36:SYSTEM/sys/sys.c **** //NVIC_VectTab:基址
+  37:SYSTEM/sys/sys.c **** //Offset:偏移量
+  38:SYSTEM/sys/sys.c **** void MY_NVIC_SetVectorTable(u32 NVIC_VectTab, u32 Offset)
+  39:SYSTEM/sys/sys.c **** {
+  27              		.loc 1 39 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+  32              	.LVL0:
+  40:SYSTEM/sys/sys.c **** 	SCB->VTOR = NVIC_VectTab | (Offset & (u32)0x1FFFFF80); //设置NVIC的向量表偏移寄存器
+  33              		.loc 1 40 0
+  34 0000 21F06041 		bic	r1, r1, #-536870912
+  35              	.LVL1:
+  36 0004 21F07F01 		bic	r1, r1, #127
+  37 0008 014B     		ldr	r3, .L3
+  38 000a 0143     		orrs	r1, r1, r0
+  39 000c 9960     		str	r1, [r3, #8]
+  41:SYSTEM/sys/sys.c **** 														   //用于标识向量表是在CODE区还是在RAM区
+  42:SYSTEM/sys/sys.c **** }
+  40              		.loc 1 42 0
+  41 000e 7047     		bx	lr
+  42              	.L4:
+  43              		.align	2
+  44              	.L3:
+  45 0010 00ED00E0 		.word	-536810240
+  46              		.cfi_endproc
+  47              	.LFE29:
+  49              		.section	.text.MY_NVIC_PriorityGroupConfig,"ax",%progbits
+  50              		.align	1
+  51              		.p2align 2,,3
+  52              		.global	MY_NVIC_PriorityGroupConfig
+  53              		.syntax unified
+  54              		.thumb
+  55              		.thumb_func
+  56              		.fpu softvfp
+  58              	MY_NVIC_PriorityGroupConfig:
+  59              	.LFB30:
+  43:SYSTEM/sys/sys.c **** //设置NVIC分组
+  44:SYSTEM/sys/sys.c **** //NVIC_Group:NVIC分组 0~4 总共5组
+  45:SYSTEM/sys/sys.c **** void MY_NVIC_PriorityGroupConfig(u8 NVIC_Group)
+  46:SYSTEM/sys/sys.c **** {
+  60              		.loc 1 46 0
+  61              		.cfi_startproc
+  62              		@ args = 0, pretend = 0, frame = 0
+  63              		@ frame_needed = 0, uses_anonymous_args = 0
+  64              		@ link register save eliminated.
+  65              	.LVL2:
+  47:SYSTEM/sys/sys.c **** 	u32 temp, temp1;
+  48:SYSTEM/sys/sys.c **** 	temp1 = (~NVIC_Group) & 0x07; //取后三位
+  49:SYSTEM/sys/sys.c **** 	temp1 <<= 8;
+  50:SYSTEM/sys/sys.c **** 	temp = SCB->AIRCR;  //读取先前的设置
+  51:SYSTEM/sys/sys.c **** 	temp &= 0X0000F8FF; //清空先前分组
+  66              		.loc 1 51 0
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 3
 
 
- 121              		.p2align 2,,3
- 122              		.global	Ex_NVIC_Config
- 123              		.syntax unified
- 124              		.thumb
- 125              		.thumb_func
- 126              		.fpu softvfp
- 128              	Ex_NVIC_Config:
- 129              		@ args = 0, pretend = 0, frame = 0
- 130              		@ frame_needed = 0, uses_anonymous_args = 0
- 131              		@ link register save eliminated.
- 132 0000 F0B4     		push	{r4, r5, r6, r7}
- 133 0002 0125     		movs	r5, #1
- 134 0004 0F27     		movs	r7, #15
- 135 0006 144E     		ldr	r6, .L22
- 136 0008 01F0FC03 		and	r3, r1, #252
- 137 000c B469     		ldr	r4, [r6, #24]
- 138 000e 03F18043 		add	r3, r3, #1073741824
- 139 0012 2C43     		orrs	r4, r4, r5
- 140 0014 B461     		str	r4, [r6, #24]
- 141 0016 03F58033 		add	r3, r3, #65536
- 142 001a 01F00304 		and	r4, r1, #3
- 143 001e 9E68     		ldr	r6, [r3, #8]
- 144 0020 A400     		lsls	r4, r4, #2
- 145 0022 A740     		lsls	r7, r7, r4
- 146 0024 26EA0706 		bic	r6, r6, r7
- 147 0028 9E60     		str	r6, [r3, #8]
- 148 002a 9E68     		ldr	r6, [r3, #8]
- 149 002c A040     		lsls	r0, r0, r4
- 150 002e 3043     		orrs	r0, r0, r6
- 151 0030 0A4C     		ldr	r4, .L22+4
- 152 0032 9860     		str	r0, [r3, #8]
- 153 0034 2368     		ldr	r3, [r4]
- 154 0036 05FA01F1 		lsl	r1, r5, r1
- 155 003a 0B43     		orrs	r3, r3, r1
- 156 003c D007     		lsls	r0, r2, #31
- 157 003e 2360     		str	r3, [r4]
- 158 0040 02D5     		bpl	.L13
- 159 0042 E368     		ldr	r3, [r4, #12]
- 160 0044 0B43     		orrs	r3, r3, r1
- 161 0046 E360     		str	r3, [r4, #12]
- 162              	.L13:
- 163 0048 9307     		lsls	r3, r2, #30
- 164 004a 03D5     		bpl	.L12
- 165 004c 034B     		ldr	r3, .L22+4
- 166 004e 9A68     		ldr	r2, [r3, #8]
- 167 0050 1143     		orrs	r1, r1, r2
- 168 0052 9960     		str	r1, [r3, #8]
- 169              	.L12:
- 170 0054 F0BC     		pop	{r4, r5, r6, r7}
- 171 0056 7047     		bx	lr
- 172              	.L23:
- 173              		.align	2
- 174              	.L22:
- 175 0058 00100240 		.word	1073876992
- 176 005c 00040140 		.word	1073808384
- 178              		.section	.text.MYRCC_DeInit,"ax",%progbits
- 179              		.align	1
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 4
+  67 0000 4FF6FF01 		movw	r1, #63743
+  48:SYSTEM/sys/sys.c **** 	temp1 <<= 8;
+  68              		.loc 1 48 0
+  69 0004 C043     		mvns	r0, r0
+  70              	.LVL3:
+  50:SYSTEM/sys/sys.c **** 	temp &= 0X0000F8FF; //清空先前分组
+  71              		.loc 1 50 0
+  72 0006 064A     		ldr	r2, .L6
+  49:SYSTEM/sys/sys.c **** 	temp = SCB->AIRCR;  //读取先前的设置
+  73              		.loc 1 49 0
+  74 0008 0002     		lsls	r0, r0, #8
+  50:SYSTEM/sys/sys.c **** 	temp &= 0X0000F8FF; //清空先前分组
+  75              		.loc 1 50 0
+  76 000a D368     		ldr	r3, [r2, #12]
+  77              	.LVL4:
+  49:SYSTEM/sys/sys.c **** 	temp = SCB->AIRCR;  //读取先前的设置
+  78              		.loc 1 49 0
+  79 000c 00F4E060 		and	r0, r0, #1792
+  80              		.loc 1 51 0
+  81 0010 0B40     		ands	r3, r3, r1
+  82              	.LVL5:
+  52:SYSTEM/sys/sys.c **** 	temp |= 0X05FA0000; //写入钥匙
+  83              		.loc 1 52 0
+  84 0012 43F0BF63 		orr	r3, r3, #100139008
+  85              	.LVL6:
+  86 0016 43F40033 		orr	r3, r3, #131072
+  87              	.LVL7:
+  53:SYSTEM/sys/sys.c **** 	temp |= temp1;
+  88              		.loc 1 53 0
+  89 001a 1843     		orrs	r0, r0, r3
+  90              	.LVL8:
+  54:SYSTEM/sys/sys.c **** 	SCB->AIRCR = temp; //设置分组
+  91              		.loc 1 54 0
+  92 001c D060     		str	r0, [r2, #12]
+  55:SYSTEM/sys/sys.c **** }
+  93              		.loc 1 55 0
+  94 001e 7047     		bx	lr
+  95              	.L7:
+  96              		.align	2
+  97              	.L6:
+  98 0020 00ED00E0 		.word	-536810240
+  99              		.cfi_endproc
+ 100              	.LFE30:
+ 102              		.section	.text.MY_NVIC_Init,"ax",%progbits
+ 103              		.align	1
+ 104              		.p2align 2,,3
+ 105              		.global	MY_NVIC_Init
+ 106              		.syntax unified
+ 107              		.thumb
+ 108              		.thumb_func
+ 109              		.fpu softvfp
+ 111              	MY_NVIC_Init:
+ 112              	.LFB31:
+  56:SYSTEM/sys/sys.c **** //设置NVIC
+  57:SYSTEM/sys/sys.c **** //NVIC_PreemptionPriority:抢占优先级
+  58:SYSTEM/sys/sys.c **** //NVIC_SubPriority       :响应优先级
+  59:SYSTEM/sys/sys.c **** //NVIC_Channel           :中断编号
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 4
 
 
- 180              		.p2align 2,,3
- 181              		.global	MYRCC_DeInit
- 182              		.syntax unified
- 183              		.thumb
- 184              		.thumb_func
- 185              		.fpu softvfp
- 187              	MYRCC_DeInit:
- 188              		@ args = 0, pretend = 0, frame = 0
- 189              		@ frame_needed = 0, uses_anonymous_args = 0
- 190              		@ link register save eliminated.
- 191 0000 0022     		movs	r2, #0
- 192 0002 1420     		movs	r0, #20
- 193 0004 30B4     		push	{r4, r5}
- 194 0006 4FF00065 		mov	r5, #134217728
- 195 000a 104B     		ldr	r3, .L26
- 196 000c 1049     		ldr	r1, .L26+4
- 197 000e 1A61     		str	r2, [r3, #16]
- 198 0010 DA60     		str	r2, [r3, #12]
- 199 0012 5861     		str	r0, [r3, #20]
- 200 0014 9A61     		str	r2, [r3, #24]
- 201 0016 DA61     		str	r2, [r3, #28]
- 202 0018 1868     		ldr	r0, [r3]
- 203 001a 0E4C     		ldr	r4, .L26+8
- 204 001c 40F00100 		orr	r0, r0, #1
- 205 0020 1860     		str	r0, [r3]
- 206 0022 5868     		ldr	r0, [r3, #4]
- 207 0024 0140     		ands	r1, r1, r0
- 208 0026 5960     		str	r1, [r3, #4]
- 209 0028 1968     		ldr	r1, [r3]
- 210 002a 21F08471 		bic	r1, r1, #17301504
- 211 002e 21F48031 		bic	r1, r1, #65536
- 212 0032 1960     		str	r1, [r3]
- 213 0034 1968     		ldr	r1, [r3]
- 214 0036 21F48021 		bic	r1, r1, #262144
- 215 003a 1960     		str	r1, [r3]
- 216 003c 5968     		ldr	r1, [r3, #4]
- 217 003e 21F4FE01 		bic	r1, r1, #8323072
- 218 0042 5960     		str	r1, [r3, #4]
- 219 0044 9A60     		str	r2, [r3, #8]
- 220 0046 A560     		str	r5, [r4, #8]
- 221 0048 30BC     		pop	{r4, r5}
- 222 004a 7047     		bx	lr
- 223              	.L27:
- 224              		.align	2
- 225              	.L26:
- 226 004c 00100240 		.word	1073876992
- 227 0050 0000FFF8 		.word	-117506048
- 228 0054 00ED00E0 		.word	-536810240
- 230              		.section	.text.WFI_SET,"ax",%progbits
- 231              		.align	1
- 232              		.p2align 2,,3
- 233              		.global	WFI_SET
- 234              		.syntax unified
- 235              		.thumb
- 236              		.thumb_func
- 237              		.fpu softvfp
- 239              	WFI_SET:
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 5
+  60:SYSTEM/sys/sys.c **** //NVIC_Group             :中断分组 0~4
+  61:SYSTEM/sys/sys.c **** //注意优先级不能超过设定的组的范围!否则会有意想不到的错误
+  62:SYSTEM/sys/sys.c **** //组划分:
+  63:SYSTEM/sys/sys.c **** //组0:0位抢占优先级,4位响应优先级
+  64:SYSTEM/sys/sys.c **** //组1:1位抢占优先级,3位响应优先级
+  65:SYSTEM/sys/sys.c **** //组2:2位抢占优先级,2位响应优先级
+  66:SYSTEM/sys/sys.c **** //组3:3位抢占优先级,1位响应优先级
+  67:SYSTEM/sys/sys.c **** //组4:4位抢占优先级,0位响应优先级
+  68:SYSTEM/sys/sys.c **** //NVIC_SubPriority和NVIC_PreemptionPriority的原则是,数值越小,越优先
+  69:SYSTEM/sys/sys.c **** void MY_NVIC_Init(u8 NVIC_PreemptionPriority, u8 NVIC_SubPriority, u8 NVIC_Channel, u8 NVIC_Group)
+  70:SYSTEM/sys/sys.c **** {
+ 113              		.loc 1 70 0
+ 114              		.cfi_startproc
+ 115              		@ args = 0, pretend = 0, frame = 0
+ 116              		@ frame_needed = 0, uses_anonymous_args = 0
+ 117              	.LVL9:
+ 118 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 119              	.LCFI0:
+ 120              		.cfi_def_cfa_offset 20
+ 121              		.cfi_offset 4, -20
+ 122              		.cfi_offset 5, -16
+ 123              		.cfi_offset 6, -12
+ 124              		.cfi_offset 7, -8
+ 125              		.cfi_offset 14, -4
+ 126              	.LBB8:
+ 127              	.LBB9:
+  51:SYSTEM/sys/sys.c **** 	temp |= 0X05FA0000; //写入钥匙
+ 128              		.loc 1 51 0
+ 129 0002 4FF6FF0E 		movw	lr, #63743
+  48:SYSTEM/sys/sys.c **** 	temp1 <<= 8;
+ 130              		.loc 1 48 0
+ 131 0006 DE43     		mvns	r6, r3
+ 132              	.LBE9:
+ 133              	.LBE8:
+  71:SYSTEM/sys/sys.c **** 	u32 temp;
+  72:SYSTEM/sys/sys.c **** 	MY_NVIC_PriorityGroupConfig(NVIC_Group); //设置分组
+  73:SYSTEM/sys/sys.c **** 	temp = NVIC_PreemptionPriority << (4 - NVIC_Group);
+  74:SYSTEM/sys/sys.c **** 	temp |= NVIC_SubPriority & (0x0f >> NVIC_Group);
+  75:SYSTEM/sys/sys.c **** 	temp &= 0xf;											   //取低四位
+  76:SYSTEM/sys/sys.c **** 	NVIC->ISER[NVIC_Channel / 32] |= (1 << NVIC_Channel % 32); //使能中断位(要清除的话,相�
+ 134              		.loc 1 76 0
+ 135 0008 0127     		movs	r7, #1
+  74:SYSTEM/sys/sys.c **** 	temp &= 0xf;											   //取低四位
+ 136              		.loc 1 74 0
+ 137 000a 0F24     		movs	r4, #15
+ 138              	.LBB11:
+ 139              	.LBB10:
+  50:SYSTEM/sys/sys.c **** 	temp &= 0X0000F8FF; //清空先前分组
+ 140              		.loc 1 50 0
+ 141 000c DFF85CC0 		ldr	ip, .L10
+  49:SYSTEM/sys/sys.c **** 	temp = SCB->AIRCR;  //读取先前的设置
+ 142              		.loc 1 49 0
+ 143 0010 3602     		lsls	r6, r6, #8
+  50:SYSTEM/sys/sys.c **** 	temp &= 0X0000F8FF; //清空先前分组
+ 144              		.loc 1 50 0
+ 145 0012 DCF80C50 		ldr	r5, [ip, #12]
+ 146              	.LVL10:
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 5
 
 
- 240              		@ args = 0, pretend = 0, frame = 0
- 241              		@ frame_needed = 0, uses_anonymous_args = 0
- 242              		@ link register save eliminated.
- 243              		.syntax unified
- 244              	@ 155 "SYSTEM/sys/sys.c" 1
- 245 0000 30BF     		WFI
- 246              	@ 0 "" 2
- 247              		.thumb
- 248              		.syntax unified
- 249 0002 7047     		bx	lr
- 251              		.section	.text.INTX_DISABLE,"ax",%progbits
- 252              		.align	1
- 253              		.p2align 2,,3
- 254              		.global	INTX_DISABLE
- 255              		.syntax unified
- 256              		.thumb
- 257              		.thumb_func
- 258              		.fpu softvfp
- 260              	INTX_DISABLE:
- 261              		@ args = 0, pretend = 0, frame = 0
- 262              		@ frame_needed = 0, uses_anonymous_args = 0
- 263              		@ link register save eliminated.
- 264              		.syntax unified
- 265              	@ 163 "SYSTEM/sys/sys.c" 1
- 266 0000 72B6     		CPSID   I
- 267              	@ 0 "" 2
- 268              	@ 164 "SYSTEM/sys/sys.c" 1
- 269 0002 7047     		BX      LR
- 270              	@ 0 "" 2
- 271              		.thumb
- 272              		.syntax unified
- 273 0004 7047     		bx	lr
- 275 0006 00BF     		.section	.text.INTX_ENABLE,"ax",%progbits
- 276              		.align	1
- 277              		.p2align 2,,3
- 278              		.global	INTX_ENABLE
- 279              		.syntax unified
- 280              		.thumb
- 281              		.thumb_func
- 282              		.fpu softvfp
- 284              	INTX_ENABLE:
- 285              		@ args = 0, pretend = 0, frame = 0
- 286              		@ frame_needed = 0, uses_anonymous_args = 0
- 287              		@ link register save eliminated.
- 288              		.syntax unified
- 289              	@ 170 "SYSTEM/sys/sys.c" 1
- 290 0000 62B6     		CPSIE   I
- 291              	@ 0 "" 2
- 292              	@ 171 "SYSTEM/sys/sys.c" 1
- 293 0002 7047     		BX      LR
- 294              	@ 0 "" 2
- 295              		.thumb
- 296              		.syntax unified
- 297 0004 7047     		bx	lr
- 299 0006 00BF     		.section	.text.MSR_MSP,"ax",%progbits
- 300              		.align	1
- 301              		.p2align 2,,3
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 6
+  49:SYSTEM/sys/sys.c **** 	temp = SCB->AIRCR;  //读取先前的设置
+ 147              		.loc 1 49 0
+ 148 0016 06F4E066 		and	r6, r6, #1792
+ 149              	.LVL11:
+  51:SYSTEM/sys/sys.c **** 	temp |= 0X05FA0000; //写入钥匙
+ 150              		.loc 1 51 0
+ 151 001a 05EA0E05 		and	r5, r5, lr
+ 152              	.LVL12:
+  52:SYSTEM/sys/sys.c **** 	temp |= temp1;
+ 153              		.loc 1 52 0
+ 154 001e 45F0BF65 		orr	r5, r5, #100139008
+ 155              	.LVL13:
+ 156 0022 45F40035 		orr	r5, r5, #131072
+ 157              	.LVL14:
+  53:SYSTEM/sys/sys.c **** 	SCB->AIRCR = temp; //设置分组
+ 158              		.loc 1 53 0
+ 159 0026 2E43     		orrs	r6, r6, r5
+ 160              	.LVL15:
+ 161 0028 5509     		lsrs	r5, r2, #5
+ 162 002a AD00     		lsls	r5, r5, #2
+ 163 002c 05F16045 		add	r5, r5, #-536870912
+  54:SYSTEM/sys/sys.c **** }
+ 164              		.loc 1 54 0
+ 165 0030 CCF80C60 		str	r6, [ip, #12]
+ 166              	.LVL16:
+ 167 0034 05F56145 		add	r5, r5, #57600
+ 168              	.LBE10:
+ 169              	.LBE11:
+ 170              		.loc 1 76 0
+ 171 0038 2E68     		ldr	r6, [r5]
+ 172 003a 02F01F0C 		and	ip, r2, #31
+ 173 003e 07FA0CF7 		lsl	r7, r7, ip
+ 174 0042 3743     		orrs	r7, r7, r6
+  77:SYSTEM/sys/sys.c **** 	NVIC->IP[NVIC_Channel] |= temp << 4;					   //设置响应优先级和抢断优先级
+ 175              		.loc 1 77 0
+ 176 0044 02F16042 		add	r2, r2, #-536870912
+ 177              	.LVL17:
+  73:SYSTEM/sys/sys.c **** 	temp |= NVIC_SubPriority & (0x0f >> NVIC_Group);
+ 178              		.loc 1 73 0
+ 179 0048 C3F10406 		rsb	r6, r3, #4
+  74:SYSTEM/sys/sys.c **** 	temp &= 0xf;											   //取低四位
+ 180              		.loc 1 74 0
+ 181 004c 44FA03F3 		asr	r3, r4, r3
+ 182              	.LVL18:
+ 183              		.loc 1 77 0
+ 184 0050 02F56142 		add	r2, r2, #57600
+  76:SYSTEM/sys/sys.c **** 	NVIC->IP[NVIC_Channel] |= temp << 4;					   //设置响应优先级和抢断优先级
+ 185              		.loc 1 76 0
+ 186 0054 2F60     		str	r7, [r5]
+  74:SYSTEM/sys/sys.c **** 	temp &= 0xf;											   //取低四位
+ 187              		.loc 1 74 0
+ 188 0056 0B40     		ands	r3, r3, r1
+  73:SYSTEM/sys/sys.c **** 	temp |= NVIC_SubPriority & (0x0f >> NVIC_Group);
+ 189              		.loc 1 73 0
+ 190 0058 B040     		lsls	r0, r0, r6
+ 191              	.LVL19:
+ 192              		.loc 1 77 0
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 6
 
 
- 302              		.global	MSR_MSP
- 303              		.syntax unified
- 304              		.thumb
- 305              		.thumb_func
- 306              		.fpu softvfp
- 308              	MSR_MSP:
- 309              		@ args = 0, pretend = 0, frame = 0
- 310              		@ frame_needed = 0, uses_anonymous_args = 0
- 311              		@ link register save eliminated.
- 312              		.syntax unified
- 313              	@ 177 "SYSTEM/sys/sys.c" 1
- 314 0000 80F30888 		MSR MSP, r0
- 315              	@ 0 "" 2
- 316              	@ 178 "SYSTEM/sys/sys.c" 1
- 317 0004 7047     		BX r14
- 318              	@ 0 "" 2
- 319              		.thumb
- 320              		.syntax unified
- 321 0006 7047     		bx	lr
- 323              		.section	.text.Sys_Standby,"ax",%progbits
- 324              		.align	1
- 325              		.p2align 2,,3
- 326              		.global	Sys_Standby
- 327              		.syntax unified
- 328              		.thumb
- 329              		.thumb_func
- 330              		.fpu softvfp
- 332              	Sys_Standby:
- 333              		@ args = 0, pretend = 0, frame = 0
- 334              		@ frame_needed = 0, uses_anonymous_args = 0
- 335              		@ link register save eliminated.
- 336 0000 0C48     		ldr	r0, .L33
- 337 0002 0D49     		ldr	r1, .L33+4
- 338 0004 0269     		ldr	r2, [r0, #16]
- 339 0006 0D4B     		ldr	r3, .L33+8
- 340 0008 42F00402 		orr	r2, r2, #4
- 341 000c 0261     		str	r2, [r0, #16]
- 342 000e CA69     		ldr	r2, [r1, #28]
- 343 0010 42F08052 		orr	r2, r2, #268435456
- 344 0014 CA61     		str	r2, [r1, #28]
- 345 0016 5A68     		ldr	r2, [r3, #4]
- 346 0018 42F48072 		orr	r2, r2, #256
- 347 001c 5A60     		str	r2, [r3, #4]
- 348 001e 1A68     		ldr	r2, [r3]
- 349 0020 42F00402 		orr	r2, r2, #4
- 350 0024 1A60     		str	r2, [r3]
- 351 0026 1A68     		ldr	r2, [r3]
- 352 0028 42F00202 		orr	r2, r2, #2
- 353 002c 1A60     		str	r2, [r3]
- 354              		.syntax unified
- 355              	@ 155 "SYSTEM/sys/sys.c" 1
- 356 002e 30BF     		WFI
- 357              	@ 0 "" 2
- 358              		.thumb
- 359              		.syntax unified
- 360 0030 7047     		bx	lr
- 361              	.L34:
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 7
+ 193 005a 92F80013 		ldrb	r1, [r2, #768]	@ zero_extendqisi2
+ 194              	.LVL20:
+  74:SYSTEM/sys/sys.c **** 	temp &= 0xf;											   //取低四位
+ 195              		.loc 1 74 0
+ 196 005e 0343     		orrs	r3, r3, r0
+ 197              	.LVL21:
+  75:SYSTEM/sys/sys.c **** 	NVIC->ISER[NVIC_Channel / 32] |= (1 << NVIC_Channel % 32); //使能中断位(要清除的话,相�
+ 198              		.loc 1 75 0
+ 199 0060 2340     		ands	r3, r3, r4
+ 200              	.LVL22:
+ 201              		.loc 1 77 0
+ 202 0062 41EA0313 		orr	r3, r1, r3, lsl #4
+ 203              	.LVL23:
+ 204 0066 82F80033 		strb	r3, [r2, #768]
+  78:SYSTEM/sys/sys.c **** }
+ 205              		.loc 1 78 0
+ 206 006a F0BD     		pop	{r4, r5, r6, r7, pc}
+ 207              	.L11:
+ 208              		.align	2
+ 209              	.L10:
+ 210 006c 00ED00E0 		.word	-536810240
+ 211              		.cfi_endproc
+ 212              	.LFE31:
+ 214              		.section	.text.Ex_NVIC_Config,"ax",%progbits
+ 215              		.align	1
+ 216              		.p2align 2,,3
+ 217              		.global	Ex_NVIC_Config
+ 218              		.syntax unified
+ 219              		.thumb
+ 220              		.thumb_func
+ 221              		.fpu softvfp
+ 223              	Ex_NVIC_Config:
+ 224              	.LFB32:
+  79:SYSTEM/sys/sys.c **** //外部中断配置函数
+  80:SYSTEM/sys/sys.c **** //只针对GPIOA~G;不包括PVD,RTC和USB唤醒这三个
+  81:SYSTEM/sys/sys.c **** //参数:
+  82:SYSTEM/sys/sys.c **** //GPIOx:0~6,代表GPIOA~G
+  83:SYSTEM/sys/sys.c **** //BITx:需要使能的位;
+  84:SYSTEM/sys/sys.c **** //TRIM:触发模式,1,下升沿;2,上降沿;3，任意电平触发
+  85:SYSTEM/sys/sys.c **** //该函数一次只能配置1个IO口,多个IO口,需多次调用
+  86:SYSTEM/sys/sys.c **** //该函数会自动开启对应中断,以及屏蔽线
+  87:SYSTEM/sys/sys.c **** void Ex_NVIC_Config(u8 GPIOx, u8 BITx, u8 TRIM)
+  88:SYSTEM/sys/sys.c **** {
+ 225              		.loc 1 88 0
+ 226              		.cfi_startproc
+ 227              		@ args = 0, pretend = 0, frame = 0
+ 228              		@ frame_needed = 0, uses_anonymous_args = 0
+ 229              		@ link register save eliminated.
+ 230              	.LVL24:
+ 231 0000 F0B4     		push	{r4, r5, r6, r7}
+ 232              	.LCFI1:
+ 233              		.cfi_def_cfa_offset 16
+ 234              		.cfi_offset 4, -16
+ 235              		.cfi_offset 5, -12
+ 236              		.cfi_offset 6, -8
+ 237              		.cfi_offset 7, -4
+  89:SYSTEM/sys/sys.c **** 	u8 EXTADDR;
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 7
 
 
- 362 0032 00BF     		.align	2
- 363              	.L33:
- 364 0034 00ED00E0 		.word	-536810240
- 365 0038 00100240 		.word	1073876992
- 366 003c 00700040 		.word	1073770496
- 368              		.section	.text.Sys_Soft_Reset,"ax",%progbits
- 369              		.align	1
- 370              		.p2align 2,,3
- 371              		.global	Sys_Soft_Reset
- 372              		.syntax unified
- 373              		.thumb
- 374              		.thumb_func
- 375              		.fpu softvfp
- 377              	Sys_Soft_Reset:
- 378              		@ args = 0, pretend = 0, frame = 0
- 379              		@ frame_needed = 0, uses_anonymous_args = 0
- 380              		@ link register save eliminated.
- 381 0000 014B     		ldr	r3, .L36
- 382 0002 024A     		ldr	r2, .L36+4
- 383 0004 DA60     		str	r2, [r3, #12]
- 384 0006 7047     		bx	lr
- 385              	.L37:
- 386              		.align	2
- 387              	.L36:
- 388 0008 00ED00E0 		.word	-536810240
- 389 000c 0400FA05 		.word	100270084
- 391              		.section	.text.JTAG_Set,"ax",%progbits
- 392              		.align	1
- 393              		.p2align 2,,3
- 394              		.global	JTAG_Set
- 395              		.syntax unified
- 396              		.thumb
- 397              		.thumb_func
- 398              		.fpu softvfp
- 400              	JTAG_Set:
- 401              		@ args = 0, pretend = 0, frame = 0
- 402              		@ frame_needed = 0, uses_anonymous_args = 0
- 403              		@ link register save eliminated.
- 404 0000 0749     		ldr	r1, .L39
- 405 0002 084B     		ldr	r3, .L39+4
- 406 0004 8A69     		ldr	r2, [r1, #24]
- 407 0006 42F00102 		orr	r2, r2, #1
- 408 000a 8A61     		str	r2, [r1, #24]
- 409 000c 5A68     		ldr	r2, [r3, #4]
- 410 000e 22F0E062 		bic	r2, r2, #117440512
- 411 0012 5A60     		str	r2, [r3, #4]
- 412 0014 5A68     		ldr	r2, [r3, #4]
- 413 0016 42EA4060 		orr	r0, r2, r0, lsl #25
- 414 001a 5860     		str	r0, [r3, #4]
- 415 001c 7047     		bx	lr
- 416              	.L40:
- 417 001e 00BF     		.align	2
- 418              	.L39:
- 419 0020 00100240 		.word	1073876992
- 420 0024 00000140 		.word	1073807360
- 422              		.section	.text.Stm32_Clock_Init,"ax",%progbits
- 423              		.align	1
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 8
+  90:SYSTEM/sys/sys.c **** 	u8 EXTOFFSET;
+  91:SYSTEM/sys/sys.c **** 	EXTADDR = BITx / 4; //得到中断寄存器组的编号
+  92:SYSTEM/sys/sys.c **** 	EXTOFFSET = (BITx % 4) * 4;
+  93:SYSTEM/sys/sys.c **** 	RCC->APB2ENR |= 0x01;							 //使能io复用时钟
+  94:SYSTEM/sys/sys.c **** 	AFIO->EXTICR[EXTADDR] &= ~(0x000F << EXTOFFSET); //清除原来设置！！！
+  95:SYSTEM/sys/sys.c **** 	AFIO->EXTICR[EXTADDR] |= GPIOx << EXTOFFSET;	 //EXTI.BITx映射到GPIOx.BITx
+  96:SYSTEM/sys/sys.c **** 	//自动设置
+  97:SYSTEM/sys/sys.c **** 	EXTI->IMR |= 1 << BITx; //  开启line BITx上的中断
+ 238              		.loc 1 97 0
+ 239 0002 0125     		movs	r5, #1
+  94:SYSTEM/sys/sys.c **** 	AFIO->EXTICR[EXTADDR] |= GPIOx << EXTOFFSET;	 //EXTI.BITx映射到GPIOx.BITx
+ 240              		.loc 1 94 0
+ 241 0004 0F27     		movs	r7, #15
+  93:SYSTEM/sys/sys.c **** 	AFIO->EXTICR[EXTADDR] &= ~(0x000F << EXTOFFSET); //清除原来设置！！！
+ 242              		.loc 1 93 0
+ 243 0006 144E     		ldr	r6, .L22
+ 244 0008 01F0FC03 		and	r3, r1, #252
+ 245 000c B469     		ldr	r4, [r6, #24]
+ 246 000e 03F18043 		add	r3, r3, #1073741824
+ 247 0012 2C43     		orrs	r4, r4, r5
+ 248 0014 B461     		str	r4, [r6, #24]
+ 249 0016 03F58033 		add	r3, r3, #65536
+  92:SYSTEM/sys/sys.c **** 	RCC->APB2ENR |= 0x01;							 //使能io复用时钟
+ 250              		.loc 1 92 0
+ 251 001a 01F00304 		and	r4, r1, #3
+  94:SYSTEM/sys/sys.c **** 	AFIO->EXTICR[EXTADDR] |= GPIOx << EXTOFFSET;	 //EXTI.BITx映射到GPIOx.BITx
+ 252              		.loc 1 94 0
+ 253 001e 9E68     		ldr	r6, [r3, #8]
+ 254 0020 A400     		lsls	r4, r4, #2
+ 255 0022 A740     		lsls	r7, r7, r4
+ 256 0024 26EA0706 		bic	r6, r6, r7
+ 257 0028 9E60     		str	r6, [r3, #8]
+  95:SYSTEM/sys/sys.c **** 	//自动设置
+ 258              		.loc 1 95 0
+ 259 002a 9E68     		ldr	r6, [r3, #8]
+ 260 002c A040     		lsls	r0, r0, r4
+ 261              	.LVL25:
+ 262 002e 3043     		orrs	r0, r0, r6
+ 263              		.loc 1 97 0
+ 264 0030 0A4C     		ldr	r4, .L22+4
+  95:SYSTEM/sys/sys.c **** 	//自动设置
+ 265              		.loc 1 95 0
+ 266 0032 9860     		str	r0, [r3, #8]
+ 267              		.loc 1 97 0
+ 268 0034 2368     		ldr	r3, [r4]
+ 269 0036 05FA01F1 		lsl	r1, r5, r1
+ 270              	.LVL26:
+ 271 003a 0B43     		orrs	r3, r3, r1
+  98:SYSTEM/sys/sys.c **** 							//EXTI->EMR|=1<<BITx;//不屏蔽line BITx上的事件 (如果不屏蔽这句,在硬件上是
+  99:SYSTEM/sys/sys.c **** 	if (TRIM & 0x01)
+ 272              		.loc 1 99 0
+ 273 003c D007     		lsls	r0, r2, #31
+  97:SYSTEM/sys/sys.c **** 							//EXTI->EMR|=1<<BITx;//不屏蔽line BITx上的事件 (如果不屏蔽这句,在硬件上是
+ 274              		.loc 1 97 0
+ 275 003e 2360     		str	r3, [r4]
+ 276              		.loc 1 99 0
+ 277 0040 02D5     		bpl	.L13
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 8
 
 
- 424              		.p2align 2,,3
- 425              		.global	Stm32_Clock_Init
- 426              		.syntax unified
- 427              		.thumb
- 428              		.thumb_func
- 429              		.fpu softvfp
- 431              	Stm32_Clock_Init:
- 432              		@ args = 0, pretend = 0, frame = 0
- 433              		@ frame_needed = 0, uses_anonymous_args = 0
- 434              		@ link register save eliminated.
- 435 0000 70B4     		push	{r4, r5, r6}
- 436 0002 0021     		movs	r1, #0
- 437 0004 1424     		movs	r4, #20
- 438 0006 4FF00066 		mov	r6, #134217728
- 439 000a 264B     		ldr	r3, .L51
- 440 000c 1A46     		mov	r2, r3
- 441 000e 1961     		str	r1, [r3, #16]
- 442 0010 D960     		str	r1, [r3, #12]
- 443 0012 5C61     		str	r4, [r3, #20]
- 444 0014 9961     		str	r1, [r3, #24]
- 445 0016 D961     		str	r1, [r3, #28]
- 446 0018 1D68     		ldr	r5, [r3]
- 447 001a 234C     		ldr	r4, .L51+4
- 448 001c 45F00105 		orr	r5, r5, #1
- 449 0020 1D60     		str	r5, [r3]
- 450 0022 5D68     		ldr	r5, [r3, #4]
- 451 0024 2C40     		ands	r4, r4, r5
- 452 0026 5C60     		str	r4, [r3, #4]
- 453 0028 1C68     		ldr	r4, [r3]
- 454 002a 204D     		ldr	r5, .L51+8
- 455 002c 24F08474 		bic	r4, r4, #17301504
- 456 0030 24F48034 		bic	r4, r4, #65536
- 457 0034 1C60     		str	r4, [r3]
- 458 0036 1C68     		ldr	r4, [r3]
- 459 0038 24F48024 		bic	r4, r4, #262144
- 460 003c 1C60     		str	r4, [r3]
- 461 003e 5C68     		ldr	r4, [r3, #4]
- 462 0040 24F4FE04 		bic	r4, r4, #8323072
- 463 0044 5C60     		str	r4, [r3, #4]
- 464 0046 9960     		str	r1, [r3, #8]
- 465 0048 AE60     		str	r6, [r5, #8]
- 466 004a 1968     		ldr	r1, [r3]
- 467 004c 41F48031 		orr	r1, r1, #65536
- 468 0050 1960     		str	r1, [r3]
- 469              	.L42:
- 470 0052 1368     		ldr	r3, [r2]
- 471 0054 5B0C     		lsrs	r3, r3, #17
- 472 0056 FCD0     		beq	.L42
- 473 0058 4FF48063 		mov	r3, #1024
- 474 005c 5360     		str	r3, [r2, #4]
- 475 005e 5368     		ldr	r3, [r2, #4]
- 476 0060 0238     		subs	r0, r0, #2
- 477 0062 C0B2     		uxtb	r0, r0
- 478 0064 43EA8040 		orr	r0, r3, r0, lsl #18
- 479 0068 5060     		str	r0, [r2, #4]
- 480 006a 5368     		ldr	r3, [r2, #4]
- 481 006c 1048     		ldr	r0, .L51+12
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 9
+ 100:SYSTEM/sys/sys.c **** 		EXTI->FTSR |= 1 << BITx; //line BITx上事件下降沿触发
+ 278              		.loc 1 100 0
+ 279 0042 E368     		ldr	r3, [r4, #12]
+ 280 0044 0B43     		orrs	r3, r3, r1
+ 281 0046 E360     		str	r3, [r4, #12]
+ 282              	.L13:
+ 101:SYSTEM/sys/sys.c **** 	if (TRIM & 0x02)
+ 283              		.loc 1 101 0
+ 284 0048 9307     		lsls	r3, r2, #30
+ 285 004a 03D5     		bpl	.L12
+ 102:SYSTEM/sys/sys.c **** 		EXTI->RTSR |= 1 << BITx; //line BITx上事件上升降沿触发
+ 286              		.loc 1 102 0
+ 287 004c 034B     		ldr	r3, .L22+4
+ 288 004e 9A68     		ldr	r2, [r3, #8]
+ 289              	.LVL27:
+ 290 0050 1143     		orrs	r1, r1, r2
+ 291 0052 9960     		str	r1, [r3, #8]
+ 292              	.L12:
+ 103:SYSTEM/sys/sys.c **** }
+ 293              		.loc 1 103 0
+ 294 0054 F0BC     		pop	{r4, r5, r6, r7}
+ 295              	.LCFI2:
+ 296              		.cfi_restore 7
+ 297              		.cfi_restore 6
+ 298              		.cfi_restore 5
+ 299              		.cfi_restore 4
+ 300              		.cfi_def_cfa_offset 0
+ 301 0056 7047     		bx	lr
+ 302              	.L23:
+ 303              		.align	2
+ 304              	.L22:
+ 305 0058 00100240 		.word	1073876992
+ 306 005c 00040140 		.word	1073808384
+ 307              		.cfi_endproc
+ 308              	.LFE32:
+ 310              		.section	.text.MYRCC_DeInit,"ax",%progbits
+ 311              		.align	1
+ 312              		.p2align 2,,3
+ 313              		.global	MYRCC_DeInit
+ 314              		.syntax unified
+ 315              		.thumb
+ 316              		.thumb_func
+ 317              		.fpu softvfp
+ 319              	MYRCC_DeInit:
+ 320              	.LFB33:
+ 104:SYSTEM/sys/sys.c **** //不能在这里执行所有外设复位!否则至少引起串口不工作.
+ 105:SYSTEM/sys/sys.c **** //把所有时钟寄存器复位
+ 106:SYSTEM/sys/sys.c **** void MYRCC_DeInit(void)
+ 107:SYSTEM/sys/sys.c **** {
+ 321              		.loc 1 107 0
+ 322              		.cfi_startproc
+ 323              		@ args = 0, pretend = 0, frame = 0
+ 324              		@ frame_needed = 0, uses_anonymous_args = 0
+ 325              		@ link register save eliminated.
+ 108:SYSTEM/sys/sys.c **** 	RCC->APB1RSTR = 0x00000000; //复位结束
+ 326              		.loc 1 108 0
+ 327 0000 0022     		movs	r2, #0
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 9
 
 
- 482 006e 43F48033 		orr	r3, r3, #65536
- 483 0072 5360     		str	r3, [r2, #4]
- 484 0074 0368     		ldr	r3, [r0]
- 485 0076 0B49     		ldr	r1, .L51
- 486 0078 43F03203 		orr	r3, r3, #50
- 487 007c 0360     		str	r3, [r0]
- 488 007e 1368     		ldr	r3, [r2]
- 489 0080 43F08073 		orr	r3, r3, #16777216
- 490 0084 1360     		str	r3, [r2]
- 491              	.L43:
- 492 0086 0B68     		ldr	r3, [r1]
- 493 0088 5B0E     		lsrs	r3, r3, #25
- 494 008a FCD0     		beq	.L43
- 495 008c 4B68     		ldr	r3, [r1, #4]
- 496 008e 054A     		ldr	r2, .L51
- 497 0090 43F00203 		orr	r3, r3, #2
- 498 0094 4B60     		str	r3, [r1, #4]
- 499              	.L44:
- 500 0096 5368     		ldr	r3, [r2, #4]
- 501 0098 C3F38103 		ubfx	r3, r3, #2, #2
- 502 009c 022B     		cmp	r3, #2
- 503 009e FAD1     		bne	.L44
- 504 00a0 70BC     		pop	{r4, r5, r6}
- 505 00a2 7047     		bx	lr
- 506              	.L52:
- 507              		.align	2
- 508              	.L51:
- 509 00a4 00100240 		.word	1073876992
- 510 00a8 0000FFF8 		.word	-117506048
- 511 00ac 00ED00E0 		.word	-536810240
- 512 00b0 00200240 		.word	1073881088
- 514              		.ident	"GCC: (GNU Tools for Arm Embedded Processors 7-2018-q2-update) 7.3.1 20180622 (release) [AR
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s 			page 10
+ 109:SYSTEM/sys/sys.c **** 	RCC->APB2RSTR = 0x00000000;
+ 110:SYSTEM/sys/sys.c **** 
+ 111:SYSTEM/sys/sys.c **** 	RCC->AHBENR = 0x00000014;  //睡眠模式闪存和SRAM时钟使能.其他关闭.
+ 328              		.loc 1 111 0
+ 329 0002 1420     		movs	r0, #20
+ 107:SYSTEM/sys/sys.c **** 	RCC->APB1RSTR = 0x00000000; //复位结束
+ 330              		.loc 1 107 0
+ 331 0004 30B4     		push	{r4, r5}
+ 332              	.LCFI3:
+ 333              		.cfi_def_cfa_offset 8
+ 334              		.cfi_offset 4, -8
+ 335              		.cfi_offset 5, -4
+ 336              	.LBB14:
+ 337              	.LBB15:
+  40:SYSTEM/sys/sys.c **** 														   //用于标识向量表是在CODE区还是在RAM区
+ 338              		.loc 1 40 0
+ 339 0006 4FF00065 		mov	r5, #134217728
+ 340              	.LBE15:
+ 341              	.LBE14:
+ 108:SYSTEM/sys/sys.c **** 	RCC->APB2RSTR = 0x00000000;
+ 342              		.loc 1 108 0
+ 343 000a 104B     		ldr	r3, .L26
+ 112:SYSTEM/sys/sys.c **** 	RCC->APB2ENR = 0x00000000; //外设时钟关闭.
+ 113:SYSTEM/sys/sys.c **** 	RCC->APB1ENR = 0x00000000;
+ 114:SYSTEM/sys/sys.c **** 	RCC->CR |= 0x00000001;   //使能内部高速时钟HSION
+ 115:SYSTEM/sys/sys.c **** 	RCC->CFGR &= 0xF8FF0000; //复位SW[1:0],HPRE[3:0],PPRE1[2:0],PPRE2[2:0],ADCPRE[1:0],MCO[2:0]
+ 344              		.loc 1 115 0
+ 345 000c 1049     		ldr	r1, .L26+4
+ 108:SYSTEM/sys/sys.c **** 	RCC->APB2RSTR = 0x00000000;
+ 346              		.loc 1 108 0
+ 347 000e 1A61     		str	r2, [r3, #16]
+ 109:SYSTEM/sys/sys.c **** 
+ 348              		.loc 1 109 0
+ 349 0010 DA60     		str	r2, [r3, #12]
+ 111:SYSTEM/sys/sys.c **** 	RCC->APB2ENR = 0x00000000; //外设时钟关闭.
+ 350              		.loc 1 111 0
+ 351 0012 5861     		str	r0, [r3, #20]
+ 112:SYSTEM/sys/sys.c **** 	RCC->APB2ENR = 0x00000000; //外设时钟关闭.
+ 352              		.loc 1 112 0
+ 353 0014 9A61     		str	r2, [r3, #24]
+ 113:SYSTEM/sys/sys.c **** 	RCC->CR |= 0x00000001;   //使能内部高速时钟HSION
+ 354              		.loc 1 113 0
+ 355 0016 DA61     		str	r2, [r3, #28]
+ 114:SYSTEM/sys/sys.c **** 	RCC->CFGR &= 0xF8FF0000; //复位SW[1:0],HPRE[3:0],PPRE1[2:0],PPRE2[2:0],ADCPRE[1:0],MCO[2:0]
+ 356              		.loc 1 114 0
+ 357 0018 1868     		ldr	r0, [r3]
+ 358              	.LBB18:
+ 359              	.LBB16:
+  40:SYSTEM/sys/sys.c **** 														   //用于标识向量表是在CODE区还是在RAM区
+ 360              		.loc 1 40 0
+ 361 001a 0E4C     		ldr	r4, .L26+8
+ 362              	.LBE16:
+ 363              	.LBE18:
+ 114:SYSTEM/sys/sys.c **** 	RCC->CFGR &= 0xF8FF0000; //复位SW[1:0],HPRE[3:0],PPRE1[2:0],PPRE2[2:0],ADCPRE[1:0],MCO[2:0]
+ 364              		.loc 1 114 0
+ 365 001c 40F00100 		orr	r0, r0, #1
+ 366 0020 1860     		str	r0, [r3]
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 10
+
+
+ 367              		.loc 1 115 0
+ 368 0022 5868     		ldr	r0, [r3, #4]
+ 369 0024 0140     		ands	r1, r1, r0
+ 370 0026 5960     		str	r1, [r3, #4]
+ 116:SYSTEM/sys/sys.c **** 	RCC->CR &= 0xFEF6FFFF;   //复位HSEON,CSSON,PLLON
+ 371              		.loc 1 116 0
+ 372 0028 1968     		ldr	r1, [r3]
+ 373 002a 21F08471 		bic	r1, r1, #17301504
+ 374 002e 21F48031 		bic	r1, r1, #65536
+ 375 0032 1960     		str	r1, [r3]
+ 117:SYSTEM/sys/sys.c **** 	RCC->CR &= 0xFFFBFFFF;   //复位HSEBYP
+ 376              		.loc 1 117 0
+ 377 0034 1968     		ldr	r1, [r3]
+ 378 0036 21F48021 		bic	r1, r1, #262144
+ 379 003a 1960     		str	r1, [r3]
+ 118:SYSTEM/sys/sys.c **** 	RCC->CFGR &= 0xFF80FFFF; //复位PLLSRC, PLLXTPRE, PLLMUL[3:0] and USBPRE
+ 380              		.loc 1 118 0
+ 381 003c 5968     		ldr	r1, [r3, #4]
+ 382 003e 21F4FE01 		bic	r1, r1, #8323072
+ 383 0042 5960     		str	r1, [r3, #4]
+ 119:SYSTEM/sys/sys.c **** 	RCC->CIR = 0x00000000;   //关闭所有中断
+ 384              		.loc 1 119 0
+ 385 0044 9A60     		str	r2, [r3, #8]
+ 386              	.LVL28:
+ 387              	.LBB19:
+ 388              	.LBB17:
+  40:SYSTEM/sys/sys.c **** 														   //用于标识向量表是在CODE区还是在RAM区
+ 389              		.loc 1 40 0
+ 390 0046 A560     		str	r5, [r4, #8]
+ 391              	.LVL29:
+ 392              	.LBE17:
+ 393              	.LBE19:
+ 120:SYSTEM/sys/sys.c **** 							 //配置向量表
+ 121:SYSTEM/sys/sys.c **** #ifdef VECT_TAB_RAM
+ 122:SYSTEM/sys/sys.c **** 	MY_NVIC_SetVectorTable(0x20000000, 0x0);
+ 123:SYSTEM/sys/sys.c **** #else
+ 124:SYSTEM/sys/sys.c **** 	MY_NVIC_SetVectorTable(0x08000000, 0x0);
+ 125:SYSTEM/sys/sys.c **** #endif
+ 126:SYSTEM/sys/sys.c **** }
+ 394              		.loc 1 126 0
+ 395 0048 30BC     		pop	{r4, r5}
+ 396              	.LCFI4:
+ 397              		.cfi_restore 5
+ 398              		.cfi_restore 4
+ 399              		.cfi_def_cfa_offset 0
+ 400 004a 7047     		bx	lr
+ 401              	.L27:
+ 402              		.align	2
+ 403              	.L26:
+ 404 004c 00100240 		.word	1073876992
+ 405 0050 0000FFF8 		.word	-117506048
+ 406 0054 00ED00E0 		.word	-536810240
+ 407              		.cfi_endproc
+ 408              	.LFE33:
+ 410              		.section	.text.WFI_SET,"ax",%progbits
+ 411              		.align	1
+ 412              		.p2align 2,,3
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 11
+
+
+ 413              		.global	WFI_SET
+ 414              		.syntax unified
+ 415              		.thumb
+ 416              		.thumb_func
+ 417              		.fpu softvfp
+ 419              	WFI_SET:
+ 420              	.LFB34:
+ 127:SYSTEM/sys/sys.c **** /* 
+ 128:SYSTEM/sys/sys.c **** //THUMB指令不支持汇编内联
+ 129:SYSTEM/sys/sys.c **** //采用如下方法实现执行汇编指令WFI  
+ 130:SYSTEM/sys/sys.c **** void WFI_SET(void)
+ 131:SYSTEM/sys/sys.c **** {
+ 132:SYSTEM/sys/sys.c **** 	__ASM volatile("wfi");		  
+ 133:SYSTEM/sys/sys.c **** }
+ 134:SYSTEM/sys/sys.c **** //关闭所有中断
+ 135:SYSTEM/sys/sys.c **** void INTX_DISABLE(void)
+ 136:SYSTEM/sys/sys.c **** {		  
+ 137:SYSTEM/sys/sys.c **** 	__ASM volatile("cpsid i");
+ 138:SYSTEM/sys/sys.c **** }
+ 139:SYSTEM/sys/sys.c **** //开启所有中断
+ 140:SYSTEM/sys/sys.c **** void INTX_ENABLE(void)
+ 141:SYSTEM/sys/sys.c **** {
+ 142:SYSTEM/sys/sys.c **** 	__ASM volatile("cpsie i");		  
+ 143:SYSTEM/sys/sys.c **** }
+ 144:SYSTEM/sys/sys.c **** //设置栈顶地址
+ 145:SYSTEM/sys/sys.c **** //addr:栈顶地址
+ 146:SYSTEM/sys/sys.c **** __asm void MSR_MSP(u32 addr) 
+ 147:SYSTEM/sys/sys.c **** {
+ 148:SYSTEM/sys/sys.c ****     MSR MSP, r0 			//set Main Stack value
+ 149:SYSTEM/sys/sys.c ****     BX r14
+ 150:SYSTEM/sys/sys.c **** }
+ 151:SYSTEM/sys/sys.c **** */
+ 152:SYSTEM/sys/sys.c **** 
+ 153:SYSTEM/sys/sys.c **** //THUMB指令不支持汇编内联
+ 154:SYSTEM/sys/sys.c **** //采用如下方法实现执行汇编指令WFI
+ 155:SYSTEM/sys/sys.c **** void WFI_SET(void)
+ 156:SYSTEM/sys/sys.c **** {
+ 421              		.loc 1 156 0
+ 422              		.cfi_startproc
+ 423              		@ args = 0, pretend = 0, frame = 0
+ 424              		@ frame_needed = 0, uses_anonymous_args = 0
+ 425              		@ link register save eliminated.
+ 157:SYSTEM/sys/sys.c **** 	__asm__ __volatile__("WFI");
+ 426              		.loc 1 157 0
+ 427              		.syntax unified
+ 428              	@ 157 "SYSTEM/sys/sys.c" 1
+ 429 0000 30BF     		WFI
+ 430              	@ 0 "" 2
+ 158:SYSTEM/sys/sys.c **** }
+ 431              		.loc 1 158 0
+ 432              		.thumb
+ 433              		.syntax unified
+ 434 0002 7047     		bx	lr
+ 435              		.cfi_endproc
+ 436              	.LFE34:
+ 438              		.section	.text.INTX_DISABLE,"ax",%progbits
+ 439              		.align	1
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 12
+
+
+ 440              		.p2align 2,,3
+ 441              		.global	INTX_DISABLE
+ 442              		.syntax unified
+ 443              		.thumb
+ 444              		.thumb_func
+ 445              		.fpu softvfp
+ 447              	INTX_DISABLE:
+ 448              	.LFB35:
+ 159:SYSTEM/sys/sys.c **** 
+ 160:SYSTEM/sys/sys.c **** //关闭所有中断(但是不包括fault和NMI中断)
+ 161:SYSTEM/sys/sys.c **** void INTX_DISABLE(void)
+ 162:SYSTEM/sys/sys.c **** {
+ 449              		.loc 1 162 0
+ 450              		.cfi_startproc
+ 451              		@ args = 0, pretend = 0, frame = 0
+ 452              		@ frame_needed = 0, uses_anonymous_args = 0
+ 453              		@ link register save eliminated.
+ 163:SYSTEM/sys/sys.c **** 
+ 164:SYSTEM/sys/sys.c **** 	__asm__ __volatile__("CPSID   I");
+ 454              		.loc 1 164 0
+ 455              		.syntax unified
+ 456              	@ 164 "SYSTEM/sys/sys.c" 1
+ 457 0000 72B6     		CPSID   I
+ 458              	@ 0 "" 2
+ 165:SYSTEM/sys/sys.c **** 	__asm__ __volatile__("BX      LR");
+ 459              		.loc 1 165 0
+ 460              	@ 165 "SYSTEM/sys/sys.c" 1
+ 461 0002 7047     		BX      LR
+ 462              	@ 0 "" 2
+ 166:SYSTEM/sys/sys.c **** }
+ 463              		.loc 1 166 0
+ 464              		.thumb
+ 465              		.syntax unified
+ 466 0004 7047     		bx	lr
+ 467              		.cfi_endproc
+ 468              	.LFE35:
+ 470 0006 00BF     		.section	.text.INTX_ENABLE,"ax",%progbits
+ 471              		.align	1
+ 472              		.p2align 2,,3
+ 473              		.global	INTX_ENABLE
+ 474              		.syntax unified
+ 475              		.thumb
+ 476              		.thumb_func
+ 477              		.fpu softvfp
+ 479              	INTX_ENABLE:
+ 480              	.LFB36:
+ 167:SYSTEM/sys/sys.c **** //开启所有中断
+ 168:SYSTEM/sys/sys.c **** void INTX_ENABLE(void)
+ 169:SYSTEM/sys/sys.c **** {
+ 481              		.loc 1 169 0
+ 482              		.cfi_startproc
+ 483              		@ args = 0, pretend = 0, frame = 0
+ 484              		@ frame_needed = 0, uses_anonymous_args = 0
+ 485              		@ link register save eliminated.
+ 170:SYSTEM/sys/sys.c **** 	__asm__ __volatile__("CPSIE   I");
+ 486              		.loc 1 170 0
+ 487              		.syntax unified
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 13
+
+
+ 488              	@ 170 "SYSTEM/sys/sys.c" 1
+ 489 0000 62B6     		CPSIE   I
+ 490              	@ 0 "" 2
+ 171:SYSTEM/sys/sys.c **** 	__asm__ __volatile__("BX      LR");
+ 491              		.loc 1 171 0
+ 492              	@ 171 "SYSTEM/sys/sys.c" 1
+ 493 0002 7047     		BX      LR
+ 494              	@ 0 "" 2
+ 172:SYSTEM/sys/sys.c **** }
+ 495              		.loc 1 172 0
+ 496              		.thumb
+ 497              		.syntax unified
+ 498 0004 7047     		bx	lr
+ 499              		.cfi_endproc
+ 500              	.LFE36:
+ 502 0006 00BF     		.section	.text.MSR_MSP,"ax",%progbits
+ 503              		.align	1
+ 504              		.p2align 2,,3
+ 505              		.global	MSR_MSP
+ 506              		.syntax unified
+ 507              		.thumb
+ 508              		.thumb_func
+ 509              		.fpu softvfp
+ 511              	MSR_MSP:
+ 512              	.LFB37:
+ 173:SYSTEM/sys/sys.c **** //设置栈顶地址
+ 174:SYSTEM/sys/sys.c **** //addr:栈顶地址
+ 175:SYSTEM/sys/sys.c **** void MSR_MSP(u32 addr)
+ 176:SYSTEM/sys/sys.c **** {
+ 513              		.loc 1 176 0
+ 514              		.cfi_startproc
+ 515              		@ args = 0, pretend = 0, frame = 0
+ 516              		@ frame_needed = 0, uses_anonymous_args = 0
+ 517              		@ link register save eliminated.
+ 518              	.LVL30:
+ 177:SYSTEM/sys/sys.c **** 	__asm__ __volatile__("MSR MSP, r0");
+ 519              		.loc 1 177 0
+ 520              		.syntax unified
+ 521              	@ 177 "SYSTEM/sys/sys.c" 1
+ 522 0000 80F30888 		MSR MSP, r0
+ 523              	@ 0 "" 2
+ 178:SYSTEM/sys/sys.c **** 	__asm__ __volatile__("BX r14");
+ 524              		.loc 1 178 0
+ 525              	@ 178 "SYSTEM/sys/sys.c" 1
+ 526 0004 7047     		BX r14
+ 527              	@ 0 "" 2
+ 179:SYSTEM/sys/sys.c **** }
+ 528              		.loc 1 179 0
+ 529              		.thumb
+ 530              		.syntax unified
+ 531 0006 7047     		bx	lr
+ 532              		.cfi_endproc
+ 533              	.LFE37:
+ 535              		.section	.text.Sys_Standby,"ax",%progbits
+ 536              		.align	1
+ 537              		.p2align 2,,3
+ 538              		.global	Sys_Standby
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 14
+
+
+ 539              		.syntax unified
+ 540              		.thumb
+ 541              		.thumb_func
+ 542              		.fpu softvfp
+ 544              	Sys_Standby:
+ 545              	.LFB38:
+ 180:SYSTEM/sys/sys.c **** 
+ 181:SYSTEM/sys/sys.c **** //进入待机模式
+ 182:SYSTEM/sys/sys.c **** void Sys_Standby(void)
+ 183:SYSTEM/sys/sys.c **** {
+ 546              		.loc 1 183 0
+ 547              		.cfi_startproc
+ 548              		@ args = 0, pretend = 0, frame = 0
+ 549              		@ frame_needed = 0, uses_anonymous_args = 0
+ 550              		@ link register save eliminated.
+ 184:SYSTEM/sys/sys.c **** 	SCB->SCR |= 1 << 2;		 //使能SLEEPDEEP位 (SYS->CTRL)
+ 551              		.loc 1 184 0
+ 552 0000 0C48     		ldr	r0, .L33
+ 185:SYSTEM/sys/sys.c **** 	RCC->APB1ENR |= 1 << 28; //使能电源时钟
+ 553              		.loc 1 185 0
+ 554 0002 0D49     		ldr	r1, .L33+4
+ 184:SYSTEM/sys/sys.c **** 	SCB->SCR |= 1 << 2;		 //使能SLEEPDEEP位 (SYS->CTRL)
+ 555              		.loc 1 184 0
+ 556 0004 0269     		ldr	r2, [r0, #16]
+ 186:SYSTEM/sys/sys.c **** 	PWR->CSR |= 1 << 8;		 //设置WKUP用于唤醒
+ 557              		.loc 1 186 0
+ 558 0006 0D4B     		ldr	r3, .L33+8
+ 184:SYSTEM/sys/sys.c **** 	SCB->SCR |= 1 << 2;		 //使能SLEEPDEEP位 (SYS->CTRL)
+ 559              		.loc 1 184 0
+ 560 0008 42F00402 		orr	r2, r2, #4
+ 561 000c 0261     		str	r2, [r0, #16]
+ 185:SYSTEM/sys/sys.c **** 	RCC->APB1ENR |= 1 << 28; //使能电源时钟
+ 562              		.loc 1 185 0
+ 563 000e CA69     		ldr	r2, [r1, #28]
+ 564 0010 42F08052 		orr	r2, r2, #268435456
+ 565 0014 CA61     		str	r2, [r1, #28]
+ 566              		.loc 1 186 0
+ 567 0016 5A68     		ldr	r2, [r3, #4]
+ 568 0018 42F48072 		orr	r2, r2, #256
+ 569 001c 5A60     		str	r2, [r3, #4]
+ 187:SYSTEM/sys/sys.c **** 	PWR->CR |= 1 << 2;		 //清除Wake-up 标志
+ 570              		.loc 1 187 0
+ 571 001e 1A68     		ldr	r2, [r3]
+ 572 0020 42F00402 		orr	r2, r2, #4
+ 573 0024 1A60     		str	r2, [r3]
+ 188:SYSTEM/sys/sys.c **** 	PWR->CR |= 1 << 1;		 //PDDS置位
+ 574              		.loc 1 188 0
+ 575 0026 1A68     		ldr	r2, [r3]
+ 576 0028 42F00202 		orr	r2, r2, #2
+ 577 002c 1A60     		str	r2, [r3]
+ 578              	.LBB20:
+ 579              	.LBB21:
+ 157:SYSTEM/sys/sys.c **** }
+ 580              		.loc 1 157 0
+ 581              		.syntax unified
+ 582              	@ 157 "SYSTEM/sys/sys.c" 1
+ 583 002e 30BF     		WFI
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 15
+
+
+ 584              	@ 0 "" 2
+ 585              		.thumb
+ 586              		.syntax unified
+ 587              	.LBE21:
+ 588              	.LBE20:
+ 189:SYSTEM/sys/sys.c **** 	WFI_SET();				 //执行WFI指令
+ 190:SYSTEM/sys/sys.c **** }
+ 589              		.loc 1 190 0
+ 590 0030 7047     		bx	lr
+ 591              	.L34:
+ 592 0032 00BF     		.align	2
+ 593              	.L33:
+ 594 0034 00ED00E0 		.word	-536810240
+ 595 0038 00100240 		.word	1073876992
+ 596 003c 00700040 		.word	1073770496
+ 597              		.cfi_endproc
+ 598              	.LFE38:
+ 600              		.section	.text.Sys_Soft_Reset,"ax",%progbits
+ 601              		.align	1
+ 602              		.p2align 2,,3
+ 603              		.global	Sys_Soft_Reset
+ 604              		.syntax unified
+ 605              		.thumb
+ 606              		.thumb_func
+ 607              		.fpu softvfp
+ 609              	Sys_Soft_Reset:
+ 610              	.LFB39:
+ 191:SYSTEM/sys/sys.c **** //系统软复位
+ 192:SYSTEM/sys/sys.c **** void Sys_Soft_Reset(void)
+ 193:SYSTEM/sys/sys.c **** {
+ 611              		.loc 1 193 0
+ 612              		.cfi_startproc
+ 613              		@ args = 0, pretend = 0, frame = 0
+ 614              		@ frame_needed = 0, uses_anonymous_args = 0
+ 615              		@ link register save eliminated.
+ 194:SYSTEM/sys/sys.c **** 	SCB->AIRCR = 0X05FA0000 | (u32)0x04;
+ 616              		.loc 1 194 0
+ 617 0000 014B     		ldr	r3, .L36
+ 618 0002 024A     		ldr	r2, .L36+4
+ 619 0004 DA60     		str	r2, [r3, #12]
+ 195:SYSTEM/sys/sys.c **** }
+ 620              		.loc 1 195 0
+ 621 0006 7047     		bx	lr
+ 622              	.L37:
+ 623              		.align	2
+ 624              	.L36:
+ 625 0008 00ED00E0 		.word	-536810240
+ 626 000c 0400FA05 		.word	100270084
+ 627              		.cfi_endproc
+ 628              	.LFE39:
+ 630              		.section	.text.JTAG_Set,"ax",%progbits
+ 631              		.align	1
+ 632              		.p2align 2,,3
+ 633              		.global	JTAG_Set
+ 634              		.syntax unified
+ 635              		.thumb
+ 636              		.thumb_func
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 16
+
+
+ 637              		.fpu softvfp
+ 639              	JTAG_Set:
+ 640              	.LFB40:
+ 196:SYSTEM/sys/sys.c **** //JTAG模式设置,用于设置JTAG的模式
+ 197:SYSTEM/sys/sys.c **** //mode:jtag,swd模式设置;00,全使能;01,使能SWD;10,全关闭;
+ 198:SYSTEM/sys/sys.c **** //#define JTAG_SWD_DISABLE   0X02
+ 199:SYSTEM/sys/sys.c **** //#define SWD_ENABLE         0X01
+ 200:SYSTEM/sys/sys.c **** //#define JTAG_SWD_ENABLE    0X00
+ 201:SYSTEM/sys/sys.c **** void JTAG_Set(u8 mode)
+ 202:SYSTEM/sys/sys.c **** {
+ 641              		.loc 1 202 0
+ 642              		.cfi_startproc
+ 643              		@ args = 0, pretend = 0, frame = 0
+ 644              		@ frame_needed = 0, uses_anonymous_args = 0
+ 645              		@ link register save eliminated.
+ 646              	.LVL31:
+ 203:SYSTEM/sys/sys.c **** 	u32 temp;
+ 204:SYSTEM/sys/sys.c **** 	temp = mode;
+ 205:SYSTEM/sys/sys.c **** 	temp <<= 25;
+ 206:SYSTEM/sys/sys.c **** 	RCC->APB2ENR |= 1 << 0;   //开启辅助时钟
+ 647              		.loc 1 206 0
+ 648 0000 0749     		ldr	r1, .L39
+ 207:SYSTEM/sys/sys.c **** 	AFIO->MAPR &= 0XF8FFFFFF; //清除MAPR的[26:24]
+ 649              		.loc 1 207 0
+ 650 0002 084B     		ldr	r3, .L39+4
+ 206:SYSTEM/sys/sys.c **** 	AFIO->MAPR &= 0XF8FFFFFF; //清除MAPR的[26:24]
+ 651              		.loc 1 206 0
+ 652 0004 8A69     		ldr	r2, [r1, #24]
+ 653 0006 42F00102 		orr	r2, r2, #1
+ 654 000a 8A61     		str	r2, [r1, #24]
+ 655              		.loc 1 207 0
+ 656 000c 5A68     		ldr	r2, [r3, #4]
+ 657 000e 22F0E062 		bic	r2, r2, #117440512
+ 658 0012 5A60     		str	r2, [r3, #4]
+ 208:SYSTEM/sys/sys.c **** 	AFIO->MAPR |= temp;		  //设置jtag模式
+ 659              		.loc 1 208 0
+ 660 0014 5A68     		ldr	r2, [r3, #4]
+ 661 0016 42EA4060 		orr	r0, r2, r0, lsl #25
+ 662              	.LVL32:
+ 663 001a 5860     		str	r0, [r3, #4]
+ 209:SYSTEM/sys/sys.c **** }
+ 664              		.loc 1 209 0
+ 665 001c 7047     		bx	lr
+ 666              	.L40:
+ 667 001e 00BF     		.align	2
+ 668              	.L39:
+ 669 0020 00100240 		.word	1073876992
+ 670 0024 00000140 		.word	1073807360
+ 671              		.cfi_endproc
+ 672              	.LFE40:
+ 674              		.section	.text.Stm32_Clock_Init,"ax",%progbits
+ 675              		.align	1
+ 676              		.p2align 2,,3
+ 677              		.global	Stm32_Clock_Init
+ 678              		.syntax unified
+ 679              		.thumb
+ 680              		.thumb_func
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 17
+
+
+ 681              		.fpu softvfp
+ 683              	Stm32_Clock_Init:
+ 684              	.LFB41:
+ 210:SYSTEM/sys/sys.c **** //系统时钟初始化函数
+ 211:SYSTEM/sys/sys.c **** //pll:选择的倍频数，从2开始，最大值为16
+ 212:SYSTEM/sys/sys.c **** void Stm32_Clock_Init(u8 PLL)
+ 213:SYSTEM/sys/sys.c **** {
+ 685              		.loc 1 213 0
+ 686              		.cfi_startproc
+ 687              		@ args = 0, pretend = 0, frame = 0
+ 688              		@ frame_needed = 0, uses_anonymous_args = 0
+ 689              		@ link register save eliminated.
+ 690              	.LVL33:
+ 691 0000 70B4     		push	{r4, r5, r6}
+ 692              	.LCFI5:
+ 693              		.cfi_def_cfa_offset 12
+ 694              		.cfi_offset 4, -12
+ 695              		.cfi_offset 5, -8
+ 696              		.cfi_offset 6, -4
+ 697              	.LBB26:
+ 698              	.LBB27:
+ 108:SYSTEM/sys/sys.c **** 	RCC->APB2RSTR = 0x00000000;
+ 699              		.loc 1 108 0
+ 700 0002 0021     		movs	r1, #0
+ 111:SYSTEM/sys/sys.c **** 	RCC->APB2ENR = 0x00000000; //外设时钟关闭.
+ 701              		.loc 1 111 0
+ 702 0004 1424     		movs	r4, #20
+ 703              	.LBB28:
+ 704              	.LBB29:
+  40:SYSTEM/sys/sys.c **** 														   //用于标识向量表是在CODE区还是在RAM区
+ 705              		.loc 1 40 0
+ 706 0006 4FF00066 		mov	r6, #134217728
+ 707              	.LBE29:
+ 708              	.LBE28:
+ 108:SYSTEM/sys/sys.c **** 	RCC->APB2RSTR = 0x00000000;
+ 709              		.loc 1 108 0
+ 710 000a 264B     		ldr	r3, .L51
+ 711              	.LBE27:
+ 712              	.LBE26:
+ 214:SYSTEM/sys/sys.c **** 	unsigned char temp = 0;
+ 215:SYSTEM/sys/sys.c **** 	MYRCC_DeInit();		   //复位并配置向量表
+ 216:SYSTEM/sys/sys.c **** 	RCC->CR |= 0x00010000; //外部高速时钟使能HSEON
+ 217:SYSTEM/sys/sys.c **** 	while (!(RCC->CR >> 17))
+ 713              		.loc 1 217 0
+ 714 000c 1A46     		mov	r2, r3
+ 715              	.LBB35:
+ 716              	.LBB34:
+ 108:SYSTEM/sys/sys.c **** 	RCC->APB2RSTR = 0x00000000;
+ 717              		.loc 1 108 0
+ 718 000e 1961     		str	r1, [r3, #16]
+ 109:SYSTEM/sys/sys.c **** 
+ 719              		.loc 1 109 0
+ 720 0010 D960     		str	r1, [r3, #12]
+ 111:SYSTEM/sys/sys.c **** 	RCC->APB2ENR = 0x00000000; //外设时钟关闭.
+ 721              		.loc 1 111 0
+ 722 0012 5C61     		str	r4, [r3, #20]
+ 112:SYSTEM/sys/sys.c **** 	RCC->APB1ENR = 0x00000000;
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 18
+
+
+ 723              		.loc 1 112 0
+ 724 0014 9961     		str	r1, [r3, #24]
+ 113:SYSTEM/sys/sys.c **** 	RCC->CR |= 0x00000001;   //使能内部高速时钟HSION
+ 725              		.loc 1 113 0
+ 726 0016 D961     		str	r1, [r3, #28]
+ 114:SYSTEM/sys/sys.c **** 	RCC->CFGR &= 0xF8FF0000; //复位SW[1:0],HPRE[3:0],PPRE1[2:0],PPRE2[2:0],ADCPRE[1:0],MCO[2:0]
+ 727              		.loc 1 114 0
+ 728 0018 1D68     		ldr	r5, [r3]
+ 115:SYSTEM/sys/sys.c **** 	RCC->CR &= 0xFEF6FFFF;   //复位HSEON,CSSON,PLLON
+ 729              		.loc 1 115 0
+ 730 001a 234C     		ldr	r4, .L51+4
+ 114:SYSTEM/sys/sys.c **** 	RCC->CFGR &= 0xF8FF0000; //复位SW[1:0],HPRE[3:0],PPRE1[2:0],PPRE2[2:0],ADCPRE[1:0],MCO[2:0]
+ 731              		.loc 1 114 0
+ 732 001c 45F00105 		orr	r5, r5, #1
+ 733 0020 1D60     		str	r5, [r3]
+ 115:SYSTEM/sys/sys.c **** 	RCC->CR &= 0xFEF6FFFF;   //复位HSEON,CSSON,PLLON
+ 734              		.loc 1 115 0
+ 735 0022 5D68     		ldr	r5, [r3, #4]
+ 736 0024 2C40     		ands	r4, r4, r5
+ 737 0026 5C60     		str	r4, [r3, #4]
+ 116:SYSTEM/sys/sys.c **** 	RCC->CR &= 0xFFFBFFFF;   //复位HSEBYP
+ 738              		.loc 1 116 0
+ 739 0028 1C68     		ldr	r4, [r3]
+ 740              	.LBB32:
+ 741              	.LBB30:
+  40:SYSTEM/sys/sys.c **** 														   //用于标识向量表是在CODE区还是在RAM区
+ 742              		.loc 1 40 0
+ 743 002a 204D     		ldr	r5, .L51+8
+ 744              	.LBE30:
+ 745              	.LBE32:
+ 116:SYSTEM/sys/sys.c **** 	RCC->CR &= 0xFFFBFFFF;   //复位HSEBYP
+ 746              		.loc 1 116 0
+ 747 002c 24F08474 		bic	r4, r4, #17301504
+ 748 0030 24F48034 		bic	r4, r4, #65536
+ 749 0034 1C60     		str	r4, [r3]
+ 117:SYSTEM/sys/sys.c **** 	RCC->CFGR &= 0xFF80FFFF; //复位PLLSRC, PLLXTPRE, PLLMUL[3:0] and USBPRE
+ 750              		.loc 1 117 0
+ 751 0036 1C68     		ldr	r4, [r3]
+ 752 0038 24F48024 		bic	r4, r4, #262144
+ 753 003c 1C60     		str	r4, [r3]
+ 118:SYSTEM/sys/sys.c **** 	RCC->CIR = 0x00000000;   //关闭所有中断
+ 754              		.loc 1 118 0
+ 755 003e 5C68     		ldr	r4, [r3, #4]
+ 756 0040 24F4FE04 		bic	r4, r4, #8323072
+ 757 0044 5C60     		str	r4, [r3, #4]
+ 119:SYSTEM/sys/sys.c **** 							 //配置向量表
+ 758              		.loc 1 119 0
+ 759 0046 9960     		str	r1, [r3, #8]
+ 760              	.LVL34:
+ 761              	.LBB33:
+ 762              	.LBB31:
+  40:SYSTEM/sys/sys.c **** 														   //用于标识向量表是在CODE区还是在RAM区
+ 763              		.loc 1 40 0
+ 764 0048 AE60     		str	r6, [r5, #8]
+ 765              	.LVL35:
+ 766              	.LBE31:
+ 767              	.LBE33:
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 19
+
+
+ 768              	.LBE34:
+ 769              	.LBE35:
+ 216:SYSTEM/sys/sys.c **** 	while (!(RCC->CR >> 17))
+ 770              		.loc 1 216 0
+ 771 004a 1968     		ldr	r1, [r3]
+ 772 004c 41F48031 		orr	r1, r1, #65536
+ 773 0050 1960     		str	r1, [r3]
+ 774              	.L42:
+ 775              		.loc 1 217 0 discriminator 1
+ 776 0052 1368     		ldr	r3, [r2]
+ 777 0054 5B0C     		lsrs	r3, r3, #17
+ 778 0056 FCD0     		beq	.L42
+ 218:SYSTEM/sys/sys.c **** 		;					//等待外部时钟就绪
+ 219:SYSTEM/sys/sys.c **** 	RCC->CFGR = 0X00000400; //APB1=DIV2;APB2=DIV1;AHB=DIV1;
+ 779              		.loc 1 219 0
+ 780 0058 4FF48063 		mov	r3, #1024
+ 781 005c 5360     		str	r3, [r2, #4]
+ 782              	.LVL36:
+ 220:SYSTEM/sys/sys.c **** 	PLL -= 2;				//抵消2个单位（因为是从2开始的，设置0就是2）
+ 221:SYSTEM/sys/sys.c **** 	RCC->CFGR |= PLL << 18; //设置PLL值 2~16
+ 783              		.loc 1 221 0
+ 784 005e 5368     		ldr	r3, [r2, #4]
+ 220:SYSTEM/sys/sys.c **** 	PLL -= 2;				//抵消2个单位（因为是从2开始的，设置0就是2）
+ 785              		.loc 1 220 0
+ 786 0060 0238     		subs	r0, r0, #2
+ 787              	.LVL37:
+ 788              		.loc 1 221 0
+ 789 0062 C0B2     		uxtb	r0, r0
+ 790 0064 43EA8040 		orr	r0, r3, r0, lsl #18
+ 791 0068 5060     		str	r0, [r2, #4]
+ 222:SYSTEM/sys/sys.c **** 	RCC->CFGR |= 1 << 16;   //PLLSRC ON
+ 792              		.loc 1 222 0
+ 793 006a 5368     		ldr	r3, [r2, #4]
+ 223:SYSTEM/sys/sys.c **** 	FLASH->ACR |= 0x32;		//FLASH 2个延时周期
+ 794              		.loc 1 223 0
+ 795 006c 1048     		ldr	r0, .L51+12
+ 222:SYSTEM/sys/sys.c **** 	RCC->CFGR |= 1 << 16;   //PLLSRC ON
+ 796              		.loc 1 222 0
+ 797 006e 43F48033 		orr	r3, r3, #65536
+ 798 0072 5360     		str	r3, [r2, #4]
+ 799              		.loc 1 223 0
+ 800 0074 0368     		ldr	r3, [r0]
+ 224:SYSTEM/sys/sys.c **** 	RCC->CR |= 0x01000000;  //PLLON
+ 225:SYSTEM/sys/sys.c **** 	while (!(RCC->CR >> 25))
+ 801              		.loc 1 225 0
+ 802 0076 0B49     		ldr	r1, .L51
+ 223:SYSTEM/sys/sys.c **** 	FLASH->ACR |= 0x32;		//FLASH 2个延时周期
+ 803              		.loc 1 223 0
+ 804 0078 43F03203 		orr	r3, r3, #50
+ 805 007c 0360     		str	r3, [r0]
+ 224:SYSTEM/sys/sys.c **** 	RCC->CR |= 0x01000000;  //PLLON
+ 806              		.loc 1 224 0
+ 807 007e 1368     		ldr	r3, [r2]
+ 808 0080 43F08073 		orr	r3, r3, #16777216
+ 809 0084 1360     		str	r3, [r2]
+ 810              	.L43:
+ 811              		.loc 1 225 0 discriminator 1
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 20
+
+
+ 812 0086 0B68     		ldr	r3, [r1]
+ 813 0088 5B0E     		lsrs	r3, r3, #25
+ 814 008a FCD0     		beq	.L43
+ 226:SYSTEM/sys/sys.c **** 		;					 //等待PLL锁定
+ 227:SYSTEM/sys/sys.c **** 	RCC->CFGR |= 0x00000002; //PLL作为系统时钟
+ 815              		.loc 1 227 0
+ 816 008c 4B68     		ldr	r3, [r1, #4]
+ 228:SYSTEM/sys/sys.c **** 	while (temp != 0x02)	 //等待PLL作为系统时钟设置成功
+ 229:SYSTEM/sys/sys.c **** 	{
+ 230:SYSTEM/sys/sys.c **** 		temp = RCC->CFGR >> 2;
+ 817              		.loc 1 230 0
+ 818 008e 054A     		ldr	r2, .L51
+ 227:SYSTEM/sys/sys.c **** 	while (temp != 0x02)	 //等待PLL作为系统时钟设置成功
+ 819              		.loc 1 227 0
+ 820 0090 43F00203 		orr	r3, r3, #2
+ 821 0094 4B60     		str	r3, [r1, #4]
+ 822              	.LVL38:
+ 823              	.L44:
+ 824              		.loc 1 230 0
+ 825 0096 5368     		ldr	r3, [r2, #4]
+ 826              	.LVL39:
+ 228:SYSTEM/sys/sys.c **** 	while (temp != 0x02)	 //等待PLL作为系统时钟设置成功
+ 827              		.loc 1 228 0
+ 828 0098 C3F38103 		ubfx	r3, r3, #2, #2
+ 829              	.LVL40:
+ 830 009c 022B     		cmp	r3, #2
+ 831 009e FAD1     		bne	.L44
+ 231:SYSTEM/sys/sys.c **** 		temp &= 0x03;
+ 232:SYSTEM/sys/sys.c **** 	}
+ 233:SYSTEM/sys/sys.c **** }
+ 832              		.loc 1 233 0
+ 833 00a0 70BC     		pop	{r4, r5, r6}
+ 834              	.LCFI6:
+ 835              		.cfi_restore 6
+ 836              		.cfi_restore 5
+ 837              		.cfi_restore 4
+ 838              		.cfi_def_cfa_offset 0
+ 839 00a2 7047     		bx	lr
+ 840              	.L52:
+ 841              		.align	2
+ 842              	.L51:
+ 843 00a4 00100240 		.word	1073876992
+ 844 00a8 0000FFF8 		.word	-117506048
+ 845 00ac 00ED00E0 		.word	-536810240
+ 846 00b0 00200240 		.word	1073881088
+ 847              		.cfi_endproc
+ 848              	.LFE41:
+ 850              		.text
+ 851              	.Letext0:
+ 852              		.file 2 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\machine\\_default_t
+ 853              		.file 3 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\sys\\_stdint.h"
+ 854              		.file 4 "SYSTEM/sys/core_cm3.h"
+ 855              		.file 5 "SYSTEM/sys/system_stm32f10x.h"
+ 856              		.file 6 "SYSTEM/sys/stm32f10x.h"
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 21
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 sys.c
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:14     .text.MY_NVIC_SetVectorTable:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:22     .text.MY_NVIC_SetVectorTable:00000000 MY_NVIC_SetVectorTable
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:35     .text.MY_NVIC_SetVectorTable:00000010 $d
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:38     .text.MY_NVIC_PriorityGroupConfig:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:46     .text.MY_NVIC_PriorityGroupConfig:00000000 MY_NVIC_PriorityGroupConfig
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:65     .text.MY_NVIC_PriorityGroupConfig:00000020 $d
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:68     .text.MY_NVIC_Init:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:76     .text.MY_NVIC_Init:00000000 MY_NVIC_Init
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:117    .text.MY_NVIC_Init:0000006c $d
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:120    .text.Ex_NVIC_Config:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:128    .text.Ex_NVIC_Config:00000000 Ex_NVIC_Config
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:175    .text.Ex_NVIC_Config:00000058 $d
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:179    .text.MYRCC_DeInit:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:187    .text.MYRCC_DeInit:00000000 MYRCC_DeInit
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:226    .text.MYRCC_DeInit:0000004c $d
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:231    .text.WFI_SET:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:239    .text.WFI_SET:00000000 WFI_SET
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:252    .text.INTX_DISABLE:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:260    .text.INTX_DISABLE:00000000 INTX_DISABLE
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:276    .text.INTX_ENABLE:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:284    .text.INTX_ENABLE:00000000 INTX_ENABLE
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:300    .text.MSR_MSP:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:308    .text.MSR_MSP:00000000 MSR_MSP
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:324    .text.Sys_Standby:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:332    .text.Sys_Standby:00000000 Sys_Standby
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:364    .text.Sys_Standby:00000034 $d
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:369    .text.Sys_Soft_Reset:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:377    .text.Sys_Soft_Reset:00000000 Sys_Soft_Reset
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:388    .text.Sys_Soft_Reset:00000008 $d
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:392    .text.JTAG_Set:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:400    .text.JTAG_Set:00000000 JTAG_Set
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:419    .text.JTAG_Set:00000020 $d
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:423    .text.Stm32_Clock_Init:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:431    .text.Stm32_Clock_Init:00000000 Stm32_Clock_Init
-C:\Users\czsta\AppData\Local\Temp\ccyOuEkw.s:509    .text.Stm32_Clock_Init:000000a4 $d
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:16     .text.MY_NVIC_SetVectorTable:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:24     .text.MY_NVIC_SetVectorTable:00000000 MY_NVIC_SetVectorTable
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:45     .text.MY_NVIC_SetVectorTable:00000010 $d
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:50     .text.MY_NVIC_PriorityGroupConfig:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:58     .text.MY_NVIC_PriorityGroupConfig:00000000 MY_NVIC_PriorityGroupConfig
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:98     .text.MY_NVIC_PriorityGroupConfig:00000020 $d
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:103    .text.MY_NVIC_Init:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:111    .text.MY_NVIC_Init:00000000 MY_NVIC_Init
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:210    .text.MY_NVIC_Init:0000006c $d
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:215    .text.Ex_NVIC_Config:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:223    .text.Ex_NVIC_Config:00000000 Ex_NVIC_Config
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:305    .text.Ex_NVIC_Config:00000058 $d
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:311    .text.MYRCC_DeInit:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:319    .text.MYRCC_DeInit:00000000 MYRCC_DeInit
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:404    .text.MYRCC_DeInit:0000004c $d
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:411    .text.WFI_SET:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:419    .text.WFI_SET:00000000 WFI_SET
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:439    .text.INTX_DISABLE:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:447    .text.INTX_DISABLE:00000000 INTX_DISABLE
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:471    .text.INTX_ENABLE:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:479    .text.INTX_ENABLE:00000000 INTX_ENABLE
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:503    .text.MSR_MSP:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:511    .text.MSR_MSP:00000000 MSR_MSP
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:536    .text.Sys_Standby:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:544    .text.Sys_Standby:00000000 Sys_Standby
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:594    .text.Sys_Standby:00000034 $d
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:601    .text.Sys_Soft_Reset:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:609    .text.Sys_Soft_Reset:00000000 Sys_Soft_Reset
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:625    .text.Sys_Soft_Reset:00000008 $d
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:631    .text.JTAG_Set:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:639    .text.JTAG_Set:00000000 JTAG_Set
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:669    .text.JTAG_Set:00000020 $d
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:675    .text.Stm32_Clock_Init:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:683    .text.Stm32_Clock_Init:00000000 Stm32_Clock_Init
+C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:843    .text.Stm32_Clock_Init:000000a4 $d
 
 NO UNDEFINED SYMBOLS

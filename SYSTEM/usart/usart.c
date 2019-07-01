@@ -1,138 +1,144 @@
-#include "usart.h"	  
-////////////////////////////////////////////////////////////////////////////////// 	 
-//Èç¹ûÊ¹ÓÃucos,Ôò°üÀ¨ÏÂÃæµÄÍ·ÎÄ¼ş¼´¿É.
+ï»¿#include "usart.h"
+//////////////////////////////////////////////////////////////////////////////////
+//å¦‚æœä½¿ç”¨ucos,åˆ™åŒ…æ‹¬ä¸‹é¢çš„å¤´æ–‡ä»¶å³å¯.
 #if SYSTEM_SUPPORT_OS
-#include "includes.h"					//ucos Ê¹ÓÃ	  
+#include "includes.h" //ucos ä½¿ç”¨
 #endif
-//////////////////////////////////////////////////////////////////////////////////	 
-//±¾³ÌĞòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßĞí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾
-//ALIENTEK STM32¿ª·¢°å
-//´®¿Ú1³õÊ¼»¯£¨ÊÊºÏSTM32F10xÏµÁĞ£©		   
-//ÕıµãÔ­×Ó@ALIENTEK
-//¼¼ÊõÂÛÌ³:www.openedv.com
-//´´½¨ÈÕÆÚ:2010/1/1
-//°æ±¾£ºV1.7
-//°æÈ¨ËùÓĞ£¬µÁ°æ±Ø¾¿¡£
-//Copyright(C) ¹ãÖİÊĞĞÇÒíµç×Ó¿Æ¼¼ÓĞÏŞ¹«Ë¾ 2009-2019
+//////////////////////////////////////////////////////////////////////////////////
+//æœ¬ç¨‹åºåªä¾›å­¦ä¹ ä½¿ç”¨ï¼Œæœªç»ä½œè€…è®¸å¯ï¼Œä¸å¾—ç”¨äºå…¶å®ƒä»»ä½•ç”¨é€”
+//ALIENTEK STM32å¼€å‘æ¿
+//ä¸²å£1åˆå§‹åŒ–ï¼ˆé€‚åˆSTM32F10xç³»åˆ—ï¼‰
+//æ­£ç‚¹åŸå­@ALIENTEK
+//æŠ€æœ¯è®ºå›:www.openedv.com
+//åˆ›å»ºæ—¥æœŸ:2010/1/1
+//ç‰ˆæœ¬ï¼šV1.7
+//ç‰ˆæƒæ‰€æœ‰ï¼Œç›—ç‰ˆå¿…ç©¶ã€‚
+//Copyright(C) å¹¿å·å¸‚æ˜Ÿç¿¼ç”µå­ç§‘æŠ€æœ‰é™å…¬å¸ 2009-2019
 //All rights reserved
 //********************************************************************************
-//V1.3ĞŞ¸ÄËµÃ÷ 
-//Ö§³ÖÊÊÓ¦²»Í¬ÆµÂÊÏÂµÄ´®¿Ú²¨ÌØÂÊÉèÖÃ.
-//¼ÓÈëÁË¶ÔprintfµÄÖ§³Ö
-//Ôö¼ÓÁË´®¿Ú½ÓÊÕÃüÁî¹¦ÄÜ.
-//ĞŞÕıÁËprintfµÚÒ»¸ö×Ö·û¶ªÊ§µÄbug
-//V1.4ĞŞ¸ÄËµÃ÷
-//1,ĞŞ¸Ä´®¿Ú³õÊ¼»¯IOµÄbug
-//2,ĞŞ¸ÄÁËUSART_RX_STA,Ê¹µÃ´®¿Ú×î´ó½ÓÊÕ×Ö½ÚÊıÎª2µÄ14´Î·½
-//3,Ôö¼ÓÁËUSART_REC_LEN,ÓÃÓÚ¶¨Òå´®¿Ú×î´óÔÊĞí½ÓÊÕµÄ×Ö½ÚÊı(²»´óÓÚ2µÄ14´Î·½)
-//4,ĞŞ¸ÄÁËEN_USART1_RXµÄÊ¹ÄÜ·½Ê½
-//V1.5ĞŞ¸ÄËµÃ÷
-//1,Ôö¼ÓÁË¶ÔUCOSIIµÄÖ§³Ö
-//V1.6ĞŞ¸ÄËµÃ÷ 20150109
-//uart_initº¯ÊıÈ¥µôÁË¿ªÆôPEÖĞ¶Ï
-//V1.7ĞŞ¸ÄËµÃ÷ 20150322
-//ĞŞ¸ÄOS_CRITICAL_METHODºêÅĞ¶ÏÎª£ºSYSTEM_SUPPORT_OS
-////////////////////////////////////////////////////////////////////////////////// 	  
- 
+//V1.3ä¿®æ”¹è¯´æ˜
+//æ”¯æŒé€‚åº”ä¸åŒé¢‘ç‡ä¸‹çš„ä¸²å£æ³¢ç‰¹ç‡è®¾ç½®.
+//åŠ å…¥äº†å¯¹printfçš„æ”¯æŒ
+//å¢åŠ äº†ä¸²å£æ¥æ”¶å‘½ä»¤åŠŸèƒ½.
+//ä¿®æ­£äº†printfç¬¬ä¸€ä¸ªå­—ç¬¦ä¸¢å¤±çš„bug
+//V1.4ä¿®æ”¹è¯´æ˜
+//1,ä¿®æ”¹ä¸²å£åˆå§‹åŒ–IOçš„bug
+//2,ä¿®æ”¹äº†USART_RX_STA,ä½¿å¾—ä¸²å£æœ€å¤§æ¥æ”¶å­—èŠ‚æ•°ä¸º2çš„14æ¬¡æ–¹
+//3,å¢åŠ äº†USART_REC_LEN,ç”¨äºå®šä¹‰ä¸²å£æœ€å¤§å…è®¸æ¥æ”¶çš„å­—èŠ‚æ•°(ä¸å¤§äº2çš„14æ¬¡æ–¹)
+//4,ä¿®æ”¹äº†EN_USART1_RXçš„ä½¿èƒ½æ–¹å¼
+//V1.5ä¿®æ”¹è¯´æ˜
+//1,å¢åŠ äº†å¯¹UCOSIIçš„æ”¯æŒ
+//V1.6ä¿®æ”¹è¯´æ˜ 20150109
+//uart_initå‡½æ•°å»æ‰äº†å¼€å¯PEä¸­æ–­
+//V1.7ä¿®æ”¹è¯´æ˜ 20150322
+//ä¿®æ”¹OS_CRITICAL_METHODå®åˆ¤æ–­ä¸ºï¼šSYSTEM_SUPPORT_OS
+//////////////////////////////////////////////////////////////////////////////////
+
 //////////////////////////////////////////////////////////////////
-//¼ÓÈëÒÔÏÂ´úÂë,Ö§³Öprintfº¯Êı,¶ø²»ĞèÒªÑ¡Ôñuse MicroLIB	  
-#if 1
-#pragma import(__use_no_semihosting)             
-//±ê×¼¿âĞèÒªµÄÖ§³Öº¯Êı                 
-struct __FILE 
-{ 
-	int handle; 
-	/* Whatever you require here. If the only file you are using is */ 
-	/* standard output using printf() for debugging, no file handling */ 
-	/* is required. */ 
-}; 
-/* FILE is typedef¡¯ d in stdio.h. */ 
-FILE __stdout;       
-//¶¨Òå_sys_exit()ÒÔ±ÜÃâÊ¹ÓÃ°ëÖ÷»úÄ£Ê½    
-void _sys_exit(int x) 
-{ 
-	x = x; 
-} 
-//ÖØ¶¨Ïòfputcº¯Êı
-//printfµÄÊä³ö£¬Ö¸Ïòfputc£¬ÓÉfputcÊä³öµ½´®¿Ú
-//ÕâÀïÊ¹ÓÃ´®¿Ú1(USART1)Êä³öprintfĞÅÏ¢
+//åŠ å…¥ä»¥ä¸‹ä»£ç ,æ”¯æŒprintfå‡½æ•°,è€Œä¸éœ€è¦é€‰æ‹©use MicroLIB
+#if 0
+#pragma import(__use_no_semihosting)
+//æ ‡å‡†åº“éœ€è¦çš„æ”¯æŒå‡½æ•°
+struct __FILE
+{
+	int handle;
+	/* Whatever you require here. If the only file you are using is */
+	/* standard output using printf() for debugging, no file handling */
+	/* is required. */
+};
+/* FILE is typedefâ€™ d in stdio.h. */
+FILE __stdout;
+//å®šä¹‰_sys_exit()ä»¥é¿å…ä½¿ç”¨åŠä¸»æœºæ¨¡å¼
+void _sys_exit(int x)
+{
+	x = x;
+}
+//é‡å®šå‘fputcå‡½æ•°
+//printfçš„è¾“å‡ºï¼ŒæŒ‡å‘fputcï¼Œç”±fputcè¾“å‡ºåˆ°ä¸²å£
+//è¿™é‡Œä½¿ç”¨ä¸²å£1(USART1)è¾“å‡ºprintfä¿¡æ¯
 int fputc(int ch, FILE *f)
-{      
-	while((USART1->SR&0X40)==0);//µÈ´ıÉÏÒ»´Î´®¿ÚÊı¾İ·¢ËÍÍê³É  
-	USART1->DR = (u8) ch;      	//Ğ´DR,´®¿Ú1½«·¢ËÍÊı¾İ
+{
+	while ((USART1->SR & 0X40) == 0)
+		;				 //ç­‰å¾…ä¸Šä¸€æ¬¡ä¸²å£æ•°æ®å‘é€å®Œæˆ
+	USART1->DR = (u8)ch; //å†™DR,ä¸²å£1å°†å‘é€æ•°æ®
 	return ch;
 }
-#endif 
+#endif
 //end
 //////////////////////////////////////////////////////////////////
 
-#if EN_USART1_RX   //Èç¹ûÊ¹ÄÜÁË½ÓÊÕ
-//´®¿Ú1ÖĞ¶Ï·şÎñ³ÌĞò
-//×¢Òâ,¶ÁÈ¡USARTx->SRÄÜ±ÜÃâÄªÃûÆäÃîµÄ´íÎó   	
-u8 USART_RX_BUF[USART_REC_LEN];     //½ÓÊÕ»º³å,×î´óUSART_REC_LEN¸ö×Ö½Ú.
-//½ÓÊÕ×´Ì¬
-//bit15£¬	½ÓÊÕÍê³É±êÖ¾
-//bit14£¬	½ÓÊÕµ½0x0d
-//bit13~0£¬	½ÓÊÕµ½µÄÓĞĞ§×Ö½ÚÊıÄ¿
-u16 USART_RX_STA=0;       //½ÓÊÕ×´Ì¬±ê¼Ç	  
-  
+#if EN_USART1_RX //å¦‚æœä½¿èƒ½äº†æ¥æ”¶
+//ä¸²å£1ä¸­æ–­æœåŠ¡ç¨‹åº
+//æ³¨æ„,è¯»å–USARTx->SRèƒ½é¿å…è«åå…¶å¦™çš„é”™è¯¯
+u8 USART_RX_BUF[USART_REC_LEN]; //æ¥æ”¶ç¼“å†²,æœ€å¤§USART_REC_LENä¸ªå­—èŠ‚.
+//æ¥æ”¶çŠ¶æ€
+//bit15ï¼Œ	æ¥æ”¶å®Œæˆæ ‡å¿—
+//bit14ï¼Œ	æ¥æ”¶åˆ°0x0d
+//bit13~0ï¼Œ	æ¥æ”¶åˆ°çš„æœ‰æ•ˆå­—èŠ‚æ•°ç›®
+u16 USART_RX_STA = 0; //æ¥æ”¶çŠ¶æ€æ ‡è®°
+
 void USART1_IRQHandler(void)
 {
-	u8 res;	
-#if SYSTEM_SUPPORT_OS 		//Èç¹ûSYSTEM_SUPPORT_OSÎªÕæ£¬ÔòĞèÒªÖ§³ÖOS.
-	OSIntEnter();    
+	u8 res;
+#if SYSTEM_SUPPORT_OS //å¦‚æœSYSTEM_SUPPORT_OSä¸ºçœŸï¼Œåˆ™éœ€è¦æ”¯æŒOS.
+	OSIntEnter();
 #endif
-	if(USART1->SR&(1<<5))	//½ÓÊÕµ½Êı¾İ
-	{	 
-		res=USART1->DR; 
-		if((USART_RX_STA&0x8000)==0)//½ÓÊÕÎ´Íê³É
+	if (USART1->SR & (1 << 5)) //æ¥æ”¶åˆ°æ•°æ®
+	{
+		res = USART1->DR;
+		if ((USART_RX_STA & 0x8000) == 0) //æ¥æ”¶æœªå®Œæˆ
 		{
-			if(USART_RX_STA&0x4000)//½ÓÊÕµ½ÁË0x0d
+			if (USART_RX_STA & 0x4000) //æ¥æ”¶åˆ°äº†0x0d
 			{
-				if(res!=0x0a)USART_RX_STA=0;//½ÓÊÕ´íÎó,ÖØĞÂ¿ªÊ¼
-				else USART_RX_STA|=0x8000;	//½ÓÊÕÍê³ÉÁË 
-			}else //»¹Ã»ÊÕµ½0X0D
-			{	
-				if(res==0x0d)USART_RX_STA|=0x4000;
+				if (res != 0x0a)
+					USART_RX_STA = 0; //æ¥æ”¶é”™è¯¯,é‡æ–°å¼€å§‹
+				else
+					USART_RX_STA |= 0x8000; //æ¥æ”¶å®Œæˆäº†
+			}
+			else //è¿˜æ²¡æ”¶åˆ°0X0D
+			{
+				if (res == 0x0d)
+					USART_RX_STA |= 0x4000;
 				else
 				{
-					USART_RX_BUF[USART_RX_STA&0X3FFF]=res;
+					USART_RX_BUF[USART_RX_STA & 0X3FFF] = res;
 					USART_RX_STA++;
-					if(USART_RX_STA>(USART_REC_LEN-1))USART_RX_STA=0;//½ÓÊÕÊı¾İ´íÎó,ÖØĞÂ¿ªÊ¼½ÓÊÕ	  
-				}		 
+					if (USART_RX_STA > (USART_REC_LEN - 1))
+						USART_RX_STA = 0; //æ¥æ”¶æ•°æ®é”™è¯¯,é‡æ–°å¼€å§‹æ¥æ”¶
+				}
 			}
-		}  		 									     
+		}
 	}
-#if SYSTEM_SUPPORT_OS 	//Èç¹ûSYSTEM_SUPPORT_OSÎªÕæ£¬ÔòĞèÒªÖ§³ÖOS.
-	OSIntExit();  											 
+#if SYSTEM_SUPPORT_OS //å¦‚æœSYSTEM_SUPPORT_OSä¸ºçœŸï¼Œåˆ™éœ€è¦æ”¯æŒOS.
+	OSIntExit();
 #endif
-} 
-#endif										 
-//³õÊ¼»¯IO ´®¿Ú1
-//pclk2:PCLK2Ê±ÖÓÆµÂÊ(Mhz)
-//bound:²¨ÌØÂÊ 
-void uart_init(u32 pclk2,u32 bound)
-{  	 
+}
+#endif
+//åˆå§‹åŒ–IO ä¸²å£1
+//pclk2:PCLK2æ—¶é’Ÿé¢‘ç‡(Mhz)
+//bound:æ³¢ç‰¹ç‡
+void uart_init(u32 pclk2, u32 bound)
+{
 	float temp;
 	u16 mantissa;
-	u16 fraction;	   
-	temp=(float)(pclk2*1000000)/(bound*16);//µÃµ½USARTDIV
-	mantissa=temp;				 //µÃµ½ÕûÊı²¿·Ö
-	fraction=(temp-mantissa)*16; //µÃµ½Ğ¡Êı²¿·Ö	 
-    mantissa<<=4;
-	mantissa+=fraction; 
-	RCC->APB2ENR|=1<<2;   //Ê¹ÄÜPORTA¿ÚÊ±ÖÓ  
-	RCC->APB2ENR|=1<<14;  //Ê¹ÄÜ´®¿ÚÊ±ÖÓ 
-	GPIOA->CRH&=0XFFFFF00F;//IO×´Ì¬ÉèÖÃ
-	GPIOA->CRH|=0X000008B0;//IO×´Ì¬ÉèÖÃ 
-	RCC->APB2RSTR|=1<<14;   //¸´Î»´®¿Ú1
-	RCC->APB2RSTR&=~(1<<14);//Í£Ö¹¸´Î»	   	   
-	//²¨ÌØÂÊÉèÖÃ
- 	USART1->BRR=mantissa; // ²¨ÌØÂÊÉèÖÃ	 
-	USART1->CR1|=0X200C;  //1Î»Í£Ö¹,ÎŞĞ£ÑéÎ».
-#if EN_USART1_RX		  //Èç¹ûÊ¹ÄÜÁË½ÓÊÕ
-	//Ê¹ÄÜ½ÓÊÕÖĞ¶Ï 
-	USART1->CR1|=1<<5;    //½ÓÊÕ»º³åÇø·Ç¿ÕÖĞ¶ÏÊ¹ÄÜ	    	
-	MY_NVIC_Init(3,3,USART1_IRQn,2);//×é2£¬×îµÍÓÅÏÈ¼¶ 
+	u16 fraction;
+	temp = (float)(pclk2 * 1000000) / (bound * 16); //å¾—åˆ°USARTDIV
+	mantissa = temp;								//å¾—åˆ°æ•´æ•°éƒ¨åˆ†
+	fraction = (temp - mantissa) * 16;				//å¾—åˆ°å°æ•°éƒ¨åˆ†
+	mantissa <<= 4;
+	mantissa += fraction;
+	RCC->APB2ENR |= 1 << 2;		 //ä½¿èƒ½PORTAå£æ—¶é’Ÿ
+	RCC->APB2ENR |= 1 << 14;	 //ä½¿èƒ½ä¸²å£æ—¶é’Ÿ
+	GPIOA->CRH &= 0XFFFFF00F;	//IOçŠ¶æ€è®¾ç½®
+	GPIOA->CRH |= 0X000008B0;	//IOçŠ¶æ€è®¾ç½®
+	RCC->APB2RSTR |= 1 << 14;	//å¤ä½ä¸²å£1
+	RCC->APB2RSTR &= ~(1 << 14); //åœæ­¢å¤ä½
+								 //æ³¢ç‰¹ç‡è®¾ç½®
+	USART1->BRR = mantissa;		 // æ³¢ç‰¹ç‡è®¾ç½®
+	USART1->CR1 |= 0X200C;		 //1ä½åœæ­¢,æ— æ ¡éªŒä½.
+#if EN_USART1_RX				 //å¦‚æœä½¿èƒ½äº†æ¥æ”¶
+	//ä½¿èƒ½æ¥æ”¶ä¸­æ–­
+	USART1->CR1 |= 1 << 5;				//æ¥æ”¶ç¼“å†²åŒºéç©ºä¸­æ–­ä½¿èƒ½
+	MY_NVIC_Init(3, 3, USART1_IRQn, 2); //ç»„2ï¼Œæœ€ä½ä¼˜å…ˆçº§
 #endif
 }

@@ -13,14 +13,14 @@
 ######################################
 # target
 ######################################
-TARGET = test
+TARGET = snake
 
 
 ######################################
 # building variables
 ######################################
 # debug build?
-DEBUG = 0
+DEBUG = 1
 # optimization
 OPT = -O3
 
@@ -37,16 +37,19 @@ BUILD_DIR = OBJ
 # C sources
 C_SOURCES =  \
 SYSTEM/sys/sys.c \
-USER/test.c \
-HARDWARE/EXTI/exti.c \
-HARDWARE/KEY/key.c \
-HARDWARE/LCD/ILI93xx.c \
-HARDWARE/LED/led.c \
-HARDWARE/TIMER/timer.c \
-HARDWARE/WDG/wdg.c \
+USER/main.c \
 SYSTEM/delay/delay.c \
 SYSTEM/usart/usart.c \
 SYSTEM/sys/system_stm32f10x.c \
+USER/AI.c \
+USER/snake.c \
+HARDWARE/LCD/ILI93xx.c \
+HARDWARE/LED/led.c \
+#HARDWARE/KEY/key.c \
+HARDWARE/TIMER/timer.c \
+HARDWARE/EXTI/exti.c \
+HARDWARE/WDG/wdg.c 
+
 #HARDWARE/OLED/oled.c 
 
 # ASM sources
@@ -115,7 +118,8 @@ C_INCLUDES =  \
 -IHARDWARE/WDG \
 -ISYSTEM/delay \
 -ISYSTEM/sys \
--ISYSTEM/usart 
+-ISYSTEM/usart \
+-IUSER
 
 
 

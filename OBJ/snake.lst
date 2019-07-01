@@ -1,0 +1,2227 @@
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 2
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"snake.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.move,"ax",%progbits
+  16              		.align	1
+  17              		.p2align 2,,3
+  18              		.global	move
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	move:
+  25              	.LFB31:
+  26              		.file 1 "USER/snake.c"
+   1:USER/snake.c  **** ﻿// snake.cpp: 定义控制台应用程序的入口点。
+   2:USER/snake.c  **** #include "snake.h"
+   3:USER/snake.c  **** 
+   4:USER/snake.c  **** static short map[HEIGHT][WIDTH] = {0}; // 地图
+   5:USER/snake.c  **** static short size;					   // 蛇的长度
+   6:USER/snake.c  **** static Direction dire, diren;		   // 方向
+   7:USER/snake.c  **** static short x, y;					   // 蛇头位置
+   8:USER/snake.c  **** static clock_t mark;				   // 时间标记
+   9:USER/snake.c  **** //SDL_Renderer *ren;//刷子
+  10:USER/snake.c  **** //SDL_Rect rec;//框子
+  11:USER/snake.c  **** static bool end = false;
+  12:USER/snake.c  **** //static bool quit = false;
+  13:USER/snake.c  **** //SDL_Event event;//事件
+  14:USER/snake.c  **** //SDL_Window * window;
+  15:USER/snake.c  **** static int banai = 0; //防止死循环
+  16:USER/snake.c  **** 
+  17:USER/snake.c  **** int initialize()
+  18:USER/snake.c  **** {
+  19:USER/snake.c  **** 	//SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);//初始化SDL
+  20:USER/snake.c  **** 	//window = SDL_CreateWindow("snake.by starstory", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED
+  21:USER/snake.c  **** 	srand((unsigned)time(NULL)); //初始化随机数
+  22:USER/snake.c  **** 	mark = clock();				 //标记时间
+  23:USER/snake.c  **** 	for (short *n = map[0]; n != map[HEIGHT]; n++)
+  24:USER/snake.c  **** 		*n = 0;
+  25:USER/snake.c  **** 	for (int i = 0; i < WIDTH; i++)
+  26:USER/snake.c  **** 	{
+  27:USER/snake.c  **** 		map[0][i] = -2;
+  28:USER/snake.c  **** 		map[HEIGHT - 1][i] = -2;
+  29:USER/snake.c  **** 	}
+  30:USER/snake.c  **** 	for (int i = 0; i < HEIGHT; i++)
+  31:USER/snake.c  **** 	{
+  32:USER/snake.c  **** 		map[i][0] = -2;
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 2
+
+
+  33:USER/snake.c  **** 		map[i][WIDTH - 1] = -2;
+  34:USER/snake.c  **** 	} //占用地图边界
+  35:USER/snake.c  **** 
+  36:USER/snake.c  **** 	//ren = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);//刷子绑定窗口
+  37:USER/snake.c  **** 	//SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
+  38:USER/snake.c  **** 	//SDL_RenderClear(ren);
+  39:USER/snake.c  **** 	//SDL_RenderPresent(ren);//清屏
+  40:USER/snake.c  **** 	size = 3;
+  41:USER/snake.c  **** 	x = 3;
+  42:USER/snake.c  **** 	y = 3;
+  43:USER/snake.c  **** 	map[3][3] = 3;
+  44:USER/snake.c  **** 	map[3][2] = 2;
+  45:USER/snake.c  **** 	map[3][1] = 1;
+  46:USER/snake.c  **** 	dire = d_right;
+  47:USER/snake.c  **** 	diren = d_right;
+  48:USER/snake.c  **** 	newfood(); //初始化一个食物
+  49:USER/snake.c  **** 	display();
+  50:USER/snake.c  **** 	return 0;
+  51:USER/snake.c  **** }
+  52:USER/snake.c  **** int gamewithai()
+  53:USER/snake.c  **** {
+  54:USER/snake.c  **** 
+  55:USER/snake.c  **** 	//		display();
+  56:USER/snake.c  **** 	//LED0 = !LED0;
+  57:USER/snake.c  **** 	if ((dire = ai(map, size, x, y, 0)) == d_error)
+  58:USER/snake.c  **** 	{
+  59:USER/snake.c  **** 		//MessageBox(NULL, "没路了", "error", MB_OK);
+  60:USER/snake.c  **** 		return 0;
+  61:USER/snake.c  **** 	}
+  62:USER/snake.c  **** 	if (banai > (WIDTH - 2) * (HEIGHT - 2) * 4)
+  63:USER/snake.c  **** 	{
+  64:USER/snake.c  **** 		//MessageBox(NULL, "死循环", "error", MB_OK);
+  65:USER/snake.c  **** 		return 0;
+  66:USER/snake.c  **** 	}
+  67:USER/snake.c  **** 	//while (1)
+  68:USER/snake.c  **** 	//LCD_Fill(120, 120, 159, 159, GREEN);
+  69:USER/snake.c  **** 	end = false;
+  70:USER/snake.c  **** 	switch (dire)
+  71:USER/snake.c  **** 	{
+  72:USER/snake.c  **** 	case d_up:
+  73:USER/snake.c  **** 		if (move(x, y - 1) == 1)
+  74:USER/snake.c  **** 			y = y - 1;
+  75:USER/snake.c  **** 		else
+  76:USER/snake.c  **** 			end = true;
+  77:USER/snake.c  **** 		break;
+  78:USER/snake.c  **** 	case d_down:
+  79:USER/snake.c  **** 		if (move(x, y + 1) == 1)
+  80:USER/snake.c  **** 			y = y + 1;
+  81:USER/snake.c  **** 		else
+  82:USER/snake.c  **** 			end = true;
+  83:USER/snake.c  **** 		break;
+  84:USER/snake.c  **** 	case d_left:
+  85:USER/snake.c  **** 		if (move(x - 1, y) == 1)
+  86:USER/snake.c  **** 			x = x - 1;
+  87:USER/snake.c  **** 		else
+  88:USER/snake.c  **** 			end = true;
+  89:USER/snake.c  **** 		break;
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 3
+
+
+  90:USER/snake.c  **** 	case d_right:
+  91:USER/snake.c  **** 		if (move(x + 1, y) == 1)
+  92:USER/snake.c  **** 			x = x + 1;
+  93:USER/snake.c  **** 		else
+  94:USER/snake.c  **** 			end = true;
+  95:USER/snake.c  **** 		break;
+  96:USER/snake.c  **** 	default:
+  97:USER/snake.c  **** 		break;
+  98:USER/snake.c  **** 	}
+  99:USER/snake.c  **** 	if (end)
+ 100:USER/snake.c  **** 		return 0;
+ 101:USER/snake.c  **** 	display();
+ 102:USER/snake.c  **** 	return 1;
+ 103:USER/snake.c  **** }
+ 104:USER/snake.c  **** /*
+ 105:USER/snake.c  **** int game()
+ 106:USER/snake.c  **** {
+ 107:USER/snake.c  **** 	if (clock() - mark > CLOCKS_PER_SEC * 2 /9) {
+ 108:USER/snake.c  **** 		mark = clock();
+ 109:USER/snake.c  **** 		switch (dire) {
+ 110:USER/snake.c  **** 		case d_up:
+ 111:USER/snake.c  **** 			if (move(x, y - 1) == 1)
+ 112:USER/snake.c  **** 				y = y - 1;
+ 113:USER/snake.c  **** 			else
+ 114:USER/snake.c  **** 				end = true;
+ 115:USER/snake.c  **** 			break;
+ 116:USER/snake.c  **** 		case d_down:
+ 117:USER/snake.c  **** 			if (move(x, y + 1) == 1)
+ 118:USER/snake.c  **** 				y = y + 1;
+ 119:USER/snake.c  **** 			else
+ 120:USER/snake.c  **** 				end = true;
+ 121:USER/snake.c  **** 			break;
+ 122:USER/snake.c  **** 		case d_left:
+ 123:USER/snake.c  **** 			if (move(x - 1, y) == 1)
+ 124:USER/snake.c  **** 				x = x - 1;
+ 125:USER/snake.c  **** 			else
+ 126:USER/snake.c  **** 				end = true;
+ 127:USER/snake.c  **** 			break;
+ 128:USER/snake.c  **** 		case d_right:
+ 129:USER/snake.c  **** 			if (move(x + 1, y) == 1)
+ 130:USER/snake.c  **** 				x = x + 1;
+ 131:USER/snake.c  **** 			else
+ 132:USER/snake.c  **** 				end = true;
+ 133:USER/snake.c  **** 			break;
+ 134:USER/snake.c  **** 		}
+ 135:USER/snake.c  **** 		if (end)return 0;
+ 136:USER/snake.c  **** 		display();
+ 137:USER/snake.c  **** 	}
+ 138:USER/snake.c  **** 	while (SDL_PollEvent(&event))
+ 139:USER/snake.c  **** 		switch (event.type)
+ 140:USER/snake.c  **** 		{
+ 141:USER/snake.c  **** 		case SDL_KEYDOWN:
+ 142:USER/snake.c  **** 			switch (event.key.keysym.sym) {
+ 143:USER/snake.c  **** 			case SDLK_w: if (diren == d_up || diren == d_down)
+ 144:USER/snake.c  **** 				break;
+ 145:USER/snake.c  **** 						 else
+ 146:USER/snake.c  **** 				dire = d_up;
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 4
+
+
+ 147:USER/snake.c  **** 				break;
+ 148:USER/snake.c  **** 			case SDLK_a: if (diren == d_left || diren == d_right)
+ 149:USER/snake.c  **** 				break;
+ 150:USER/snake.c  **** 						 else
+ 151:USER/snake.c  **** 				dire = d_left;
+ 152:USER/snake.c  **** 				break;
+ 153:USER/snake.c  **** 			case SDLK_s: if (diren == d_up || diren == d_down)
+ 154:USER/snake.c  **** 				break;
+ 155:USER/snake.c  **** 						 else
+ 156:USER/snake.c  **** 				dire = d_down;
+ 157:USER/snake.c  **** 				break;
+ 158:USER/snake.c  **** 			case SDLK_d: if (diren == d_left || diren == d_right)
+ 159:USER/snake.c  **** 				break;
+ 160:USER/snake.c  **** 						 else
+ 161:USER/snake.c  **** 				dire = d_right;
+ 162:USER/snake.c  **** 				break;
+ 163:USER/snake.c  **** 			}
+ 164:USER/snake.c  **** 			break;
+ 165:USER/snake.c  **** 		case SDL_QUIT:
+ 166:USER/snake.c  **** 			quit = true;
+ 167:USER/snake.c  **** 			break;
+ 168:USER/snake.c  **** 		}
+ 169:USER/snake.c  **** 	if (quit)
+ 170:USER/snake.c  **** 		return 0;
+ 171:USER/snake.c  **** 	return 1;
+ 172:USER/snake.c  **** }
+ 173:USER/snake.c  ****  */
+ 174:USER/snake.c  **** int move(int x, int y)
+ 175:USER/snake.c  **** { //蛇头向前进一个格
+  27              		.loc 1 175 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              	.LVL0:
+  32 0000 38B5     		push	{r3, r4, r5, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 16
+  35              		.cfi_offset 3, -16
+  36              		.cfi_offset 4, -12
+  37              		.cfi_offset 5, -8
+  38              		.cfi_offset 14, -4
+ 176:USER/snake.c  **** 	diren = dire;
+ 177:USER/snake.c  **** 	if (map[y][x] == 0 || map[y][x] == 1)
+  39              		.loc 1 177 0
+  40 0002 01EB4101 		add	r1, r1, r1, lsl #1
+  41              	.LVL1:
+  42 0006 2B4C     		ldr	r4, .L20
+  43 0008 00EBC100 		add	r0, r0, r1, lsl #3
+  44              	.LVL2:
+  45 000c 34F91030 		ldrsh	r3, [r4, r0, lsl #1]
+  46 0010 9AB2     		uxth	r2, r3
+  47 0012 012A     		cmp	r2, #1
+  48 0014 03D9     		bls	.L17
+ 178:USER/snake.c  **** 	{
+ 179:USER/snake.c  **** 		map[y][x] = size + 1;
+ 180:USER/snake.c  **** 		banai++;
+ 181:USER/snake.c  **** 		for (int a = 0; a < HEIGHT; a++)
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 5
+
+
+ 182:USER/snake.c  **** 			for (int b = 0; b < WIDTH; b++)
+ 183:USER/snake.c  **** 				map[a][b] = (map[a][b] > 0 ? map[a][b] - 1 : map[a][b]);
+ 184:USER/snake.c  **** 	}
+ 185:USER/snake.c  **** 	else if (map[y][x] == -1)
+  49              		.loc 1 185 0
+  50 0016 0133     		adds	r3, r3, #1
+  51 0018 27D0     		beq	.L18
+ 186:USER/snake.c  **** 	{
+ 187:USER/snake.c  **** 		size++;
+ 188:USER/snake.c  **** 		map[y][x] = size;
+ 189:USER/snake.c  **** 		banai = 0;
+ 190:USER/snake.c  **** 		newfood();
+ 191:USER/snake.c  **** 	}
+ 192:USER/snake.c  **** 	else
+ 193:USER/snake.c  **** 		return 0;
+  52              		.loc 1 193 0
+  53 001a 0020     		movs	r0, #0
+ 194:USER/snake.c  **** 	return 1;
+ 195:USER/snake.c  **** }
+  54              		.loc 1 195 0
+  55 001c 38BD     		pop	{r3, r4, r5, pc}
+  56              	.L17:
+ 179:USER/snake.c  **** 		banai++;
+  57              		.loc 1 179 0
+  58 001e 264B     		ldr	r3, .L20+4
+ 180:USER/snake.c  **** 		for (int a = 0; a < HEIGHT; a++)
+  59              		.loc 1 180 0
+  60 0020 2649     		ldr	r1, .L20+8
+ 179:USER/snake.c  **** 		banai++;
+  61              		.loc 1 179 0
+  62 0022 1A88     		ldrh	r2, [r3]
+ 180:USER/snake.c  **** 		for (int a = 0; a < HEIGHT; a++)
+  63              		.loc 1 180 0
+  64 0024 0B68     		ldr	r3, [r1]
+ 179:USER/snake.c  **** 		banai++;
+  65              		.loc 1 179 0
+  66 0026 0132     		adds	r2, r2, #1
+ 180:USER/snake.c  **** 		for (int a = 0; a < HEIGHT; a++)
+  67              		.loc 1 180 0
+  68 0028 0133     		adds	r3, r3, #1
+ 179:USER/snake.c  **** 		banai++;
+  69              		.loc 1 179 0
+  70 002a 24F81020 		strh	r2, [r4, r0, lsl #1]	@ movhi
+ 180:USER/snake.c  **** 		for (int a = 0; a < HEIGHT; a++)
+  71              		.loc 1 180 0
+  72 002e 0B60     		str	r3, [r1]
+  73              	.LVL3:
+  74 0030 04F13000 		add	r0, r4, #48
+  75 0034 04F5C664 		add	r4, r4, #1584
+  76              	.LVL4:
+  77              	.L7:
+  78 0038 A0F13003 		sub	r3, r0, #48
+  79              	.LVL5:
+  80              	.L3:
+  81              	.LBB14:
+  82              	.LBB15:
+ 183:USER/snake.c  **** 	}
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 6
+
+
+  83              		.loc 1 183 0
+  84 003c 33F9022B 		ldrsh	r2, [r3], #2
+  85 0040 002A     		cmp	r2, #0
+  86 0042 02F1FF31 		add	r1, r2, #-1
+  87 0046 08DD     		ble	.L4
+ 182:USER/snake.c  **** 				map[a][b] = (map[a][b] > 0 ? map[a][b] - 1 : map[a][b]);
+  88              		.loc 1 182 0
+  89 0048 9842     		cmp	r0, r3
+ 183:USER/snake.c  **** 	}
+  90              		.loc 1 183 0
+  91 004a 23F8021C 		strh	r1, [r3, #-2]	@ movhi
+ 182:USER/snake.c  **** 				map[a][b] = (map[a][b] > 0 ? map[a][b] - 1 : map[a][b]);
+  92              		.loc 1 182 0
+  93 004e F5D1     		bne	.L3
+  94 0050 3030     		adds	r0, r0, #48
+  95              	.LBE15:
+ 181:USER/snake.c  **** 			for (int b = 0; b < WIDTH; b++)
+  96              		.loc 1 181 0
+  97 0052 A042     		cmp	r0, r4
+  98 0054 F0D1     		bne	.L7
+  99              	.L19:
+ 100              	.LBE14:
+ 194:USER/snake.c  **** }
+ 101              		.loc 1 194 0
+ 102 0056 0120     		movs	r0, #1
+ 103              		.loc 1 195 0
+ 104 0058 38BD     		pop	{r3, r4, r5, pc}
+ 105              	.L4:
+ 106              	.LBB17:
+ 107              	.LBB16:
+ 182:USER/snake.c  **** 				map[a][b] = (map[a][b] > 0 ? map[a][b] - 1 : map[a][b]);
+ 108              		.loc 1 182 0
+ 109 005a 9842     		cmp	r0, r3
+ 183:USER/snake.c  **** 	}
+ 110              		.loc 1 183 0
+ 111 005c 23F8022C 		strh	r2, [r3, #-2]	@ movhi
+ 182:USER/snake.c  **** 				map[a][b] = (map[a][b] > 0 ? map[a][b] - 1 : map[a][b]);
+ 112              		.loc 1 182 0
+ 113 0060 ECD1     		bne	.L3
+ 114 0062 3030     		adds	r0, r0, #48
+ 115              	.LBE16:
+ 181:USER/snake.c  **** 			for (int b = 0; b < WIDTH; b++)
+ 116              		.loc 1 181 0
+ 117 0064 A042     		cmp	r0, r4
+ 118 0066 E7D1     		bne	.L7
+ 119 0068 F5E7     		b	.L19
+ 120              	.L18:
+ 121              	.LVL6:
+ 122              	.LBE17:
+ 123              	.LBB18:
+ 124              	.LBB19:
+ 189:USER/snake.c  **** 		newfood();
+ 125              		.loc 1 189 0
+ 126 006a 0021     		movs	r1, #0
+ 187:USER/snake.c  **** 		map[y][x] = size;
+ 127              		.loc 1 187 0
+ 128 006c 124D     		ldr	r5, .L20+4
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 7
+
+
+ 189:USER/snake.c  **** 		newfood();
+ 129              		.loc 1 189 0
+ 130 006e 134A     		ldr	r2, .L20+8
+ 187:USER/snake.c  **** 		map[y][x] = size;
+ 131              		.loc 1 187 0
+ 132 0070 2B88     		ldrh	r3, [r5]
+ 189:USER/snake.c  **** 		newfood();
+ 133              		.loc 1 189 0
+ 134 0072 1160     		str	r1, [r2]
+ 187:USER/snake.c  **** 		map[y][x] = size;
+ 135              		.loc 1 187 0
+ 136 0074 0133     		adds	r3, r3, #1
+ 137 0076 1BB2     		sxth	r3, r3
+ 138 0078 2B80     		strh	r3, [r5]	@ movhi
+ 188:USER/snake.c  **** 		banai = 0;
+ 139              		.loc 1 188 0
+ 140 007a 24F81030 		strh	r3, [r4, r0, lsl #1]	@ movhi
+ 141              	.LBB20:
+ 142              	.LBB21:
+ 196:USER/snake.c  **** 
+ 197:USER/snake.c  **** void display()
+ 198:USER/snake.c  **** {
+ 199:USER/snake.c  **** 	int a = 0;
+ 200:USER/snake.c  **** 	int b = 0;
+ 201:USER/snake.c  **** 	LCD_Clear(BLACK);
+ 202:USER/snake.c  **** 	for (a = 0; a < HEIGHT; a++)
+ 203:USER/snake.c  **** 	{
+ 204:USER/snake.c  **** 		for (b = 0; b < WIDTH; b++)
+ 205:USER/snake.c  **** 		{
+ 206:USER/snake.c  **** 			switch (map[a][b])
+ 207:USER/snake.c  **** 			{
+ 208:USER/snake.c  **** 			case 0:
+ 209:USER/snake.c  **** 				break;
+ 210:USER/snake.c  **** 			case -1:
+ 211:USER/snake.c  **** 				LCD_Fill(b * 10 + 1, a * 10 + 1, b * 10 + 9, a * 10 + 9, RED);
+ 212:USER/snake.c  **** 				break;
+ 213:USER/snake.c  **** 			case -2:
+ 214:USER/snake.c  **** 				LCD_Fill(b * 10, a * 10, b * 10 + 10, a * 10 + 10, WHITE);
+ 215:USER/snake.c  **** 				break;
+ 216:USER/snake.c  **** 			default:
+ 217:USER/snake.c  **** 				if (size != map[a][b])
+ 218:USER/snake.c  **** 					LCD_Fill(b * 10 + 1, a * 10 + 1, b * 10 + 9, a * 10 + 9, GREEN);
+ 219:USER/snake.c  **** 				else
+ 220:USER/snake.c  **** 					LCD_Fill(b * 10 + 1, a * 10 + 1, b * 10 + 9, a * 10 + 9, BLUE);
+ 221:USER/snake.c  **** 				if (a < 1 || b < 1)
+ 222:USER/snake.c  **** 				{
+ 223:USER/snake.c  **** 					//std::cerr << "错误" << __FILE__ << __LINE__ << __FUNCTION__ << std::endl;
+ 224:USER/snake.c  **** 					exit(-1);
+ 225:USER/snake.c  **** 				}
+ 226:USER/snake.c  **** 				if (abs(map[a - 1][b] - map[a][b]) == 1 && map[a - 1][b] != 0)
+ 227:USER/snake.c  **** 				{
+ 228:USER/snake.c  **** 					LCD_Fill(b * 10 + 1, a * 10, b * 10 + 9, a * 10 + 1, GREEN);
+ 229:USER/snake.c  **** 				}
+ 230:USER/snake.c  **** 				if (abs(map[a + 1][b] - map[a][b]) == 1 && map[a + 1][b] != 0)
+ 231:USER/snake.c  **** 				{
+ 232:USER/snake.c  **** 					LCD_Fill(b * 10 + 1, a * 10 + 9, b * 10 + 9, a * 10 + 10, GREEN);
+ 233:USER/snake.c  **** 				}
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 8
+
+
+ 234:USER/snake.c  **** 				if (abs(map[a][b + 1] - map[a][b]) == 1 && map[a][b + 1] != 0)
+ 235:USER/snake.c  **** 				{
+ 236:USER/snake.c  **** 					LCD_Fill(b * 10 + 9, a * 10 + 1, b * 10 + 10, a * 10 + 9, GREEN);
+ 237:USER/snake.c  **** 				}
+ 238:USER/snake.c  **** 				if (abs(map[a][b - 1] - map[a][b]) == 1 && map[a][b - 1] != 0)
+ 239:USER/snake.c  **** 				{
+ 240:USER/snake.c  **** 					LCD_Fill(b * 10, a * 10 + 1, b * 10 + 1, a * 10 + 9, GREEN);
+ 241:USER/snake.c  **** 				}
+ 242:USER/snake.c  **** 				break;
+ 243:USER/snake.c  **** 			}
+ 244:USER/snake.c  **** 		}
+ 245:USER/snake.c  **** 	}
+ 246:USER/snake.c  **** }
+ 247:USER/snake.c  **** //void displayt()
+ 248:USER/snake.c  **** //{
+ 249:USER/snake.c  **** //	system("cls");
+ 250:USER/snake.c  **** //	for (int a = 0; a < HEIGHT; a++) {
+ 251:USER/snake.c  **** //		for (int b = 0; b < WIDTH; b++) {
+ 252:USER/snake.c  **** //			std::cout.width(4);
+ 253:USER/snake.c  **** //			std::cout << map[a][b];
+ 254:USER/snake.c  **** //		}
+ 255:USER/snake.c  **** //		std::cout << std::endl << std::endl;
+ 256:USER/snake.c  **** //	}
+ 257:USER/snake.c  **** //	Sleep(10);
+ 258:USER/snake.c  **** //}
+ 259:USER/snake.c  **** void newfood()
+ 260:USER/snake.c  **** { //随机一个新的食物
+ 261:USER/snake.c  **** 	int r = rand() % ((WIDTH - 2) * (HEIGHT - 2) - size);
+ 143              		.loc 1 261 0
+ 144 007e FFF7FEFF 		bl	rand
+ 145              	.LVL7:
+ 146 0082 B5F90030 		ldrsh	r3, [r5]
+ 147 0086 C3F52573 		rsb	r3, r3, #660
+ 148 008a 90FBF3F2 		sdiv	r2, r0, r3
+ 149 008e 02FB1300 		mls	r0, r2, r3, r0
+ 150              	.LVL8:
+ 262:USER/snake.c  **** 	short *p;
+ 263:USER/snake.c  **** 	p = map[0];
+ 264:USER/snake.c  **** 
+ 265:USER/snake.c  **** 	while (r >= 0)
+ 151              		.loc 1 265 0
+ 152 0092 0028     		cmp	r0, #0
+ 153 0094 08DB     		blt	.L9
+ 154 0096 2346     		mov	r3, r4
+ 155              	.LVL9:
+ 156              	.L10:
+ 266:USER/snake.c  **** 	{
+ 267:USER/snake.c  **** 		if (*p == 0)
+ 157              		.loc 1 267 0
+ 158 0098 33F9022B 		ldrsh	r2, [r3], #2
+ 159              	.LVL10:
+ 160 009c 002A     		cmp	r2, #0
+ 161 009e FBD1     		bne	.L10
+ 268:USER/snake.c  **** 			r--;
+ 162              		.loc 1 268 0
+ 163 00a0 0138     		subs	r0, r0, #1
+ 164              	.LVL11:
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 9
+
+
+ 265:USER/snake.c  **** 	{
+ 165              		.loc 1 265 0
+ 166 00a2 421C     		adds	r2, r0, #1
+ 269:USER/snake.c  **** 		p++;
+ 167              		.loc 1 269 0
+ 168 00a4 1C46     		mov	r4, r3
+ 169              	.LVL12:
+ 265:USER/snake.c  **** 	{
+ 170              		.loc 1 265 0
+ 171 00a6 F7D1     		bne	.L10
+ 172              	.LVL13:
+ 173              	.L9:
+ 270:USER/snake.c  **** 	}
+ 271:USER/snake.c  **** 	p--; //上方循环在r=0时p多自增了一次
+ 272:USER/snake.c  **** 	*p = -1;
+ 174              		.loc 1 272 0
+ 175 00a8 4FF6FF73 		movw	r3, #65535
+ 176 00ac 0120     		movs	r0, #1
+ 177              	.LVL14:
+ 178 00ae 24F8023C 		strh	r3, [r4, #-2]	@ movhi
+ 179              	.LVL15:
+ 180              	.LBE21:
+ 181              	.LBE20:
+ 182              	.LBE19:
+ 183              	.LBE18:
+ 195:USER/snake.c  **** 
+ 184              		.loc 1 195 0
+ 185 00b2 38BD     		pop	{r3, r4, r5, pc}
+ 186              	.L21:
+ 187              		.align	2
+ 188              	.L20:
+ 189 00b4 00000000 		.word	.LANCHOR0
+ 190 00b8 00000000 		.word	.LANCHOR1
+ 191 00bc 00000000 		.word	.LANCHOR2
+ 192              		.cfi_endproc
+ 193              	.LFE31:
+ 195              		.section	.text.display,"ax",%progbits
+ 196              		.align	1
+ 197              		.p2align 2,,3
+ 198              		.global	display
+ 199              		.syntax unified
+ 200              		.thumb
+ 201              		.thumb_func
+ 202              		.fpu softvfp
+ 204              	display:
+ 205              	.LFB32:
+ 198:USER/snake.c  **** 	int a = 0;
+ 206              		.loc 1 198 0
+ 207              		.cfi_startproc
+ 208              		@ args = 0, pretend = 0, frame = 24
+ 209              		@ frame_needed = 0, uses_anonymous_args = 0
+ 210              	.LVL16:
+ 211 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 212              	.LCFI1:
+ 213              		.cfi_def_cfa_offset 36
+ 214              		.cfi_offset 4, -36
+ 215              		.cfi_offset 5, -32
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 10
+
+
+ 216              		.cfi_offset 6, -28
+ 217              		.cfi_offset 7, -24
+ 218              		.cfi_offset 8, -20
+ 219              		.cfi_offset 9, -16
+ 220              		.cfi_offset 10, -12
+ 221              		.cfi_offset 11, -8
+ 222              		.cfi_offset 14, -4
+ 201:USER/snake.c  **** 	for (a = 0; a < HEIGHT; a++)
+ 223              		.loc 1 201 0
+ 224 0004 0020     		movs	r0, #0
+ 198:USER/snake.c  **** 	int a = 0;
+ 225              		.loc 1 198 0
+ 226 0006 89B0     		sub	sp, sp, #36
+ 227              	.LCFI2:
+ 228              		.cfi_def_cfa_offset 72
+ 201:USER/snake.c  **** 	for (a = 0; a < HEIGHT; a++)
+ 229              		.loc 1 201 0
+ 230 0008 FFF7FEFF 		bl	LCD_Clear
+ 231              	.LVL17:
+ 232 000c 0023     		movs	r3, #0
+ 233 000e 4FF0010A 		mov	r10, #1
+ 234 0012 DFF8B0B1 		ldr	fp, .L64+8
+ 235 0016 0393     		str	r3, [sp, #12]
+ 236              	.LVL18:
+ 237              	.L23:
+ 214:USER/snake.c  **** 				break;
+ 238              		.loc 1 214 0
+ 239 0018 0125     		movs	r5, #1
+ 240 001a 0024     		movs	r4, #0
+ 241 001c 0AF10902 		add	r2, r10, #9
+ 242 0020 92B2     		uxth	r2, r2
+ 243 0022 0492     		str	r2, [sp, #16]
+ 244 0024 654A     		ldr	r2, .L64
+ 245 0026 0AF1FF30 		add	r0, r10, #-1
+ 246 002a 03EB4303 		add	r3, r3, r3, lsl #1
+ 211:USER/snake.c  **** 				break;
+ 247              		.loc 1 211 0
+ 248 002e 0AF10801 		add	r1, r10, #8
+ 249 0032 80B2     		uxth	r0, r0
+ 250 0034 02EB0313 		add	r3, r2, r3, lsl #4
+ 251 0038 0590     		str	r0, [sp, #20]
+ 252 003a 1FFA81F9 		uxth	r9, r1
+ 253 003e 0693     		str	r3, [sp, #24]
+ 254              	.LVL19:
+ 255              	.L35:
+ 206:USER/snake.c  **** 			{
+ 256              		.loc 1 206 0
+ 257 0040 3BF91430 		ldrsh	r3, [fp, r4, lsl #1]
+ 258 0044 4FEA4408 		lsl	r8, r4, #1
+ 259 0048 591C     		adds	r1, r3, #1
+ 260 004a 3FD0     		beq	.L25
+ 261 004c 002B     		cmp	r3, #0
+ 262 004e 3BD0     		beq	.L60
+ 263 0050 9A1C     		adds	r2, r3, #2
+ 264 0052 1AD0     		beq	.L61
+ 217:USER/snake.c  **** 					LCD_Fill(b * 10 + 1, a * 10 + 1, b * 10 + 9, a * 10 + 9, GREEN);
+ 265              		.loc 1 217 0
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 11
+
+
+ 266 0054 5A4A     		ldr	r2, .L64+4
+ 267 0056 6F1E     		subs	r7, r5, #1
+ 268 0058 B2F90020 		ldrsh	r2, [r2]
+ 269 005c 05F10806 		add	r6, r5, #8
+ 270 0060 9A42     		cmp	r2, r3
+ 271 0062 BFB2     		uxth	r7, r7
+ 272 0064 B6B2     		uxth	r6, r6
+ 273 0066 3ED0     		beq	.L28
+ 218:USER/snake.c  **** 				else
+ 274              		.loc 1 218 0
+ 275 0068 4FF4FC63 		mov	r3, #2016
+ 276 006c 3246     		mov	r2, r6
+ 277 006e 0093     		str	r3, [sp]
+ 278 0070 5146     		mov	r1, r10
+ 279 0072 4B46     		mov	r3, r9
+ 280 0074 2846     		mov	r0, r5
+ 281 0076 FFF7FEFF 		bl	LCD_Fill
+ 282              	.LVL20:
+ 283              	.L29:
+ 221:USER/snake.c  **** 				{
+ 284              		.loc 1 221 0
+ 285 007a 039B     		ldr	r3, [sp, #12]
+ 286 007c 0BB1     		cbz	r3, .L30
+ 221:USER/snake.c  **** 				{
+ 287              		.loc 1 221 0 is_stmt 0 discriminator 1
+ 288 007e 002C     		cmp	r4, #0
+ 289 0080 3AD1     		bne	.L31
+ 290              	.L30:
+ 224:USER/snake.c  **** 				}
+ 291              		.loc 1 224 0 is_stmt 1
+ 292 0082 4FF0FF30 		mov	r0, #-1
+ 293 0086 FFF7FEFF 		bl	exit
+ 294              	.LVL21:
+ 295              	.L61:
+ 214:USER/snake.c  **** 				break;
+ 296              		.loc 1 214 0
+ 297 008a 4FF6FF73 		movw	r3, #65535
+ 298 008e 05F10902 		add	r2, r5, #9
+ 299 0092 681E     		subs	r0, r5, #1
+ 300 0094 0093     		str	r3, [sp]
+ 301 0096 92B2     		uxth	r2, r2
+ 302 0098 80B2     		uxth	r0, r0
+ 303 009a DDE90431 		ldrd	r3, r1, [sp, #16]
+ 304 009e 0134     		adds	r4, r4, #1
+ 305              	.LVL22:
+ 306 00a0 FFF7FEFF 		bl	LCD_Fill
+ 307              	.LVL23:
+ 308              	.L26:
+ 309 00a4 0A35     		adds	r5, r5, #10
+ 204:USER/snake.c  **** 		{
+ 310              		.loc 1 204 0 discriminator 2
+ 311 00a6 182C     		cmp	r4, #24
+ 312 00a8 ADB2     		uxth	r5, r5
+ 313 00aa C9D1     		bne	.L35
+ 314              	.LVL24:
+ 315 00ac 039B     		ldr	r3, [sp, #12]
+ 316 00ae 0AF10A0A 		add	r10, r10, #10
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 12
+
+
+ 317 00b2 0133     		adds	r3, r3, #1
+ 202:USER/snake.c  **** 	{
+ 318              		.loc 1 202 0 discriminator 2
+ 319 00b4 202B     		cmp	r3, #32
+ 320 00b6 0393     		str	r3, [sp, #12]
+ 321              	.LVL25:
+ 322 00b8 1FFA8AFA 		uxth	r10, r10
+ 323 00bc 0BF1300B 		add	fp, fp, #48
+ 324 00c0 AAD1     		bne	.L23
+ 246:USER/snake.c  **** //void displayt()
+ 325              		.loc 1 246 0
+ 326 00c2 09B0     		add	sp, sp, #36
+ 327              	.LCFI3:
+ 328              		.cfi_remember_state
+ 329              		.cfi_def_cfa_offset 36
+ 330              		@ sp needed
+ 331 00c4 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 332              	.LVL26:
+ 333              	.L60:
+ 334              	.LCFI4:
+ 335              		.cfi_restore_state
+ 336 00c8 0134     		adds	r4, r4, #1
+ 337              	.LVL27:
+ 338 00ca EBE7     		b	.L26
+ 339              	.LVL28:
+ 340              	.L25:
+ 211:USER/snake.c  **** 				break;
+ 341              		.loc 1 211 0
+ 342 00cc 4FF47843 		mov	r3, #63488
+ 343 00d0 05F10802 		add	r2, r5, #8
+ 344 00d4 0093     		str	r3, [sp]
+ 345 00d6 92B2     		uxth	r2, r2
+ 346 00d8 4B46     		mov	r3, r9
+ 347 00da 5146     		mov	r1, r10
+ 348 00dc 2846     		mov	r0, r5
+ 349 00de 0134     		adds	r4, r4, #1
+ 350              	.LVL29:
+ 351 00e0 FFF7FEFF 		bl	LCD_Fill
+ 352              	.LVL30:
+ 212:USER/snake.c  **** 			case -2:
+ 353              		.loc 1 212 0
+ 354 00e4 DEE7     		b	.L26
+ 355              	.LVL31:
+ 356              	.L28:
+ 220:USER/snake.c  **** 				if (a < 1 || b < 1)
+ 357              		.loc 1 220 0
+ 358 00e6 1F22     		movs	r2, #31
+ 359 00e8 4B46     		mov	r3, r9
+ 360 00ea 0092     		str	r2, [sp]
+ 361 00ec 5146     		mov	r1, r10
+ 362 00ee 3246     		mov	r2, r6
+ 363 00f0 2846     		mov	r0, r5
+ 364 00f2 FFF7FEFF 		bl	LCD_Fill
+ 365              	.LVL32:
+ 366 00f6 C0E7     		b	.L29
+ 367              	.L31:
+ 368 00f8 0BEB0803 		add	r3, fp, r8
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 13
+
+
+ 226:USER/snake.c  **** 				{
+ 369              		.loc 1 226 0
+ 370 00fc 33F9301C 		ldrsh	r1, [r3, #-48]
+ 371 0100 0793     		str	r3, [sp, #28]
+ 372 0102 3BF90830 		ldrsh	r3, [fp, r8]
+ 373 0106 CA1A     		subs	r2, r1, r3
+ 374 0108 002A     		cmp	r2, #0
+ 375 010a B8BF     		it	lt
+ 376 010c 5242     		rsblt	r2, r2, #0
+ 377 010e 012A     		cmp	r2, #1
+ 378 0110 27D0     		beq	.L62
+ 379              	.L32:
+ 230:USER/snake.c  **** 				{
+ 380              		.loc 1 230 0
+ 381 0112 069A     		ldr	r2, [sp, #24]
+ 382 0114 32F90810 		ldrsh	r1, [r2, r8]
+ 383 0118 CA1A     		subs	r2, r1, r3
+ 384 011a 002A     		cmp	r2, #0
+ 385 011c B8BF     		it	lt
+ 386 011e 5242     		rsblt	r2, r2, #0
+ 387 0120 012A     		cmp	r2, #1
+ 388 0122 3DD0     		beq	.L63
+ 389              	.L33:
+ 234:USER/snake.c  **** 				{
+ 390              		.loc 1 234 0
+ 391 0124 079A     		ldr	r2, [sp, #28]
+ 236:USER/snake.c  **** 				}
+ 392              		.loc 1 236 0
+ 393 0126 0134     		adds	r4, r4, #1
+ 394              	.LVL33:
+ 234:USER/snake.c  **** 				{
+ 395              		.loc 1 234 0
+ 396 0128 B2F90210 		ldrsh	r1, [r2, #2]
+ 397 012c CA1A     		subs	r2, r1, r3
+ 398 012e 002A     		cmp	r2, #0
+ 399 0130 B8BF     		it	lt
+ 400 0132 5242     		rsblt	r2, r2, #0
+ 401 0134 012A     		cmp	r2, #1
+ 402 0136 22D0     		beq	.L57
+ 403              	.L34:
+ 238:USER/snake.c  **** 				{
+ 404              		.loc 1 238 0
+ 405 0138 079A     		ldr	r2, [sp, #28]
+ 406 013a 32F9022C 		ldrsh	r2, [r2, #-2]
+ 407 013e D31A     		subs	r3, r2, r3
+ 408 0140 002B     		cmp	r3, #0
+ 409 0142 B8BF     		it	lt
+ 410 0144 5B42     		rsblt	r3, r3, #0
+ 411 0146 012B     		cmp	r3, #1
+ 412 0148 ACD1     		bne	.L26
+ 238:USER/snake.c  **** 				{
+ 413              		.loc 1 238 0 is_stmt 0 discriminator 1
+ 414 014a 002A     		cmp	r2, #0
+ 415 014c AAD0     		beq	.L26
+ 240:USER/snake.c  **** 				}
+ 416              		.loc 1 240 0 is_stmt 1
+ 417 014e 4FF4FC63 		mov	r3, #2016
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 14
+
+
+ 418 0152 3846     		mov	r0, r7
+ 419 0154 0093     		str	r3, [sp]
+ 420 0156 2A46     		mov	r2, r5
+ 421 0158 4B46     		mov	r3, r9
+ 422 015a 5146     		mov	r1, r10
+ 423 015c FFF7FEFF 		bl	LCD_Fill
+ 424              	.LVL34:
+ 425 0160 A0E7     		b	.L26
+ 426              	.LVL35:
+ 427              	.L62:
+ 226:USER/snake.c  **** 				{
+ 428              		.loc 1 226 0 discriminator 1
+ 429 0162 0029     		cmp	r1, #0
+ 430 0164 D5D0     		beq	.L32
+ 228:USER/snake.c  **** 				}
+ 431              		.loc 1 228 0
+ 432 0166 4FF4FC63 		mov	r3, #2016
+ 433 016a 3246     		mov	r2, r6
+ 434 016c 0093     		str	r3, [sp]
+ 435 016e 0599     		ldr	r1, [sp, #20]
+ 436 0170 5346     		mov	r3, r10
+ 437 0172 2846     		mov	r0, r5
+ 438 0174 FFF7FEFF 		bl	LCD_Fill
+ 439              	.LVL36:
+ 440 0178 3BF90830 		ldrsh	r3, [fp, r8]
+ 441 017c C9E7     		b	.L32
+ 442              	.LVL37:
+ 443              	.L57:
+ 234:USER/snake.c  **** 				{
+ 444              		.loc 1 234 0 discriminator 1
+ 445 017e 0029     		cmp	r1, #0
+ 446 0180 DAD0     		beq	.L34
+ 236:USER/snake.c  **** 				}
+ 447              		.loc 1 236 0
+ 448 0182 4FF4FC63 		mov	r3, #2016
+ 449 0186 04EB8402 		add	r2, r4, r4, lsl #2
+ 450 018a 5200     		lsls	r2, r2, #1
+ 451 018c 0093     		str	r3, [sp]
+ 452 018e 92B2     		uxth	r2, r2
+ 453 0190 4B46     		mov	r3, r9
+ 454 0192 3046     		mov	r0, r6
+ 455 0194 5146     		mov	r1, r10
+ 456 0196 FFF7FEFF 		bl	LCD_Fill
+ 457              	.LVL38:
+ 458 019a 3BF90830 		ldrsh	r3, [fp, r8]
+ 459 019e CBE7     		b	.L34
+ 460              	.LVL39:
+ 461              	.L63:
+ 230:USER/snake.c  **** 				{
+ 462              		.loc 1 230 0 discriminator 1
+ 463 01a0 0029     		cmp	r1, #0
+ 464 01a2 BFD0     		beq	.L33
+ 232:USER/snake.c  **** 				}
+ 465              		.loc 1 232 0
+ 466 01a4 4FF4FC63 		mov	r3, #2016
+ 467 01a8 3246     		mov	r2, r6
+ 468 01aa 0093     		str	r3, [sp]
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 15
+
+
+ 469 01ac 4946     		mov	r1, r9
+ 470 01ae 049B     		ldr	r3, [sp, #16]
+ 471 01b0 2846     		mov	r0, r5
+ 472 01b2 FFF7FEFF 		bl	LCD_Fill
+ 473              	.LVL40:
+ 474 01b6 3BF90830 		ldrsh	r3, [fp, r8]
+ 475 01ba B3E7     		b	.L33
+ 476              	.L65:
+ 477              		.align	2
+ 478              	.L64:
+ 479 01bc 30000000 		.word	.LANCHOR0+48
+ 480 01c0 00000000 		.word	.LANCHOR1
+ 481 01c4 00000000 		.word	.LANCHOR0
+ 482              		.cfi_endproc
+ 483              	.LFE32:
+ 485              		.section	.text.initialize,"ax",%progbits
+ 486              		.align	1
+ 487              		.p2align 2,,3
+ 488              		.global	initialize
+ 489              		.syntax unified
+ 490              		.thumb
+ 491              		.thumb_func
+ 492              		.fpu softvfp
+ 494              	initialize:
+ 495              	.LFB29:
+  18:USER/snake.c  **** 	//SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);//初始化SDL
+ 496              		.loc 1 18 0
+ 497              		.cfi_startproc
+ 498              		@ args = 0, pretend = 0, frame = 0
+ 499              		@ frame_needed = 0, uses_anonymous_args = 0
+ 500 0000 70B5     		push	{r4, r5, r6, lr}
+ 501              	.LCFI5:
+ 502              		.cfi_def_cfa_offset 16
+ 503              		.cfi_offset 4, -16
+ 504              		.cfi_offset 5, -12
+ 505              		.cfi_offset 6, -8
+ 506              		.cfi_offset 14, -4
+  21:USER/snake.c  **** 	mark = clock();				 //标记时间
+ 507              		.loc 1 21 0
+ 508 0002 0020     		movs	r0, #0
+ 509 0004 354C     		ldr	r4, .L75
+ 510 0006 FFF7FEFF 		bl	time
+ 511              	.LVL41:
+ 512 000a FFF7FEFF 		bl	srand
+ 513              	.LVL42:
+  22:USER/snake.c  **** 	for (short *n = map[0]; n != map[HEIGHT]; n++)
+ 514              		.loc 1 22 0
+ 515 000e FFF7FEFF 		bl	clock
+ 516              	.LVL43:
+ 517 0012 4FF4C062 		mov	r2, #1536
+ 518 0016 0021     		movs	r1, #0
+ 519 0018 2046     		mov	r0, r4
+ 520 001a FFF7FEFF 		bl	memset
+ 521              	.LVL44:
+ 522              	.LBB27:
+  27:USER/snake.c  **** 		map[HEIGHT - 1][i] = -2;
+ 523              		.loc 1 27 0
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 16
+
+
+ 524 001e 6FF00110 		mvn	r0, #65537
+ 525 0022 2546     		mov	r5, r4
+  28:USER/snake.c  **** 	}
+ 526              		.loc 1 28 0
+ 527 0024 2646     		mov	r6, r4
+ 528 0026 2346     		mov	r3, r4
+ 529              	.LBE27:
+ 530              	.LBB28:
+  32:USER/snake.c  **** 		map[i][WIDTH - 1] = -2;
+ 531              		.loc 1 32 0
+ 532 0028 4FF6FE72 		movw	r2, #65534
+ 533 002c 04F5C061 		add	r1, r4, #1536
+ 534              	.LBE28:
+ 535              	.LBB29:
+  27:USER/snake.c  **** 		map[HEIGHT - 1][i] = -2;
+ 536              		.loc 1 27 0
+ 537 0030 2060     		str	r0, [r4]
+  28:USER/snake.c  **** 	}
+ 538              		.loc 1 28 0
+ 539 0032 C4F8D005 		str	r0, [r4, #1488]
+  27:USER/snake.c  **** 		map[HEIGHT - 1][i] = -2;
+ 540              		.loc 1 27 0
+ 541 0036 6060     		str	r0, [r4, #4]
+  28:USER/snake.c  **** 	}
+ 542              		.loc 1 28 0
+ 543 0038 C4F8D405 		str	r0, [r4, #1492]
+  27:USER/snake.c  **** 		map[HEIGHT - 1][i] = -2;
+ 544              		.loc 1 27 0
+ 545 003c A060     		str	r0, [r4, #8]
+  28:USER/snake.c  **** 	}
+ 546              		.loc 1 28 0
+ 547 003e C4F8D805 		str	r0, [r4, #1496]
+  27:USER/snake.c  **** 		map[HEIGHT - 1][i] = -2;
+ 548              		.loc 1 27 0
+ 549 0042 E060     		str	r0, [r4, #12]
+  28:USER/snake.c  **** 	}
+ 550              		.loc 1 28 0
+ 551 0044 C4F8DC05 		str	r0, [r4, #1500]
+  27:USER/snake.c  **** 		map[HEIGHT - 1][i] = -2;
+ 552              		.loc 1 27 0
+ 553 0048 2061     		str	r0, [r4, #16]
+  28:USER/snake.c  **** 	}
+ 554              		.loc 1 28 0
+ 555 004a C4F8E005 		str	r0, [r4, #1504]
+  27:USER/snake.c  **** 		map[HEIGHT - 1][i] = -2;
+ 556              		.loc 1 27 0
+ 557 004e 6061     		str	r0, [r4, #20]
+  28:USER/snake.c  **** 	}
+ 558              		.loc 1 28 0
+ 559 0050 C4F8E405 		str	r0, [r4, #1508]
+  27:USER/snake.c  **** 		map[HEIGHT - 1][i] = -2;
+ 560              		.loc 1 27 0
+ 561 0054 A061     		str	r0, [r4, #24]
+  28:USER/snake.c  **** 	}
+ 562              		.loc 1 28 0
+ 563 0056 C4F8E805 		str	r0, [r4, #1512]
+  27:USER/snake.c  **** 		map[HEIGHT - 1][i] = -2;
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 17
+
+
+ 564              		.loc 1 27 0
+ 565 005a E061     		str	r0, [r4, #28]
+  28:USER/snake.c  **** 	}
+ 566              		.loc 1 28 0
+ 567 005c C4F8EC05 		str	r0, [r4, #1516]
+  27:USER/snake.c  **** 		map[HEIGHT - 1][i] = -2;
+ 568              		.loc 1 27 0
+ 569 0060 2062     		str	r0, [r4, #32]
+  28:USER/snake.c  **** 	}
+ 570              		.loc 1 28 0
+ 571 0062 C4F8F005 		str	r0, [r4, #1520]
+  27:USER/snake.c  **** 		map[HEIGHT - 1][i] = -2;
+ 572              		.loc 1 27 0
+ 573 0066 6062     		str	r0, [r4, #36]
+  28:USER/snake.c  **** 	}
+ 574              		.loc 1 28 0
+ 575 0068 C4F8F405 		str	r0, [r4, #1524]
+  27:USER/snake.c  **** 		map[HEIGHT - 1][i] = -2;
+ 576              		.loc 1 27 0
+ 577 006c A062     		str	r0, [r4, #40]
+  28:USER/snake.c  **** 	}
+ 578              		.loc 1 28 0
+ 579 006e C4F8F805 		str	r0, [r4, #1528]
+  27:USER/snake.c  **** 		map[HEIGHT - 1][i] = -2;
+ 580              		.loc 1 27 0
+ 581 0072 E062     		str	r0, [r4, #44]
+  28:USER/snake.c  **** 	}
+ 582              		.loc 1 28 0
+ 583 0074 C4F8FC05 		str	r0, [r4, #1532]
+ 584              	.LVL45:
+ 585              	.L67:
+ 586              	.LBE29:
+ 587              	.LBB30:
+  32:USER/snake.c  **** 		map[i][WIDTH - 1] = -2;
+ 588              		.loc 1 32 0 discriminator 3
+ 589 0078 1A80     		strh	r2, [r3]	@ movhi
+  33:USER/snake.c  **** 	} //占用地图边界
+ 590              		.loc 1 33 0 discriminator 3
+ 591 007a DA85     		strh	r2, [r3, #46]	@ movhi
+ 592              	.LVL46:
+ 593 007c 3033     		adds	r3, r3, #48
+  30:USER/snake.c  **** 	{
+ 594              		.loc 1 30 0 discriminator 3
+ 595 007e 9942     		cmp	r1, r3
+ 596 0080 FAD1     		bne	.L67
+ 597              	.LBE30:
+  40:USER/snake.c  **** 	x = 3;
+ 598              		.loc 1 40 0
+ 599 0082 0323     		movs	r3, #3
+  42:USER/snake.c  **** 	map[3][3] = 3;
+ 600              		.loc 1 42 0
+ 601 0084 164A     		ldr	r2, .L75+4
+  41:USER/snake.c  **** 	y = 3;
+ 602              		.loc 1 41 0
+ 603 0086 1748     		ldr	r0, .L75+8
+  42:USER/snake.c  **** 	map[3][3] = 3;
+ 604              		.loc 1 42 0
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 18
+
+
+ 605 0088 1380     		strh	r3, [r2]	@ movhi
+  45:USER/snake.c  **** 	dire = d_right;
+ 606              		.loc 1 45 0
+ 607 008a 174A     		ldr	r2, .L75+12
+  46:USER/snake.c  **** 	diren = d_right;
+ 608              		.loc 1 46 0
+ 609 008c 1749     		ldr	r1, .L75+16
+  40:USER/snake.c  **** 	x = 3;
+ 610              		.loc 1 40 0
+ 611 008e 184C     		ldr	r4, .L75+20
+  45:USER/snake.c  **** 	dire = d_right;
+ 612              		.loc 1 45 0
+ 613 0090 C6F89220 		str	r2, [r6, #146]	@ unaligned
+  43:USER/snake.c  **** 	map[3][2] = 2;
+ 614              		.loc 1 43 0
+ 615 0094 A6F89630 		strh	r3, [r6, #150]	@ movhi
+  41:USER/snake.c  **** 	y = 3;
+ 616              		.loc 1 41 0
+ 617 0098 0380     		strh	r3, [r0]	@ movhi
+  46:USER/snake.c  **** 	diren = d_right;
+ 618              		.loc 1 46 0
+ 619 009a 0B70     		strb	r3, [r1]
+  40:USER/snake.c  **** 	x = 3;
+ 620              		.loc 1 40 0
+ 621 009c 2380     		strh	r3, [r4]	@ movhi
+ 622              	.LBB31:
+ 623              	.LBB32:
+ 261:USER/snake.c  **** 	short *p;
+ 624              		.loc 1 261 0
+ 625 009e FFF7FEFF 		bl	rand
+ 626              	.LVL47:
+ 627 00a2 B4F90030 		ldrsh	r3, [r4]
+ 628 00a6 C3F52573 		rsb	r3, r3, #660
+ 629 00aa 90FBF3F2 		sdiv	r2, r0, r3
+ 630 00ae 02FB1300 		mls	r0, r2, r3, r0
+ 631              	.LVL48:
+ 265:USER/snake.c  **** 	{
+ 632              		.loc 1 265 0
+ 633 00b2 0028     		cmp	r0, #0
+ 634 00b4 0FDB     		blt	.L74
+ 635              	.LVL49:
+ 636              	.L68:
+ 267:USER/snake.c  **** 			r--;
+ 637              		.loc 1 267 0
+ 638 00b6 35F9023B 		ldrsh	r3, [r5], #2
+ 639              	.LVL50:
+ 640 00ba 002B     		cmp	r3, #0
+ 641 00bc FBD1     		bne	.L68
+ 268:USER/snake.c  **** 		p++;
+ 642              		.loc 1 268 0
+ 643 00be 0138     		subs	r0, r0, #1
+ 644              	.LVL51:
+ 265:USER/snake.c  **** 	{
+ 645              		.loc 1 265 0
+ 646 00c0 421C     		adds	r2, r0, #1
+ 269:USER/snake.c  **** 	}
+ 647              		.loc 1 269 0
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 19
+
+
+ 648 00c2 2B46     		mov	r3, r5
+ 649              	.LVL52:
+ 265:USER/snake.c  **** 	{
+ 650              		.loc 1 265 0
+ 651 00c4 F7D1     		bne	.L68
+ 652              	.LVL53:
+ 653              	.L69:
+ 654              		.loc 1 272 0
+ 655 00c6 4FF6FF72 		movw	r2, #65535
+ 656 00ca 23F8022C 		strh	r2, [r3, #-2]	@ movhi
+ 657              	.LVL54:
+ 658              	.LBE32:
+ 659              	.LBE31:
+  49:USER/snake.c  **** 	return 0;
+ 660              		.loc 1 49 0
+ 661 00ce FFF7FEFF 		bl	display
+ 662              	.LVL55:
+  51:USER/snake.c  **** int gamewithai()
+ 663              		.loc 1 51 0
+ 664 00d2 0020     		movs	r0, #0
+ 665 00d4 70BD     		pop	{r4, r5, r6, pc}
+ 666              	.LVL56:
+ 667              	.L74:
+ 668              	.LBB34:
+ 669              	.LBB33:
+ 263:USER/snake.c  **** 
+ 670              		.loc 1 263 0
+ 671 00d6 014B     		ldr	r3, .L75
+ 672 00d8 F5E7     		b	.L69
+ 673              	.L76:
+ 674 00da 00BF     		.align	2
+ 675              	.L75:
+ 676 00dc 00000000 		.word	.LANCHOR0
+ 677 00e0 00000000 		.word	.LANCHOR4
+ 678 00e4 00000000 		.word	.LANCHOR3
+ 679 00e8 01000200 		.word	131073
+ 680 00ec 00000000 		.word	.LANCHOR5
+ 681 00f0 00000000 		.word	.LANCHOR1
+ 682              	.LBE33:
+ 683              	.LBE34:
+ 684              		.cfi_endproc
+ 685              	.LFE29:
+ 687              		.section	.text.gamewithai,"ax",%progbits
+ 688              		.align	1
+ 689              		.p2align 2,,3
+ 690              		.global	gamewithai
+ 691              		.syntax unified
+ 692              		.thumb
+ 693              		.thumb_func
+ 694              		.fpu softvfp
+ 696              	gamewithai:
+ 697              	.LFB30:
+  53:USER/snake.c  **** 
+ 698              		.loc 1 53 0
+ 699              		.cfi_startproc
+ 700              		@ args = 0, pretend = 0, frame = 0
+ 701              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 20
+
+
+ 702 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 703              	.LCFI6:
+ 704              		.cfi_def_cfa_offset 24
+ 705              		.cfi_offset 4, -24
+ 706              		.cfi_offset 5, -20
+ 707              		.cfi_offset 6, -16
+ 708              		.cfi_offset 7, -12
+ 709              		.cfi_offset 8, -8
+ 710              		.cfi_offset 14, -4
+  57:USER/snake.c  **** 	{
+ 711              		.loc 1 57 0
+ 712 0004 0026     		movs	r6, #0
+ 713 0006 BF4D     		ldr	r5, .L147
+ 714 0008 BF4C     		ldr	r4, .L147+4
+ 715 000a C04F     		ldr	r7, .L147+8
+  53:USER/snake.c  **** 
+ 716              		.loc 1 53 0
+ 717 000c 82B0     		sub	sp, sp, #8
+ 718              	.LCFI7:
+ 719              		.cfi_def_cfa_offset 32
+  57:USER/snake.c  **** 	{
+ 720              		.loc 1 57 0
+ 721 000e B5F90030 		ldrsh	r3, [r5]
+ 722 0012 B4F90020 		ldrsh	r2, [r4]
+ 723 0016 B7F90010 		ldrsh	r1, [r7]
+ 724 001a BD48     		ldr	r0, .L147+12
+ 725 001c 0096     		str	r6, [sp]
+ 726 001e FFF7FEFF 		bl	ai
+ 727              	.LVL57:
+ 728 0022 BC4B     		ldr	r3, .L147+16
+ 729 0024 0428     		cmp	r0, #4
+ 730 0026 1870     		strb	r0, [r3]
+ 731 0028 27D0     		beq	.L78
+  62:USER/snake.c  **** 	{
+ 732              		.loc 1 62 0
+ 733 002a BB4A     		ldr	r2, .L147+20
+ 734 002c 1368     		ldr	r3, [r2]
+ 735 002e B3F5256F 		cmp	r3, #2640
+ 736 0032 22DC     		bgt	.L78
+  69:USER/snake.c  **** 	switch (dire)
+ 737              		.loc 1 69 0
+ 738 0034 DFF8E482 		ldr	r8, .L147+24
+ 739 0038 88F80060 		strb	r6, [r8]
+  70:USER/snake.c  **** 	{
+ 740              		.loc 1 70 0
+ 741 003c 0328     		cmp	r0, #3
+ 742 003e 00F2EE80 		bhi	.L79
+ 743 0042 DFE800F0 		tbb	[pc, r0]
+ 744              	.L81:
+ 745 0046 02       		.byte	(.L80-.L81)/2
+ 746 0047 93       		.byte	(.L82-.L81)/2
+ 747 0048 59       		.byte	(.L83-.L81)/2
+ 748 0049 1E       		.byte	(.L84-.L81)/2
+ 749              		.p2align 1
+ 750              	.L80:
+  73:USER/snake.c  **** 			y = y - 1;
+ 751              		.loc 1 73 0
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 21
+
+
+ 752 004a B5F90000 		ldrsh	r0, [r5]
+ 753 004e B4F90010 		ldrsh	r1, [r4]
+ 754 0052 441E     		subs	r4, r0, #1
+ 755              	.LVL58:
+ 756              	.LBB75:
+ 757              	.LBB76:
+ 177:USER/snake.c  **** 	{
+ 758              		.loc 1 177 0
+ 759 0054 04EB4400 		add	r0, r4, r4, lsl #1
+ 760 0058 AD4E     		ldr	r6, .L147+12
+ 761 005a 01EBC001 		add	r1, r1, r0, lsl #3
+ 762              	.LVL59:
+ 763 005e 36F91100 		ldrsh	r0, [r6, r1, lsl #1]
+ 764 0062 1FFA80FC 		uxth	ip, r0
+ 765 0066 BCF1010F 		cmp	ip, #1
+ 766 006a 40F2DE80 		bls	.L143
+ 185:USER/snake.c  **** 	{
+ 767              		.loc 1 185 0
+ 768 006e 0130     		adds	r0, r0, #1
+ 769 0070 00F05681 		beq	.L92
+ 770              	.LVL60:
+ 771              	.L104:
+ 772              	.LBE76:
+ 773              	.LBE75:
+  76:USER/snake.c  **** 		break;
+ 774              		.loc 1 76 0
+ 775 0074 0123     		movs	r3, #1
+ 776 0076 88F80030 		strb	r3, [r8]
+ 777              	.L78:
+ 100:USER/snake.c  **** 	display();
+ 778              		.loc 1 100 0
+ 779 007a 0020     		movs	r0, #0
+ 103:USER/snake.c  **** /*
+ 780              		.loc 1 103 0
+ 781 007c 02B0     		add	sp, sp, #8
+ 782              	.LCFI8:
+ 783              		.cfi_remember_state
+ 784              		.cfi_def_cfa_offset 24
+ 785              		@ sp needed
+ 786 007e BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 787              	.L84:
+ 788              	.LCFI9:
+ 789              		.cfi_restore_state
+  91:USER/snake.c  **** 			x = x + 1;
+ 790              		.loc 1 91 0
+ 791 0082 B5F90010 		ldrsh	r1, [r5]
+ 792 0086 B4F90050 		ldrsh	r5, [r4]
+ 793              	.LBB88:
+ 794              	.LBB89:
+ 177:USER/snake.c  **** 	{
+ 795              		.loc 1 177 0
+ 796 008a 01EB4101 		add	r1, r1, r1, lsl #1
+ 797              	.LBE89:
+ 798              	.LBE88:
+  91:USER/snake.c  **** 			x = x + 1;
+ 799              		.loc 1 91 0
+ 800 008e 0135     		adds	r5, r5, #1
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 22
+
+
+ 801              	.LVL61:
+ 802              	.LBB103:
+ 803              	.LBB99:
+ 177:USER/snake.c  **** 	{
+ 804              		.loc 1 177 0
+ 805 0090 9F4E     		ldr	r6, .L147+12
+ 806 0092 05EBC101 		add	r1, r5, r1, lsl #3
+ 807 0096 36F91100 		ldrsh	r0, [r6, r1, lsl #1]
+ 808 009a 1FFA80FC 		uxth	ip, r0
+ 809 009e BCF1010F 		cmp	ip, #1
+ 810 00a2 40F2FB80 		bls	.L144
+ 185:USER/snake.c  **** 	{
+ 811              		.loc 1 185 0
+ 812 00a6 0130     		adds	r0, r0, #1
+ 813 00a8 E4D1     		bne	.L104
+ 814              	.LVL62:
+ 815              	.LBB90:
+ 816              	.LBB91:
+ 189:USER/snake.c  **** 		newfood();
+ 817              		.loc 1 189 0
+ 818 00aa 0020     		movs	r0, #0
+ 187:USER/snake.c  **** 		map[y][x] = size;
+ 819              		.loc 1 187 0
+ 820 00ac 3B88     		ldrh	r3, [r7]
+ 189:USER/snake.c  **** 		newfood();
+ 821              		.loc 1 189 0
+ 822 00ae 1060     		str	r0, [r2]
+ 187:USER/snake.c  **** 		map[y][x] = size;
+ 823              		.loc 1 187 0
+ 824 00b0 0133     		adds	r3, r3, #1
+ 825 00b2 1BB2     		sxth	r3, r3
+ 826 00b4 3B80     		strh	r3, [r7]	@ movhi
+ 188:USER/snake.c  **** 		banai = 0;
+ 827              		.loc 1 188 0
+ 828 00b6 26F81130 		strh	r3, [r6, r1, lsl #1]	@ movhi
+ 829              	.LBB92:
+ 830              	.LBB93:
+ 261:USER/snake.c  **** 	short *p;
+ 831              		.loc 1 261 0
+ 832 00ba FFF7FEFF 		bl	rand
+ 833              	.LVL63:
+ 834 00be B7F90030 		ldrsh	r3, [r7]
+ 835 00c2 C3F52573 		rsb	r3, r3, #660
+ 836 00c6 90FBF3F2 		sdiv	r2, r0, r3
+ 837 00ca 02FB1300 		mls	r0, r2, r3, r0
+ 838              	.LVL64:
+ 265:USER/snake.c  **** 	{
+ 839              		.loc 1 265 0
+ 840 00ce 0028     		cmp	r0, #0
+ 841 00d0 08DB     		blt	.L125
+ 842 00d2 3346     		mov	r3, r6
+ 843              	.LVL65:
+ 844              	.L126:
+ 267:USER/snake.c  **** 			r--;
+ 845              		.loc 1 267 0
+ 846 00d4 33F9022B 		ldrsh	r2, [r3], #2
+ 847              	.LVL66:
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 23
+
+
+ 848 00d8 002A     		cmp	r2, #0
+ 849 00da FBD1     		bne	.L126
+ 268:USER/snake.c  **** 		p++;
+ 850              		.loc 1 268 0
+ 851 00dc 0138     		subs	r0, r0, #1
+ 852              	.LVL67:
+ 265:USER/snake.c  **** 	{
+ 853              		.loc 1 265 0
+ 854 00de 421C     		adds	r2, r0, #1
+ 269:USER/snake.c  **** 	}
+ 855              		.loc 1 269 0
+ 856 00e0 1E46     		mov	r6, r3
+ 857              	.LVL68:
+ 265:USER/snake.c  **** 	{
+ 858              		.loc 1 265 0
+ 859 00e2 F7D1     		bne	.L126
+ 860              	.LVL69:
+ 861              	.L125:
+ 862              		.loc 1 272 0
+ 863 00e4 4FF6FF72 		movw	r2, #65535
+ 864 00e8 B4F90050 		ldrsh	r5, [r4]
+ 865              	.LVL70:
+ 866 00ec 98F80030 		ldrb	r3, [r8]	@ zero_extendqisi2
+ 867 00f0 26F8022C 		strh	r2, [r6, #-2]	@ movhi
+ 868              	.LVL71:
+ 869 00f4 0135     		adds	r5, r5, #1
+ 870 00f6 8EE0     		b	.L124
+ 871              	.L83:
+ 872              	.LBE93:
+ 873              	.LBE92:
+ 874              	.LBE91:
+ 875              	.LBE90:
+ 876              	.LBE99:
+ 877              	.LBE103:
+  85:USER/snake.c  **** 			x = x - 1;
+ 878              		.loc 1 85 0
+ 879 00f8 B5F90010 		ldrsh	r1, [r5]
+ 880 00fc B4F90050 		ldrsh	r5, [r4]
+ 881              	.LBB104:
+ 882              	.LBB105:
+ 177:USER/snake.c  **** 	{
+ 883              		.loc 1 177 0
+ 884 0100 01EB4101 		add	r1, r1, r1, lsl #1
+ 885              	.LBE105:
+ 886              	.LBE104:
+  85:USER/snake.c  **** 			x = x - 1;
+ 887              		.loc 1 85 0
+ 888 0104 013D     		subs	r5, r5, #1
+ 889              	.LVL72:
+ 890              	.LBB117:
+ 891              	.LBB114:
+ 177:USER/snake.c  **** 	{
+ 892              		.loc 1 177 0
+ 893 0106 824E     		ldr	r6, .L147+12
+ 894 0108 05EBC101 		add	r1, r5, r1, lsl #3
+ 895 010c 36F91100 		ldrsh	r0, [r6, r1, lsl #1]
+ 896 0110 1FFA80FC 		uxth	ip, r0
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 24
+
+
+ 897 0114 BCF1010F 		cmp	ip, #1
+ 898 0118 63D9     		bls	.L145
+ 185:USER/snake.c  **** 	{
+ 899              		.loc 1 185 0
+ 900 011a 0130     		adds	r0, r0, #1
+ 901 011c AAD1     		bne	.L104
+ 902              	.LVL73:
+ 903              	.LBB106:
+ 904              	.LBB107:
+ 189:USER/snake.c  **** 		newfood();
+ 905              		.loc 1 189 0
+ 906 011e 0020     		movs	r0, #0
+ 187:USER/snake.c  **** 		map[y][x] = size;
+ 907              		.loc 1 187 0
+ 908 0120 3B88     		ldrh	r3, [r7]
+ 189:USER/snake.c  **** 		newfood();
+ 909              		.loc 1 189 0
+ 910 0122 1060     		str	r0, [r2]
+ 187:USER/snake.c  **** 		map[y][x] = size;
+ 911              		.loc 1 187 0
+ 912 0124 0133     		adds	r3, r3, #1
+ 913 0126 1BB2     		sxth	r3, r3
+ 914 0128 3B80     		strh	r3, [r7]	@ movhi
+ 188:USER/snake.c  **** 		banai = 0;
+ 915              		.loc 1 188 0
+ 916 012a 26F81130 		strh	r3, [r6, r1, lsl #1]	@ movhi
+ 917              	.LBB108:
+ 918              	.LBB109:
+ 261:USER/snake.c  **** 	short *p;
+ 919              		.loc 1 261 0
+ 920 012e FFF7FEFF 		bl	rand
+ 921              	.LVL74:
+ 922 0132 B7F90030 		ldrsh	r3, [r7]
+ 923 0136 C3F52573 		rsb	r3, r3, #660
+ 924 013a 90FBF3F2 		sdiv	r2, r0, r3
+ 925 013e 02FB1300 		mls	r0, r2, r3, r0
+ 926              	.LVL75:
+ 265:USER/snake.c  **** 	{
+ 927              		.loc 1 265 0
+ 928 0142 0028     		cmp	r0, #0
+ 929 0144 08DB     		blt	.L115
+ 930 0146 3346     		mov	r3, r6
+ 931              	.LVL76:
+ 932              	.L116:
+ 267:USER/snake.c  **** 			r--;
+ 933              		.loc 1 267 0
+ 934 0148 33F9022B 		ldrsh	r2, [r3], #2
+ 935              	.LVL77:
+ 936 014c 002A     		cmp	r2, #0
+ 937 014e FBD1     		bne	.L116
+ 268:USER/snake.c  **** 		p++;
+ 938              		.loc 1 268 0
+ 939 0150 0138     		subs	r0, r0, #1
+ 940              	.LVL78:
+ 265:USER/snake.c  **** 	{
+ 941              		.loc 1 265 0
+ 942 0152 411C     		adds	r1, r0, #1
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 25
+
+
+ 269:USER/snake.c  **** 	}
+ 943              		.loc 1 269 0
+ 944 0154 1E46     		mov	r6, r3
+ 945              	.LVL79:
+ 265:USER/snake.c  **** 	{
+ 946              		.loc 1 265 0
+ 947 0156 F7D1     		bne	.L116
+ 948              	.LVL80:
+ 949              	.L115:
+ 950              		.loc 1 272 0
+ 951 0158 4FF6FF72 		movw	r2, #65535
+ 952 015c B4F90050 		ldrsh	r5, [r4]
+ 953              	.LVL81:
+ 954 0160 98F80030 		ldrb	r3, [r8]	@ zero_extendqisi2
+ 955 0164 26F8022C 		strh	r2, [r6, #-2]	@ movhi
+ 956              	.LVL82:
+ 957 0168 013D     		subs	r5, r5, #1
+ 958 016a 54E0     		b	.L124
+ 959              	.L82:
+ 960              	.LBE109:
+ 961              	.LBE108:
+ 962              	.LBE107:
+ 963              	.LBE106:
+ 964              	.LBE114:
+ 965              	.LBE117:
+  79:USER/snake.c  **** 			y = y + 1;
+ 966              		.loc 1 79 0
+ 967 016c B5F90000 		ldrsh	r0, [r5]
+ 968 0170 B4F90010 		ldrsh	r1, [r4]
+ 969 0174 441C     		adds	r4, r0, #1
+ 970              	.LVL83:
+ 971              	.LBB118:
+ 972              	.LBB119:
+ 177:USER/snake.c  **** 	{
+ 973              		.loc 1 177 0
+ 974 0176 04EB4400 		add	r0, r4, r4, lsl #1
+ 975 017a 654E     		ldr	r6, .L147+12
+ 976 017c 01EBC001 		add	r1, r1, r0, lsl #3
+ 977              	.LVL84:
+ 978 0180 36F91100 		ldrsh	r0, [r6, r1, lsl #1]
+ 979 0184 1FFA80FC 		uxth	ip, r0
+ 980 0188 BCF1010F 		cmp	ip, #1
+ 981 018c 6CD9     		bls	.L146
+ 185:USER/snake.c  **** 	{
+ 982              		.loc 1 185 0
+ 983 018e 0130     		adds	r0, r0, #1
+ 984 0190 7FF470AF 		bne	.L104
+ 985              	.LVL85:
+ 986              	.LBB120:
+ 987              	.LBB121:
+ 189:USER/snake.c  **** 		newfood();
+ 988              		.loc 1 189 0
+ 989 0194 0020     		movs	r0, #0
+ 187:USER/snake.c  **** 		map[y][x] = size;
+ 990              		.loc 1 187 0
+ 991 0196 3B88     		ldrh	r3, [r7]
+ 189:USER/snake.c  **** 		newfood();
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 26
+
+
+ 992              		.loc 1 189 0
+ 993 0198 1060     		str	r0, [r2]
+ 187:USER/snake.c  **** 		map[y][x] = size;
+ 994              		.loc 1 187 0
+ 995 019a 0133     		adds	r3, r3, #1
+ 996 019c 1BB2     		sxth	r3, r3
+ 997 019e 3B80     		strh	r3, [r7]	@ movhi
+ 188:USER/snake.c  **** 		banai = 0;
+ 998              		.loc 1 188 0
+ 999 01a0 26F81130 		strh	r3, [r6, r1, lsl #1]	@ movhi
+ 1000              	.LBB122:
+ 1001              	.LBB123:
+ 261:USER/snake.c  **** 	short *p;
+ 1002              		.loc 1 261 0
+ 1003 01a4 FFF7FEFF 		bl	rand
+ 1004              	.LVL86:
+ 1005 01a8 B7F90030 		ldrsh	r3, [r7]
+ 1006 01ac C3F52573 		rsb	r3, r3, #660
+ 1007 01b0 90FBF3F2 		sdiv	r2, r0, r3
+ 1008 01b4 02FB1300 		mls	r0, r2, r3, r0
+ 1009              	.LVL87:
+ 265:USER/snake.c  **** 	{
+ 1010              		.loc 1 265 0
+ 1011 01b8 0028     		cmp	r0, #0
+ 1012 01ba 08DB     		blt	.L105
+ 1013 01bc 3346     		mov	r3, r6
+ 1014              	.LVL88:
+ 1015              	.L106:
+ 267:USER/snake.c  **** 			r--;
+ 1016              		.loc 1 267 0
+ 1017 01be 33F9022B 		ldrsh	r2, [r3], #2
+ 1018              	.LVL89:
+ 1019 01c2 002A     		cmp	r2, #0
+ 1020 01c4 FBD1     		bne	.L106
+ 268:USER/snake.c  **** 		p++;
+ 1021              		.loc 1 268 0
+ 1022 01c6 0138     		subs	r0, r0, #1
+ 1023              	.LVL90:
+ 265:USER/snake.c  **** 	{
+ 1024              		.loc 1 265 0
+ 1025 01c8 441C     		adds	r4, r0, #1
+ 269:USER/snake.c  **** 	}
+ 1026              		.loc 1 269 0
+ 1027 01ca 1E46     		mov	r6, r3
+ 1028              	.LVL91:
+ 265:USER/snake.c  **** 	{
+ 1029              		.loc 1 265 0
+ 1030 01cc F7D1     		bne	.L106
+ 1031              	.LVL92:
+ 1032              	.L105:
+ 1033              		.loc 1 272 0
+ 1034 01ce 4FF6FF72 		movw	r2, #65535
+ 1035 01d2 B5F90000 		ldrsh	r0, [r5]
+ 1036              	.LVL93:
+ 1037 01d6 98F80030 		ldrb	r3, [r8]	@ zero_extendqisi2
+ 1038 01da 26F8022C 		strh	r2, [r6, #-2]	@ movhi
+ 1039              	.LVL94:
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 27
+
+
+ 1040 01de 441C     		adds	r4, r0, #1
+ 1041 01e0 3DE0     		b	.L103
+ 1042              	.LVL95:
+ 1043              	.L145:
+ 1044              	.LBE123:
+ 1045              	.LBE122:
+ 1046              	.LBE121:
+ 1047              	.LBE120:
+ 1048              	.LBE119:
+ 1049              	.LBE118:
+ 1050              	.LBB132:
+ 1051              	.LBB115:
+ 179:USER/snake.c  **** 		banai++;
+ 1052              		.loc 1 179 0
+ 1053 01e2 3888     		ldrh	r0, [r7]
+ 180:USER/snake.c  **** 		for (int a = 0; a < HEIGHT; a++)
+ 1054              		.loc 1 180 0
+ 1055 01e4 0133     		adds	r3, r3, #1
+ 179:USER/snake.c  **** 		banai++;
+ 1056              		.loc 1 179 0
+ 1057 01e6 0130     		adds	r0, r0, #1
+ 1058 01e8 26F81100 		strh	r0, [r6, r1, lsl #1]	@ movhi
+ 180:USER/snake.c  **** 		for (int a = 0; a < HEIGHT; a++)
+ 1059              		.loc 1 180 0
+ 1060 01ec 1360     		str	r3, [r2]
+ 1061              	.LVL96:
+ 1062 01ee 06F13000 		add	r0, r6, #48
+ 1063 01f2 06F5C666 		add	r6, r6, #1584
+ 1064              	.LVL97:
+ 1065              	.L113:
+ 1066 01f6 A0F13003 		sub	r3, r0, #48
+ 1067              	.LVL98:
+ 1068              	.L109:
+ 1069              	.LBB110:
+ 1070              	.LBB111:
+ 183:USER/snake.c  **** 	}
+ 1071              		.loc 1 183 0
+ 1072 01fa 33F9022B 		ldrsh	r2, [r3], #2
+ 1073 01fe 002A     		cmp	r2, #0
+ 1074 0200 02F1FF31 		add	r1, r2, #-1
+ 1075 0204 71DD     		ble	.L110
+ 182:USER/snake.c  **** 				map[a][b] = (map[a][b] > 0 ? map[a][b] - 1 : map[a][b]);
+ 1076              		.loc 1 182 0
+ 1077 0206 8342     		cmp	r3, r0
+ 183:USER/snake.c  **** 	}
+ 1078              		.loc 1 183 0
+ 1079 0208 23F8021C 		strh	r1, [r3, #-2]	@ movhi
+ 182:USER/snake.c  **** 				map[a][b] = (map[a][b] > 0 ? map[a][b] - 1 : map[a][b]);
+ 1080              		.loc 1 182 0
+ 1081 020c F5D1     		bne	.L109
+ 1082              	.L112:
+ 1083 020e 3030     		adds	r0, r0, #48
+ 1084              	.LBE111:
+ 181:USER/snake.c  **** 			for (int b = 0; b < WIDTH; b++)
+ 1085              		.loc 1 181 0
+ 1086 0210 8642     		cmp	r6, r0
+ 1087 0212 F0D1     		bne	.L113
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 28
+
+
+ 1088              	.LVL99:
+ 1089              	.L142:
+ 1090              	.LBE110:
+ 1091              	.LBE115:
+ 1092              	.LBE132:
+ 1093              	.LBB133:
+ 1094              	.LBB100:
+ 1095              	.LBB94:
+ 1096 0214 0023     		movs	r3, #0
+ 1097              	.L124:
+ 1098              	.LBE94:
+ 1099              	.LBE100:
+ 1100              	.LBE133:
+  92:USER/snake.c  **** 		else
+ 1101              		.loc 1 92 0
+ 1102 0216 2580     		strh	r5, [r4]	@ movhi
+  99:USER/snake.c  **** 		return 0;
+ 1103              		.loc 1 99 0
+ 1104 0218 002B     		cmp	r3, #0
+ 1105 021a 7FF42EAF 		bne	.L78
+ 1106              	.L79:
+ 101:USER/snake.c  **** 	return 1;
+ 1107              		.loc 1 101 0
+ 1108 021e FFF7FEFF 		bl	display
+ 1109              	.LVL100:
+ 102:USER/snake.c  **** }
+ 1110              		.loc 1 102 0
+ 1111 0222 0120     		movs	r0, #1
+ 103:USER/snake.c  **** /*
+ 1112              		.loc 1 103 0
+ 1113 0224 02B0     		add	sp, sp, #8
+ 1114              	.LCFI10:
+ 1115              		.cfi_remember_state
+ 1116              		.cfi_def_cfa_offset 24
+ 1117              		@ sp needed
+ 1118 0226 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 1119              	.LVL101:
+ 1120              	.L143:
+ 1121              	.LCFI11:
+ 1122              		.cfi_restore_state
+ 1123              	.LBB134:
+ 1124              	.LBB85:
+ 179:USER/snake.c  **** 		banai++;
+ 1125              		.loc 1 179 0
+ 1126 022a 3888     		ldrh	r0, [r7]
+ 180:USER/snake.c  **** 		for (int a = 0; a < HEIGHT; a++)
+ 1127              		.loc 1 180 0
+ 1128 022c 0133     		adds	r3, r3, #1
+ 179:USER/snake.c  **** 		banai++;
+ 1129              		.loc 1 179 0
+ 1130 022e 0130     		adds	r0, r0, #1
+ 1131 0230 26F81100 		strh	r0, [r6, r1, lsl #1]	@ movhi
+ 180:USER/snake.c  **** 		for (int a = 0; a < HEIGHT; a++)
+ 1132              		.loc 1 180 0
+ 1133 0234 1360     		str	r3, [r2]
+ 1134              	.LVL102:
+ 1135 0236 06F13000 		add	r0, r6, #48
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 29
+
+
+ 1136 023a 06F5C666 		add	r6, r6, #1584
+ 1137              	.LVL103:
+ 1138              	.L90:
+ 1139 023e A0F13003 		sub	r3, r0, #48
+ 1140              	.LVL104:
+ 1141              	.L86:
+ 1142              	.LBB77:
+ 1143              	.LBB78:
+ 183:USER/snake.c  **** 	}
+ 1144              		.loc 1 183 0
+ 1145 0242 33F9022B 		ldrsh	r2, [r3], #2
+ 1146 0246 002A     		cmp	r2, #0
+ 1147 0248 02F1FF31 		add	r1, r2, #-1
+ 1148 024c 40DD     		ble	.L87
+ 182:USER/snake.c  **** 				map[a][b] = (map[a][b] > 0 ? map[a][b] - 1 : map[a][b]);
+ 1149              		.loc 1 182 0
+ 1150 024e 8342     		cmp	r3, r0
+ 183:USER/snake.c  **** 	}
+ 1151              		.loc 1 183 0
+ 1152 0250 23F8021C 		strh	r1, [r3, #-2]	@ movhi
+ 182:USER/snake.c  **** 				map[a][b] = (map[a][b] > 0 ? map[a][b] - 1 : map[a][b]);
+ 1153              		.loc 1 182 0
+ 1154 0254 F5D1     		bne	.L86
+ 1155              	.L89:
+ 1156 0256 3030     		adds	r0, r0, #48
+ 1157              	.LBE78:
+ 181:USER/snake.c  **** 			for (int b = 0; b < WIDTH; b++)
+ 1158              		.loc 1 181 0
+ 1159 0258 8642     		cmp	r6, r0
+ 1160 025a F0D1     		bne	.L90
+ 1161              	.LVL105:
+ 1162              	.L141:
+ 1163              	.LBE77:
+ 1164              	.LBE85:
+ 1165              	.LBE134:
+ 1166              	.LBB135:
+ 1167              	.LBB129:
+ 1168              	.LBB124:
+ 1169 025c 0023     		movs	r3, #0
+ 1170              	.L103:
+ 1171              	.LBE124:
+ 1172              	.LBE129:
+ 1173              	.LBE135:
+  80:USER/snake.c  **** 		else
+ 1174              		.loc 1 80 0
+ 1175 025e 2C80     		strh	r4, [r5]	@ movhi
+  99:USER/snake.c  **** 		return 0;
+ 1176              		.loc 1 99 0
+ 1177 0260 002B     		cmp	r3, #0
+ 1178 0262 7FF40AAF 		bne	.L78
+ 1179 0266 DAE7     		b	.L79
+ 1180              	.LVL106:
+ 1181              	.L146:
+ 1182              	.LBB136:
+ 1183              	.LBB130:
+ 179:USER/snake.c  **** 		banai++;
+ 1184              		.loc 1 179 0
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 30
+
+
+ 1185 0268 3888     		ldrh	r0, [r7]
+ 180:USER/snake.c  **** 		for (int a = 0; a < HEIGHT; a++)
+ 1186              		.loc 1 180 0
+ 1187 026a 0133     		adds	r3, r3, #1
+ 179:USER/snake.c  **** 		banai++;
+ 1188              		.loc 1 179 0
+ 1189 026c 0130     		adds	r0, r0, #1
+ 1190 026e 26F81100 		strh	r0, [r6, r1, lsl #1]	@ movhi
+ 180:USER/snake.c  **** 		for (int a = 0; a < HEIGHT; a++)
+ 1191              		.loc 1 180 0
+ 1192 0272 1360     		str	r3, [r2]
+ 1193              	.LVL107:
+ 1194 0274 06F13000 		add	r0, r6, #48
+ 1195 0278 06F5C666 		add	r6, r6, #1584
+ 1196              	.LVL108:
+ 1197              	.L102:
+ 1198 027c A0F13003 		sub	r3, r0, #48
+ 1199              	.LVL109:
+ 1200              	.L98:
+ 1201              	.LBB127:
+ 1202              	.LBB125:
+ 183:USER/snake.c  **** 	}
+ 1203              		.loc 1 183 0
+ 1204 0280 33F9022B 		ldrsh	r2, [r3], #2
+ 1205 0284 002A     		cmp	r2, #0
+ 1206 0286 02F1FF31 		add	r1, r2, #-1
+ 1207 028a 33DD     		ble	.L99
+ 182:USER/snake.c  **** 				map[a][b] = (map[a][b] > 0 ? map[a][b] - 1 : map[a][b]);
+ 1208              		.loc 1 182 0
+ 1209 028c 9842     		cmp	r0, r3
+ 183:USER/snake.c  **** 	}
+ 1210              		.loc 1 183 0
+ 1211 028e 23F8021C 		strh	r1, [r3, #-2]	@ movhi
+ 182:USER/snake.c  **** 				map[a][b] = (map[a][b] > 0 ? map[a][b] - 1 : map[a][b]);
+ 1212              		.loc 1 182 0
+ 1213 0292 F5D1     		bne	.L98
+ 1214 0294 3030     		adds	r0, r0, #48
+ 1215              	.LBE125:
+ 181:USER/snake.c  **** 			for (int b = 0; b < WIDTH; b++)
+ 1216              		.loc 1 181 0
+ 1217 0296 8642     		cmp	r6, r0
+ 1218 0298 F0D1     		bne	.L102
+ 1219 029a DFE7     		b	.L141
+ 1220              	.LVL110:
+ 1221              	.L144:
+ 1222              	.LBE127:
+ 1223              	.LBE130:
+ 1224              	.LBE136:
+ 1225              	.LBB137:
+ 1226              	.LBB101:
+ 179:USER/snake.c  **** 		banai++;
+ 1227              		.loc 1 179 0
+ 1228 029c 3888     		ldrh	r0, [r7]
+ 180:USER/snake.c  **** 		for (int a = 0; a < HEIGHT; a++)
+ 1229              		.loc 1 180 0
+ 1230 029e 0133     		adds	r3, r3, #1
+ 179:USER/snake.c  **** 		banai++;
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 31
+
+
+ 1231              		.loc 1 179 0
+ 1232 02a0 0130     		adds	r0, r0, #1
+ 1233 02a2 26F81100 		strh	r0, [r6, r1, lsl #1]	@ movhi
+ 180:USER/snake.c  **** 		for (int a = 0; a < HEIGHT; a++)
+ 1234              		.loc 1 180 0
+ 1235 02a6 1360     		str	r3, [r2]
+ 1236              	.LVL111:
+ 1237 02a8 06F13000 		add	r0, r6, #48
+ 1238 02ac 06F5C666 		add	r6, r6, #1584
+ 1239              	.LVL112:
+ 1240              	.L123:
+ 1241 02b0 A0F13003 		sub	r3, r0, #48
+ 1242              	.LVL113:
+ 1243              	.L119:
+ 1244              	.LBB97:
+ 1245              	.LBB95:
+ 183:USER/snake.c  **** 	}
+ 1246              		.loc 1 183 0
+ 1247 02b4 33F9022B 		ldrsh	r2, [r3], #2
+ 1248 02b8 002A     		cmp	r2, #0
+ 1249 02ba 02F1FF31 		add	r1, r2, #-1
+ 1250 02be 0CDD     		ble	.L120
+ 182:USER/snake.c  **** 				map[a][b] = (map[a][b] > 0 ? map[a][b] - 1 : map[a][b]);
+ 1251              		.loc 1 182 0
+ 1252 02c0 8342     		cmp	r3, r0
+ 183:USER/snake.c  **** 	}
+ 1253              		.loc 1 183 0
+ 1254 02c2 23F8021C 		strh	r1, [r3, #-2]	@ movhi
+ 182:USER/snake.c  **** 				map[a][b] = (map[a][b] > 0 ? map[a][b] - 1 : map[a][b]);
+ 1255              		.loc 1 182 0
+ 1256 02c6 F5D1     		bne	.L119
+ 1257 02c8 3030     		adds	r0, r0, #48
+ 1258              	.LBE95:
+ 181:USER/snake.c  **** 			for (int b = 0; b < WIDTH; b++)
+ 1259              		.loc 1 181 0
+ 1260 02ca 8642     		cmp	r6, r0
+ 1261 02cc F0D1     		bne	.L123
+ 1262 02ce A1E7     		b	.L142
+ 1263              	.LVL114:
+ 1264              	.L87:
+ 1265              	.LBE97:
+ 1266              	.LBE101:
+ 1267              	.LBE137:
+ 1268              	.LBB138:
+ 1269              	.LBB86:
+ 1270              	.LBB80:
+ 1271              	.LBB79:
+ 182:USER/snake.c  **** 				map[a][b] = (map[a][b] > 0 ? map[a][b] - 1 : map[a][b]);
+ 1272              		.loc 1 182 0
+ 1273 02d0 8342     		cmp	r3, r0
+ 183:USER/snake.c  **** 	}
+ 1274              		.loc 1 183 0
+ 1275 02d2 23F8022C 		strh	r2, [r3, #-2]	@ movhi
+ 182:USER/snake.c  **** 				map[a][b] = (map[a][b] > 0 ? map[a][b] - 1 : map[a][b]);
+ 1276              		.loc 1 182 0
+ 1277 02d6 B4D1     		bne	.L86
+ 1278 02d8 BDE7     		b	.L89
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 32
+
+
+ 1279              	.LVL115:
+ 1280              	.L120:
+ 1281              	.LBE79:
+ 1282              	.LBE80:
+ 1283              	.LBE86:
+ 1284              	.LBE138:
+ 1285              	.LBB139:
+ 1286              	.LBB102:
+ 1287              	.LBB98:
+ 1288              	.LBB96:
+ 1289 02da 8342     		cmp	r3, r0
+ 183:USER/snake.c  **** 	}
+ 1290              		.loc 1 183 0
+ 1291 02dc 23F8022C 		strh	r2, [r3, #-2]	@ movhi
+ 182:USER/snake.c  **** 				map[a][b] = (map[a][b] > 0 ? map[a][b] - 1 : map[a][b]);
+ 1292              		.loc 1 182 0
+ 1293 02e0 E8D1     		bne	.L119
+ 1294 02e2 3030     		adds	r0, r0, #48
+ 1295              	.LBE96:
+ 181:USER/snake.c  **** 			for (int b = 0; b < WIDTH; b++)
+ 1296              		.loc 1 181 0
+ 1297 02e4 8642     		cmp	r6, r0
+ 1298 02e6 E3D1     		bne	.L123
+ 1299 02e8 94E7     		b	.L142
+ 1300              	.LVL116:
+ 1301              	.L110:
+ 1302              	.LBE98:
+ 1303              	.LBE102:
+ 1304              	.LBE139:
+ 1305              	.LBB140:
+ 1306              	.LBB116:
+ 1307              	.LBB113:
+ 1308              	.LBB112:
+ 182:USER/snake.c  **** 				map[a][b] = (map[a][b] > 0 ? map[a][b] - 1 : map[a][b]);
+ 1309              		.loc 1 182 0
+ 1310 02ea 8342     		cmp	r3, r0
+ 183:USER/snake.c  **** 	}
+ 1311              		.loc 1 183 0
+ 1312 02ec 23F8022C 		strh	r2, [r3, #-2]	@ movhi
+ 182:USER/snake.c  **** 				map[a][b] = (map[a][b] > 0 ? map[a][b] - 1 : map[a][b]);
+ 1313              		.loc 1 182 0
+ 1314 02f0 83D1     		bne	.L109
+ 1315 02f2 8CE7     		b	.L112
+ 1316              	.LVL117:
+ 1317              	.L99:
+ 1318              	.LBE112:
+ 1319              	.LBE113:
+ 1320              	.LBE116:
+ 1321              	.LBE140:
+ 1322              	.LBB141:
+ 1323              	.LBB131:
+ 1324              	.LBB128:
+ 1325              	.LBB126:
+ 1326 02f4 9842     		cmp	r0, r3
+ 183:USER/snake.c  **** 	}
+ 1327              		.loc 1 183 0
+ 1328 02f6 23F8022C 		strh	r2, [r3, #-2]	@ movhi
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 33
+
+
+ 182:USER/snake.c  **** 				map[a][b] = (map[a][b] > 0 ? map[a][b] - 1 : map[a][b]);
+ 1329              		.loc 1 182 0
+ 1330 02fa C1D1     		bne	.L98
+ 1331 02fc 3030     		adds	r0, r0, #48
+ 1332              	.LBE126:
+ 181:USER/snake.c  **** 			for (int b = 0; b < WIDTH; b++)
+ 1333              		.loc 1 181 0
+ 1334 02fe 8642     		cmp	r6, r0
+ 1335 0300 BCD1     		bne	.L102
+ 1336 0302 ABE7     		b	.L141
+ 1337              	.L148:
+ 1338              		.align	2
+ 1339              	.L147:
+ 1340 0304 00000000 		.word	.LANCHOR4
+ 1341 0308 00000000 		.word	.LANCHOR3
+ 1342 030c 00000000 		.word	.LANCHOR1
+ 1343 0310 00000000 		.word	.LANCHOR0
+ 1344 0314 00000000 		.word	.LANCHOR5
+ 1345 0318 00000000 		.word	.LANCHOR2
+ 1346 031c 00000000 		.word	.LANCHOR6
+ 1347              	.LVL118:
+ 1348              	.L92:
+ 1349              	.LBE128:
+ 1350              	.LBE131:
+ 1351              	.LBE141:
+ 1352              	.LBB142:
+ 1353              	.LBB87:
+ 1354              	.LBB81:
+ 1355              	.LBB82:
+ 189:USER/snake.c  **** 		newfood();
+ 1356              		.loc 1 189 0
+ 1357 0320 0020     		movs	r0, #0
+ 187:USER/snake.c  **** 		map[y][x] = size;
+ 1358              		.loc 1 187 0
+ 1359 0322 3B88     		ldrh	r3, [r7]
+ 189:USER/snake.c  **** 		newfood();
+ 1360              		.loc 1 189 0
+ 1361 0324 1060     		str	r0, [r2]
+ 187:USER/snake.c  **** 		map[y][x] = size;
+ 1362              		.loc 1 187 0
+ 1363 0326 0133     		adds	r3, r3, #1
+ 1364 0328 1BB2     		sxth	r3, r3
+ 1365 032a 3B80     		strh	r3, [r7]	@ movhi
+ 188:USER/snake.c  **** 		banai = 0;
+ 1366              		.loc 1 188 0
+ 1367 032c 26F81130 		strh	r3, [r6, r1, lsl #1]	@ movhi
+ 1368              	.LBB83:
+ 1369              	.LBB84:
+ 261:USER/snake.c  **** 	short *p;
+ 1370              		.loc 1 261 0
+ 1371 0330 FFF7FEFF 		bl	rand
+ 1372              	.LVL119:
+ 1373 0334 B7F90030 		ldrsh	r3, [r7]
+ 1374 0338 C3F52573 		rsb	r3, r3, #660
+ 1375 033c 90FBF3F2 		sdiv	r2, r0, r3
+ 1376 0340 02FB1300 		mls	r0, r2, r3, r0
+ 1377              	.LVL120:
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 34
+
+
+ 265:USER/snake.c  **** 	{
+ 1378              		.loc 1 265 0
+ 1379 0344 0028     		cmp	r0, #0
+ 1380 0346 08DB     		blt	.L93
+ 1381 0348 3346     		mov	r3, r6
+ 1382              	.LVL121:
+ 1383              	.L94:
+ 267:USER/snake.c  **** 			r--;
+ 1384              		.loc 1 267 0
+ 1385 034a 33F9022B 		ldrsh	r2, [r3], #2
+ 1386              	.LVL122:
+ 1387 034e 002A     		cmp	r2, #0
+ 1388 0350 FBD1     		bne	.L94
+ 268:USER/snake.c  **** 		p++;
+ 1389              		.loc 1 268 0
+ 1390 0352 0138     		subs	r0, r0, #1
+ 1391              	.LVL123:
+ 265:USER/snake.c  **** 	{
+ 1392              		.loc 1 265 0
+ 1393 0354 471C     		adds	r7, r0, #1
+ 269:USER/snake.c  **** 	}
+ 1394              		.loc 1 269 0
+ 1395 0356 1E46     		mov	r6, r3
+ 1396              	.LVL124:
+ 265:USER/snake.c  **** 	{
+ 1397              		.loc 1 265 0
+ 1398 0358 F7D1     		bne	.L94
+ 1399              	.LVL125:
+ 1400              	.L93:
+ 1401              		.loc 1 272 0
+ 1402 035a 4FF6FF72 		movw	r2, #65535
+ 1403 035e B5F90000 		ldrsh	r0, [r5]
+ 1404              	.LVL126:
+ 1405 0362 98F80030 		ldrb	r3, [r8]	@ zero_extendqisi2
+ 1406 0366 26F8022C 		strh	r2, [r6, #-2]	@ movhi
+ 1407              	.LVL127:
+ 1408 036a 441E     		subs	r4, r0, #1
+ 1409 036c 77E7     		b	.L103
+ 1410              	.LBE84:
+ 1411              	.LBE83:
+ 1412              	.LBE82:
+ 1413              	.LBE81:
+ 1414              	.LBE87:
+ 1415              	.LBE142:
+ 1416              		.cfi_endproc
+ 1417              	.LFE30:
+ 1419 036e 00BF     		.section	.text.newfood,"ax",%progbits
+ 1420              		.align	1
+ 1421              		.p2align 2,,3
+ 1422              		.global	newfood
+ 1423              		.syntax unified
+ 1424              		.thumb
+ 1425              		.thumb_func
+ 1426              		.fpu softvfp
+ 1428              	newfood:
+ 1429              	.LFB33:
+ 260:USER/snake.c  **** 	int r = rand() % ((WIDTH - 2) * (HEIGHT - 2) - size);
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 35
+
+
+ 1430              		.loc 1 260 0
+ 1431              		.cfi_startproc
+ 1432              		@ args = 0, pretend = 0, frame = 0
+ 1433              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1434 0000 08B5     		push	{r3, lr}
+ 1435              	.LCFI12:
+ 1436              		.cfi_def_cfa_offset 8
+ 1437              		.cfi_offset 3, -8
+ 1438              		.cfi_offset 14, -4
+ 261:USER/snake.c  **** 	short *p;
+ 1439              		.loc 1 261 0
+ 1440 0002 FFF7FEFF 		bl	rand
+ 1441              	.LVL128:
+ 1442 0006 0F4B     		ldr	r3, .L155
+ 1443 0008 B3F90030 		ldrsh	r3, [r3]
+ 1444 000c C3F52573 		rsb	r3, r3, #660
+ 1445 0010 90FBF3F2 		sdiv	r2, r0, r3
+ 1446 0014 02FB1300 		mls	r0, r2, r3, r0
+ 1447              	.LVL129:
+ 265:USER/snake.c  **** 	{
+ 1448              		.loc 1 265 0
+ 1449 0018 0028     		cmp	r0, #0
+ 1450 001a 0DDB     		blt	.L153
+ 1451 001c 0A4B     		ldr	r3, .L155+4
+ 1452              	.LVL130:
+ 1453              	.L151:
+ 267:USER/snake.c  **** 			r--;
+ 1454              		.loc 1 267 0
+ 1455 001e 33F9022B 		ldrsh	r2, [r3], #2
+ 1456              	.LVL131:
+ 1457 0022 002A     		cmp	r2, #0
+ 1458 0024 FBD1     		bne	.L151
+ 268:USER/snake.c  **** 		p++;
+ 1459              		.loc 1 268 0
+ 1460 0026 0138     		subs	r0, r0, #1
+ 1461              	.LVL132:
+ 265:USER/snake.c  **** 	{
+ 1462              		.loc 1 265 0
+ 1463 0028 411C     		adds	r1, r0, #1
+ 269:USER/snake.c  **** 	}
+ 1464              		.loc 1 269 0
+ 1465 002a 1A46     		mov	r2, r3
+ 1466              	.LVL133:
+ 265:USER/snake.c  **** 	{
+ 1467              		.loc 1 265 0
+ 1468 002c F7D1     		bne	.L151
+ 1469              	.LVL134:
+ 1470              		.loc 1 272 0
+ 1471 002e 4FF6FF73 		movw	r3, #65535
+ 1472              	.LVL135:
+ 1473 0032 22F8023C 		strh	r3, [r2, #-2]	@ movhi
+ 273:USER/snake.c  **** }
+ 1474              		.loc 1 273 0
+ 1475 0036 08BD     		pop	{r3, pc}
+ 1476              	.LVL136:
+ 1477              	.L153:
+ 272:USER/snake.c  **** }
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 36
+
+
+ 1478              		.loc 1 272 0
+ 1479 0038 4FF6FF73 		movw	r3, #65535
+ 263:USER/snake.c  **** 
+ 1480              		.loc 1 263 0
+ 1481 003c 024A     		ldr	r2, .L155+4
+ 1482              	.LVL137:
+ 272:USER/snake.c  **** }
+ 1483              		.loc 1 272 0
+ 1484 003e 22F8023C 		strh	r3, [r2, #-2]	@ movhi
+ 1485              		.loc 1 273 0
+ 1486 0042 08BD     		pop	{r3, pc}
+ 1487              	.L156:
+ 1488              		.align	2
+ 1489              	.L155:
+ 1490 0044 00000000 		.word	.LANCHOR1
+ 1491 0048 00000000 		.word	.LANCHOR0
+ 1492              		.cfi_endproc
+ 1493              	.LFE33:
+ 1495              		.section	.bss.banai,"aw",%nobits
+ 1496              		.align	2
+ 1497              		.set	.LANCHOR2,. + 0
+ 1500              	banai:
+ 1501 0000 00000000 		.space	4
+ 1502              		.section	.bss.dire,"aw",%nobits
+ 1503              		.set	.LANCHOR5,. + 0
+ 1506              	dire:
+ 1507 0000 00       		.space	1
+ 1508              		.section	.bss.end,"aw",%nobits
+ 1509              		.set	.LANCHOR6,. + 0
+ 1512              	end:
+ 1513 0000 00       		.space	1
+ 1514              		.section	.bss.map,"aw",%nobits
+ 1515              		.align	2
+ 1516              		.set	.LANCHOR0,. + 0
+ 1519              	map:
+ 1520 0000 00000000 		.space	1536
+ 1520      00000000 
+ 1520      00000000 
+ 1520      00000000 
+ 1520      00000000 
+ 1521              		.section	.bss.size,"aw",%nobits
+ 1522              		.align	1
+ 1523              		.set	.LANCHOR1,. + 0
+ 1526              	size:
+ 1527 0000 0000     		.space	2
+ 1528              		.section	.bss.x,"aw",%nobits
+ 1529              		.align	1
+ 1530              		.set	.LANCHOR3,. + 0
+ 1533              	x:
+ 1534 0000 0000     		.space	2
+ 1535              		.section	.bss.y,"aw",%nobits
+ 1536              		.align	1
+ 1537              		.set	.LANCHOR4,. + 0
+ 1540              	y:
+ 1541 0000 0000     		.space	2
+ 1542              		.text
+ 1543              	.Letext0:
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 37
+
+
+ 1544              		.file 2 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\machine\\_default_t
+ 1545              		.file 3 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\sys\\lock.h"
+ 1546              		.file 4 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\sys\\_types.h"
+ 1547              		.file 5 "d:\\gnu tools arm embedded\\7 2018-q2-update\\lib\\gcc\\arm-none-eabi\\7.3.1\\include\\st
+ 1548              		.file 6 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\sys\\reent.h"
+ 1549              		.file 7 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\sys\\_stdint.h"
+ 1550              		.file 8 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\sys\\types.h"
+ 1551              		.file 9 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\time.h"
+ 1552              		.file 10 "USER/public.h"
+ 1553              		.file 11 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\stdlib.h"
+ 1554              		.file 12 "SYSTEM/sys/core_cm3.h"
+ 1555              		.file 13 "SYSTEM/sys/system_stm32f10x.h"
+ 1556              		.file 14 "SYSTEM/sys/stm32f10x.h"
+ 1557              		.file 15 "HARDWARE/LCD/LCD.h"
+ 1558              		.file 16 "USER/AI.h"
+ 1559              		.file 17 "<built-in>"
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s 			page 38
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 snake.c
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:16     .text.move:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:24     .text.move:00000000 move
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:189    .text.move:000000b4 $d
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:196    .text.display:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:204    .text.display:00000000 display
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:479    .text.display:000001bc $d
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:486    .text.initialize:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:494    .text.initialize:00000000 initialize
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:676    .text.initialize:000000dc $d
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:688    .text.gamewithai:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:696    .text.gamewithai:00000000 gamewithai
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:745    .text.gamewithai:00000046 $d
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:749    .text.gamewithai:0000004a $t
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:1340   .text.gamewithai:00000304 $d
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:1357   .text.gamewithai:00000320 $t
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:1420   .text.newfood:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:1428   .text.newfood:00000000 newfood
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:1490   .text.newfood:00000044 $d
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:1496   .bss.banai:00000000 $d
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:1500   .bss.banai:00000000 banai
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:1506   .bss.dire:00000000 dire
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:1507   .bss.dire:00000000 $d
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:1512   .bss.end:00000000 end
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:1513   .bss.end:00000000 $d
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:1515   .bss.map:00000000 $d
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:1519   .bss.map:00000000 map
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:1522   .bss.size:00000000 $d
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:1526   .bss.size:00000000 size
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:1529   .bss.x:00000000 $d
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:1533   .bss.x:00000000 x
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:1536   .bss.y:00000000 $d
+C:\Users\czsta\AppData\Local\Temp\cc2ZWTnf.s:1540   .bss.y:00000000 y
+
+UNDEFINED SYMBOLS
+rand
+LCD_Clear
+LCD_Fill
+exit
+time
+srand
+clock
+memset
+ai

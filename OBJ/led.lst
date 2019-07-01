@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccNWEVRX.s 			page 1
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc9VpIzV.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -13,63 +13,128 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccNWEVRX.s 			page 1
   10              		.eabi_attribute 18, 4
   11              		.file	"led.c"
   12              		.text
-  13              		.section	.text.LED_Init,"ax",%progbits
-  14              		.align	1
-  15              		.p2align 2,,3
-  16              		.global	LED_Init
-  17              		.syntax unified
-  18              		.thumb
-  19              		.thumb_func
-  20              		.fpu softvfp
-  22              	LED_Init:
-  23              		@ args = 0, pretend = 0, frame = 0
-  24              		@ frame_needed = 0, uses_anonymous_args = 0
-  25              		@ link register save eliminated.
-  26 0000 1149     		ldr	r1, .L3
-  27 0002 124A     		ldr	r2, .L3+4
-  28 0004 8869     		ldr	r0, [r1, #24]
-  29 0006 124B     		ldr	r3, .L3+8
-  30 0008 40F00400 		orr	r0, r0, #4
-  31 000c 8861     		str	r0, [r1, #24]
-  32 000e 8869     		ldr	r0, [r1, #24]
-  33 0010 40F02000 		orr	r0, r0, #32
-  34 0014 8861     		str	r0, [r1, #24]
-  35 0016 5168     		ldr	r1, [r2, #4]
-  36 0018 21F00F01 		bic	r1, r1, #15
-  37 001c 5160     		str	r1, [r2, #4]
-  38 001e 5168     		ldr	r1, [r2, #4]
-  39 0020 41F00301 		orr	r1, r1, #3
-  40 0024 5160     		str	r1, [r2, #4]
-  41 0026 D168     		ldr	r1, [r2, #12]
-  42 0028 41F48071 		orr	r1, r1, #256
-  43 002c D160     		str	r1, [r2, #12]
-  44 002e 1A68     		ldr	r2, [r3]
-  45 0030 22F47062 		bic	r2, r2, #3840
-  46 0034 1A60     		str	r2, [r3]
-  47 0036 1A68     		ldr	r2, [r3]
-  48 0038 42F44072 		orr	r2, r2, #768
-  49 003c 1A60     		str	r2, [r3]
-  50 003e DA68     		ldr	r2, [r3, #12]
-  51 0040 42F00402 		orr	r2, r2, #4
-  52 0044 DA60     		str	r2, [r3, #12]
-  53 0046 7047     		bx	lr
-  54              	.L4:
-  55              		.align	2
-  56              	.L3:
-  57 0048 00100240 		.word	1073876992
-  58 004c 00080140 		.word	1073809408
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccNWEVRX.s 			page 2
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.LED_Init,"ax",%progbits
+  16              		.align	1
+  17              		.p2align 2,,3
+  18              		.global	LED_Init
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	LED_Init:
+  25              	.LFB29:
+  26              		.file 1 "HARDWARE/LED/led.c"
+   1:HARDWARE/LED/led.c **** #include "sys.h"   
+   2:HARDWARE/LED/led.c **** #include "led.h"
+   3:HARDWARE/LED/led.c **** //////////////////////////////////////////////////////////////////////////////////	 
+   4:HARDWARE/LED/led.c **** //本程序只供学习使用，未经作者许可，不得用于其它任何用途
+   5:HARDWARE/LED/led.c **** //ALIENTEK Mini STM32开发板
+   6:HARDWARE/LED/led.c **** //LED驱动代码	   
+   7:HARDWARE/LED/led.c **** //正点原子@ALIENTEK
+   8:HARDWARE/LED/led.c **** //技术论坛:www.openedv.com
+   9:HARDWARE/LED/led.c **** //修改日期:2014/3/05
+  10:HARDWARE/LED/led.c **** //版本：V1.0
+  11:HARDWARE/LED/led.c **** //版权所有，盗版必究。
+  12:HARDWARE/LED/led.c **** //Copyright(C) 广州市星翼电子科技有限公司 2009-2019
+  13:HARDWARE/LED/led.c **** //All rights reserved									  
+  14:HARDWARE/LED/led.c **** ////////////////////////////////////////////////////////////////////////////////// 	   
+  15:HARDWARE/LED/led.c **** 
+  16:HARDWARE/LED/led.c **** //初始化PA8和PD2为输出口.并使能这两个口的时钟		    
+  17:HARDWARE/LED/led.c **** //LED IO初始化
+  18:HARDWARE/LED/led.c **** void LED_Init(void)
+  19:HARDWARE/LED/led.c **** {
+  27              		.loc 1 19 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+  20:HARDWARE/LED/led.c **** 	RCC->APB2ENR|=1<<2;    //使能PORTA时钟	   	 
+  32              		.loc 1 20 0
+  33 0000 1149     		ldr	r1, .L3
+  21:HARDWARE/LED/led.c **** 	RCC->APB2ENR|=1<<5;    //使能PORTD时钟	   	 
+  22:HARDWARE/LED/led.c **** 	GPIOA->CRH&=0XFFFFFFF0; 
+  34              		.loc 1 22 0
+  35 0002 124A     		ldr	r2, .L3+4
+  20:HARDWARE/LED/led.c **** 	RCC->APB2ENR|=1<<2;    //使能PORTA时钟	   	 
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc9VpIzV.s 			page 2
 
 
-  59 0050 00140140 		.word	1073812480
-  61              		.ident	"GCC: (GNU Tools for Arm Embedded Processors 7-2018-q2-update) 7.3.1 20180622 (release) [AR
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccNWEVRX.s 			page 3
+  36              		.loc 1 20 0
+  37 0004 8869     		ldr	r0, [r1, #24]
+  23:HARDWARE/LED/led.c **** 	GPIOA->CRH|=0X00000003;//PA8 推挽输出   	 
+  24:HARDWARE/LED/led.c ****     GPIOA->ODR|=1<<8;      //PA8 输出高
+  25:HARDWARE/LED/led.c **** 											  
+  26:HARDWARE/LED/led.c **** 	GPIOD->CRL&=0XFFFFF0FF;
+  38              		.loc 1 26 0
+  39 0006 124B     		ldr	r3, .L3+8
+  20:HARDWARE/LED/led.c **** 	RCC->APB2ENR|=1<<5;    //使能PORTD时钟	   	 
+  40              		.loc 1 20 0
+  41 0008 40F00400 		orr	r0, r0, #4
+  42 000c 8861     		str	r0, [r1, #24]
+  21:HARDWARE/LED/led.c **** 	RCC->APB2ENR|=1<<5;    //使能PORTD时钟	   	 
+  43              		.loc 1 21 0
+  44 000e 8869     		ldr	r0, [r1, #24]
+  45 0010 40F02000 		orr	r0, r0, #32
+  46 0014 8861     		str	r0, [r1, #24]
+  22:HARDWARE/LED/led.c **** 	GPIOA->CRH|=0X00000003;//PA8 推挽输出   	 
+  47              		.loc 1 22 0
+  48 0016 5168     		ldr	r1, [r2, #4]
+  49 0018 21F00F01 		bic	r1, r1, #15
+  50 001c 5160     		str	r1, [r2, #4]
+  23:HARDWARE/LED/led.c **** 	GPIOA->CRH|=0X00000003;//PA8 推挽输出   	 
+  51              		.loc 1 23 0
+  52 001e 5168     		ldr	r1, [r2, #4]
+  53 0020 41F00301 		orr	r1, r1, #3
+  54 0024 5160     		str	r1, [r2, #4]
+  24:HARDWARE/LED/led.c **** 											  
+  55              		.loc 1 24 0
+  56 0026 D168     		ldr	r1, [r2, #12]
+  57 0028 41F48071 		orr	r1, r1, #256
+  58 002c D160     		str	r1, [r2, #12]
+  59              		.loc 1 26 0
+  60 002e 1A68     		ldr	r2, [r3]
+  61 0030 22F47062 		bic	r2, r2, #3840
+  62 0034 1A60     		str	r2, [r3]
+  27:HARDWARE/LED/led.c **** 	GPIOD->CRL|=0X00000300;//PD.2推挽输出
+  63              		.loc 1 27 0
+  64 0036 1A68     		ldr	r2, [r3]
+  65 0038 42F44072 		orr	r2, r2, #768
+  66 003c 1A60     		str	r2, [r3]
+  28:HARDWARE/LED/led.c **** 	GPIOD->ODR|=1<<2;      //PD.2输出高 
+  67              		.loc 1 28 0
+  68 003e DA68     		ldr	r2, [r3, #12]
+  69 0040 42F00402 		orr	r2, r2, #4
+  70 0044 DA60     		str	r2, [r3, #12]
+  29:HARDWARE/LED/led.c **** }
+  71              		.loc 1 29 0
+  72 0046 7047     		bx	lr
+  73              	.L4:
+  74              		.align	2
+  75              	.L3:
+  76 0048 00100240 		.word	1073876992
+  77 004c 00080140 		.word	1073809408
+  78 0050 00140140 		.word	1073812480
+  79              		.cfi_endproc
+  80              	.LFE29:
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc9VpIzV.s 			page 3
+
+
+  82              		.text
+  83              	.Letext0:
+  84              		.file 2 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\machine\\_default_t
+  85              		.file 3 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\sys\\_stdint.h"
+  86              		.file 4 "SYSTEM/sys/core_cm3.h"
+  87              		.file 5 "SYSTEM/sys/system_stm32f10x.h"
+  88              		.file 6 "SYSTEM/sys/stm32f10x.h"
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cc9VpIzV.s 			page 4
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 led.c
-C:\Users\czsta\AppData\Local\Temp\ccNWEVRX.s:14     .text.LED_Init:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccNWEVRX.s:22     .text.LED_Init:00000000 LED_Init
-C:\Users\czsta\AppData\Local\Temp\ccNWEVRX.s:57     .text.LED_Init:00000048 $d
+C:\Users\czsta\AppData\Local\Temp\cc9VpIzV.s:16     .text.LED_Init:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\cc9VpIzV.s:24     .text.LED_Init:00000000 LED_Init
+C:\Users\czsta\AppData\Local\Temp\cc9VpIzV.s:76     .text.LED_Init:00000048 $d
 
 NO UNDEFINED SYMBOLS

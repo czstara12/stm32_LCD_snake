@@ -1,0 +1,1234 @@
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 2
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"main.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.startup.main,"ax",%progbits
+  16              		.align	1
+  17              		.p2align 2,,3
+  18              		.global	main
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	main:
+  25              	.LFB32:
+  26              		.file 1 "USER/main.c"
+   1:USER/main.c   **** #include "sys.h"
+   2:USER/main.c   **** #include "usart.h"
+   3:USER/main.c   **** #include "delay.h"
+   4:USER/main.c   **** #include "led.h"
+   5:USER/main.c   **** #include "lcd.h"
+   6:USER/main.c   **** #include "snake.h"
+   7:USER/main.c   **** //ALIENTEK Mini STM32开发板范例代码11
+   8:USER/main.c   **** //TFTLCD显示实验
+   9:USER/main.c   **** //技术支持：www.openedv.com
+  10:USER/main.c   **** //广州市星翼电子科技有限公司
+  11:USER/main.c   **** 
+  12:USER/main.c   **** int main(void)
+  13:USER/main.c   **** {
+  27              		.loc 1 13 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 16
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              	.LVL0:
+  32 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 36
+  35              		.cfi_offset 4, -36
+  36              		.cfi_offset 5, -32
+  37              		.cfi_offset 6, -28
+  38              		.cfi_offset 7, -24
+  39              		.cfi_offset 8, -20
+  40              		.cfi_offset 9, -16
+  41              		.cfi_offset 10, -12
+  42              		.cfi_offset 11, -8
+  43              		.cfi_offset 14, -4
+  14:USER/main.c   **** 	u8 x = 0;
+  15:USER/main.c   **** 	u8 lcd_id[12];		 //存放LCD ID字符串
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 2
+
+
+  16:USER/main.c   **** 	Stm32_Clock_Init(9); //系统时钟设置
+  44              		.loc 1 16 0
+  45 0004 0920     		movs	r0, #9
+  13:USER/main.c   **** 	u8 x = 0;
+  46              		.loc 1 13 0
+  47 0006 87B0     		sub	sp, sp, #28
+  48              	.LCFI1:
+  49              		.cfi_def_cfa_offset 64
+  50              		.loc 1 16 0
+  51 0008 FFF7FEFF 		bl	Stm32_Clock_Init
+  52              	.LVL1:
+  17:USER/main.c   **** 	uart_init(72, 9600); //串口初始化为9600
+  53              		.loc 1 17 0
+  54 000c 4FF41651 		mov	r1, #9600
+  55 0010 4820     		movs	r0, #72
+  56 0012 FFF7FEFF 		bl	uart_init
+  57              	.LVL2:
+  18:USER/main.c   **** 	delay_init(72);		 //延时初始化
+  58              		.loc 1 18 0
+  59 0016 4820     		movs	r0, #72
+  60 0018 FFF7FEFF 		bl	delay_init
+  61              	.LVL3:
+  19:USER/main.c   **** 	LED_Init();			 //初始化与LED连接的硬件接口
+  62              		.loc 1 19 0
+  63 001c FFF7FEFF 		bl	LED_Init
+  64              	.LVL4:
+  20:USER/main.c   **** 	LCD_Init();
+  65              		.loc 1 20 0
+  66 0020 FFF7FEFF 		bl	LCD_Init
+  67              	.LVL5:
+  21:USER/main.c   **** 	//LED0 = !LED0;
+  22:USER/main.c   **** 	initialize();
+  68              		.loc 1 22 0
+  69 0024 FFF7FEFF 		bl	initialize
+  70              	.LVL6:
+  71              	.L2:
+  23:USER/main.c   **** 	while (gamewithai())
+  72              		.loc 1 23 0 discriminator 1
+  73 0028 FFF7FEFF 		bl	gamewithai
+  74              	.LVL7:
+  75 002c 0028     		cmp	r0, #0
+  76 002e FBD1     		bne	.L2
+  24:USER/main.c   **** 		;
+  25:USER/main.c   **** 
+  26:USER/main.c   **** 	POINT_COLOR = RED;
+  77              		.loc 1 26 0
+  78 0030 4FF47843 		mov	r3, #63488
+  27:USER/main.c   **** 	sprintf((char *)lcd_id, "LCD ID:%04X", lcddev.id); //将LCD ID打印到lcd_id数组。
+  79              		.loc 1 27 0
+  80 0034 D74A     		ldr	r2, .L7
+  26:USER/main.c   **** 	sprintf((char *)lcd_id, "LCD ID:%04X", lcddev.id); //将LCD ID打印到lcd_id数组。
+  81              		.loc 1 26 0
+  82 0036 DFF87493 		ldr	r9, .L7+24
+  83              		.loc 1 27 0
+  84 003a 0DF10C0A 		add	r10, sp, #12
+  85 003e 9288     		ldrh	r2, [r2, #4]
+  86 0040 5046     		mov	r0, r10
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 3
+
+
+  87 0042 D549     		ldr	r1, .L7+4
+  26:USER/main.c   **** 	sprintf((char *)lcd_id, "LCD ID:%04X", lcddev.id); //将LCD ID打印到lcd_id数组。
+  88              		.loc 1 26 0
+  89 0044 A9F80030 		strh	r3, [r9]	@ movhi
+  90              		.loc 1 27 0
+  91 0048 FFF7FEFF 		bl	sprintf
+  92              	.LVL8:
+  93 004c DFF860B3 		ldr	fp, .L7+28
+  94              	.L3:
+  28:USER/main.c   **** 
+  29:USER/main.c   **** 	while (1)
+  30:USER/main.c   **** 	{
+  31:USER/main.c   **** 		switch (x)
+  32:USER/main.c   **** 		{
+  33:USER/main.c   **** 		case 0:
+  34:USER/main.c   **** 			LCD_Clear(WHITE);
+  35:USER/main.c   **** 			break;
+  36:USER/main.c   **** 		case 1:
+  37:USER/main.c   **** 			LCD_Clear(BLACK);
+  38:USER/main.c   **** 			break;
+  39:USER/main.c   **** 		case 2:
+  40:USER/main.c   **** 			LCD_Clear(BLUE);
+  41:USER/main.c   **** 			break;
+  42:USER/main.c   **** 		case 3:
+  43:USER/main.c   **** 			LCD_Clear(RED);
+  44:USER/main.c   **** 			break;
+  45:USER/main.c   **** 		case 4:
+  46:USER/main.c   **** 			LCD_Clear(MAGENTA);
+  47:USER/main.c   **** 			break;
+  48:USER/main.c   **** 		case 5:
+  49:USER/main.c   **** 			LCD_Clear(GREEN);
+  50:USER/main.c   **** 			break;
+  51:USER/main.c   **** 		case 6:
+  52:USER/main.c   **** 			LCD_Clear(CYAN);
+  53:USER/main.c   **** 			break;
+  54:USER/main.c   **** 
+  55:USER/main.c   **** 		case 7:
+  56:USER/main.c   **** 			LCD_Clear(YELLOW);
+  57:USER/main.c   **** 			break;
+  58:USER/main.c   **** 		case 8:
+  59:USER/main.c   **** 			LCD_Clear(BRRED);
+  60:USER/main.c   **** 			break;
+  61:USER/main.c   **** 		case 9:
+  62:USER/main.c   **** 			LCD_Clear(GRAY);
+  63:USER/main.c   **** 			break;
+  64:USER/main.c   **** 		case 10:
+  65:USER/main.c   **** 			LCD_Clear(LGRAY);
+  66:USER/main.c   **** 			break;
+  67:USER/main.c   **** 		case 11:
+  68:USER/main.c   **** 			LCD_Clear(BROWN);
+  69:USER/main.c   **** 			break;
+  70:USER/main.c   **** 		}
+  71:USER/main.c   **** 
+  72:USER/main.c   **** 		POINT_COLOR = RED;
+  73:USER/main.c   **** 		LCD_ShowString(30, 40, 200, 24, 24, (u8 *)"Mini STM32 ^_^");
+  95              		.loc 1 73 0
+  96 0050 1827     		movs	r7, #24
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 4
+
+
+  72:USER/main.c   **** 		LCD_ShowString(30, 40, 200, 24, 24, (u8 *)"Mini STM32 ^_^");
+  97              		.loc 1 72 0
+  98 0052 4FF47848 		mov	r8, #63488
+  74:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+  99              		.loc 1 74 0
+ 100 0056 1024     		movs	r4, #16
+  75:USER/main.c   **** 		LCD_ShowString(30, 90, 200, 16, 16, (u8 *)"ATOM@ALIENTEK");
+  76:USER/main.c   **** 		LCD_ShowString(30, 110, 200, 16, 16, lcd_id); //显示LCD ID
+  77:USER/main.c   **** 		LCD_ShowString(30, 130, 200, 12, 12, (u8 *)"2014/3/7");
+ 101              		.loc 1 77 0
+ 102 0058 0C26     		movs	r6, #12
+  34:USER/main.c   **** 			break;
+ 103              		.loc 1 34 0
+ 104 005a 4FF6FF70 		movw	r0, #65535
+ 105 005e FFF7FEFF 		bl	LCD_Clear
+ 106              	.LVL9:
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 107              		.loc 1 73 0
+ 108 0062 3B46     		mov	r3, r7
+ 109 0064 CDE9007B 		strd	r7, fp, [sp]
+ 110 0068 C822     		movs	r2, #200
+ 111 006a 2821     		movs	r1, #40
+ 112 006c 1E20     		movs	r0, #30
+  72:USER/main.c   **** 		LCD_ShowString(30, 40, 200, 24, 24, (u8 *)"Mini STM32 ^_^");
+ 113              		.loc 1 72 0
+ 114 006e A9F80080 		strh	r8, [r9]	@ movhi
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 115              		.loc 1 73 0
+ 116 0072 FFF7FEFF 		bl	LCD_ShowString
+ 117              	.LVL10:
+  74:USER/main.c   **** 		LCD_ShowString(30, 90, 200, 16, 16, (u8 *)"ATOM@ALIENTEK");
+ 118              		.loc 1 74 0
+ 119 0076 C94B     		ldr	r3, .L7+8
+ 120 0078 C822     		movs	r2, #200
+ 121 007a CDE90043 		strd	r4, r3, [sp]
+ 122 007e 4621     		movs	r1, #70
+ 123 0080 2346     		mov	r3, r4
+ 124 0082 1E20     		movs	r0, #30
+ 125 0084 FFF7FEFF 		bl	LCD_ShowString
+ 126              	.LVL11:
+  75:USER/main.c   **** 		LCD_ShowString(30, 110, 200, 16, 16, lcd_id); //显示LCD ID
+ 127              		.loc 1 75 0
+ 128 0088 C54A     		ldr	r2, .L7+12
+ 129 008a 2346     		mov	r3, r4
+ 130 008c 0192     		str	r2, [sp, #4]
+ 131 008e 0094     		str	r4, [sp]
+ 132 0090 C822     		movs	r2, #200
+ 133 0092 5A21     		movs	r1, #90
+ 134 0094 1E20     		movs	r0, #30
+ 135 0096 FFF7FEFF 		bl	LCD_ShowString
+ 136              	.LVL12:
+  76:USER/main.c   **** 		LCD_ShowString(30, 130, 200, 12, 12, (u8 *)"2014/3/7");
+ 137              		.loc 1 76 0
+ 138 009a 2346     		mov	r3, r4
+ 139 009c CDE9004A 		strd	r4, r10, [sp]
+ 140 00a0 C822     		movs	r2, #200
+ 141 00a2 6E21     		movs	r1, #110
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 5
+
+
+ 142 00a4 1E20     		movs	r0, #30
+ 143 00a6 FFF7FEFF 		bl	LCD_ShowString
+ 144              	.LVL13:
+ 145              		.loc 1 77 0
+ 146 00aa BE49     		ldr	r1, .L7+16
+  78:USER/main.c   **** 		x++;
+  79:USER/main.c   **** 		if (x == 12)
+  80:USER/main.c   **** 			x = 0;
+  81:USER/main.c   **** 		LED0 = !LED0;
+ 147              		.loc 1 81 0
+ 148 00ac BE4D     		ldr	r5, .L7+20
+  77:USER/main.c   **** 		x++;
+ 149              		.loc 1 77 0
+ 150 00ae C822     		movs	r2, #200
+ 151 00b0 CDE90061 		strd	r6, r1, [sp]
+ 152 00b4 3346     		mov	r3, r6
+ 153 00b6 8221     		movs	r1, #130
+ 154 00b8 1E20     		movs	r0, #30
+ 155 00ba FFF7FEFF 		bl	LCD_ShowString
+ 156              	.LVL14:
+ 157              		.loc 1 81 0
+ 158 00be 2B68     		ldr	r3, [r5]
+  82:USER/main.c   **** 		delay_ms(1000);
+ 159              		.loc 1 82 0
+ 160 00c0 4FF47A70 		mov	r0, #1000
+  81:USER/main.c   **** 		delay_ms(1000);
+ 161              		.loc 1 81 0
+ 162 00c4 B3FA83F3 		clz	r3, r3
+ 163 00c8 5B09     		lsrs	r3, r3, #5
+ 164 00ca 2B60     		str	r3, [r5]
+ 165              		.loc 1 82 0
+ 166 00cc FFF7FEFF 		bl	delay_ms
+ 167              	.LVL15:
+  37:USER/main.c   **** 			break;
+ 168              		.loc 1 37 0
+ 169 00d0 0020     		movs	r0, #0
+ 170 00d2 FFF7FEFF 		bl	LCD_Clear
+ 171              	.LVL16:
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 172              		.loc 1 73 0
+ 173 00d6 3B46     		mov	r3, r7
+ 174 00d8 CDE9007B 		strd	r7, fp, [sp]
+ 175 00dc C822     		movs	r2, #200
+ 176 00de 2821     		movs	r1, #40
+ 177 00e0 1E20     		movs	r0, #30
+  72:USER/main.c   **** 		LCD_ShowString(30, 40, 200, 24, 24, (u8 *)"Mini STM32 ^_^");
+ 178              		.loc 1 72 0
+ 179 00e2 A9F80080 		strh	r8, [r9]	@ movhi
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 180              		.loc 1 73 0
+ 181 00e6 FFF7FEFF 		bl	LCD_ShowString
+ 182              	.LVL17:
+  74:USER/main.c   **** 		LCD_ShowString(30, 90, 200, 16, 16, (u8 *)"ATOM@ALIENTEK");
+ 183              		.loc 1 74 0
+ 184 00ea AC4B     		ldr	r3, .L7+8
+ 185 00ec 0094     		str	r4, [sp]
+ 186 00ee 0193     		str	r3, [sp, #4]
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 6
+
+
+ 187 00f0 C822     		movs	r2, #200
+ 188 00f2 2346     		mov	r3, r4
+ 189 00f4 4621     		movs	r1, #70
+ 190 00f6 1E20     		movs	r0, #30
+ 191 00f8 FFF7FEFF 		bl	LCD_ShowString
+ 192              	.LVL18:
+  75:USER/main.c   **** 		LCD_ShowString(30, 110, 200, 16, 16, lcd_id); //显示LCD ID
+ 193              		.loc 1 75 0
+ 194 00fc A84A     		ldr	r2, .L7+12
+ 195 00fe 2346     		mov	r3, r4
+ 196 0100 0192     		str	r2, [sp, #4]
+ 197 0102 0094     		str	r4, [sp]
+ 198 0104 C822     		movs	r2, #200
+ 199 0106 5A21     		movs	r1, #90
+ 200 0108 1E20     		movs	r0, #30
+ 201 010a FFF7FEFF 		bl	LCD_ShowString
+ 202              	.LVL19:
+  76:USER/main.c   **** 		LCD_ShowString(30, 130, 200, 12, 12, (u8 *)"2014/3/7");
+ 203              		.loc 1 76 0
+ 204 010e 2346     		mov	r3, r4
+ 205 0110 CDE9004A 		strd	r4, r10, [sp]
+ 206 0114 C822     		movs	r2, #200
+ 207 0116 6E21     		movs	r1, #110
+ 208 0118 1E20     		movs	r0, #30
+ 209 011a FFF7FEFF 		bl	LCD_ShowString
+ 210              	.LVL20:
+  77:USER/main.c   **** 		x++;
+ 211              		.loc 1 77 0
+ 212 011e A149     		ldr	r1, .L7+16
+ 213 0120 C822     		movs	r2, #200
+ 214 0122 0191     		str	r1, [sp, #4]
+ 215 0124 3346     		mov	r3, r6
+ 216 0126 8221     		movs	r1, #130
+ 217 0128 0096     		str	r6, [sp]
+ 218 012a 1E20     		movs	r0, #30
+ 219 012c FFF7FEFF 		bl	LCD_ShowString
+ 220              	.LVL21:
+  81:USER/main.c   **** 		delay_ms(1000);
+ 221              		.loc 1 81 0
+ 222 0130 2B68     		ldr	r3, [r5]
+ 223              		.loc 1 82 0
+ 224 0132 4FF47A70 		mov	r0, #1000
+  81:USER/main.c   **** 		delay_ms(1000);
+ 225              		.loc 1 81 0
+ 226 0136 B3FA83F3 		clz	r3, r3
+ 227 013a 5B09     		lsrs	r3, r3, #5
+ 228 013c 2B60     		str	r3, [r5]
+ 229              		.loc 1 82 0
+ 230 013e FFF7FEFF 		bl	delay_ms
+ 231              	.LVL22:
+  40:USER/main.c   **** 			break;
+ 232              		.loc 1 40 0
+ 233 0142 1F20     		movs	r0, #31
+ 234 0144 FFF7FEFF 		bl	LCD_Clear
+ 235              	.LVL23:
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 236              		.loc 1 73 0
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 7
+
+
+ 237 0148 3B46     		mov	r3, r7
+ 238 014a CDE9007B 		strd	r7, fp, [sp]
+ 239 014e C822     		movs	r2, #200
+ 240 0150 2821     		movs	r1, #40
+ 241 0152 1E20     		movs	r0, #30
+  72:USER/main.c   **** 		LCD_ShowString(30, 40, 200, 24, 24, (u8 *)"Mini STM32 ^_^");
+ 242              		.loc 1 72 0
+ 243 0154 A9F80080 		strh	r8, [r9]	@ movhi
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 244              		.loc 1 73 0
+ 245 0158 FFF7FEFF 		bl	LCD_ShowString
+ 246              	.LVL24:
+  74:USER/main.c   **** 		LCD_ShowString(30, 90, 200, 16, 16, (u8 *)"ATOM@ALIENTEK");
+ 247              		.loc 1 74 0
+ 248 015c 8F4B     		ldr	r3, .L7+8
+ 249 015e 0094     		str	r4, [sp]
+ 250 0160 0193     		str	r3, [sp, #4]
+ 251 0162 C822     		movs	r2, #200
+ 252 0164 2346     		mov	r3, r4
+ 253 0166 4621     		movs	r1, #70
+ 254 0168 1E20     		movs	r0, #30
+ 255 016a FFF7FEFF 		bl	LCD_ShowString
+ 256              	.LVL25:
+  75:USER/main.c   **** 		LCD_ShowString(30, 110, 200, 16, 16, lcd_id); //显示LCD ID
+ 257              		.loc 1 75 0
+ 258 016e 8C4A     		ldr	r2, .L7+12
+ 259 0170 2346     		mov	r3, r4
+ 260 0172 0192     		str	r2, [sp, #4]
+ 261 0174 0094     		str	r4, [sp]
+ 262 0176 C822     		movs	r2, #200
+ 263 0178 5A21     		movs	r1, #90
+ 264 017a 1E20     		movs	r0, #30
+ 265 017c FFF7FEFF 		bl	LCD_ShowString
+ 266              	.LVL26:
+  76:USER/main.c   **** 		LCD_ShowString(30, 130, 200, 12, 12, (u8 *)"2014/3/7");
+ 267              		.loc 1 76 0
+ 268 0180 2346     		mov	r3, r4
+ 269 0182 CDE9004A 		strd	r4, r10, [sp]
+ 270 0186 C822     		movs	r2, #200
+ 271 0188 6E21     		movs	r1, #110
+ 272 018a 1E20     		movs	r0, #30
+ 273 018c FFF7FEFF 		bl	LCD_ShowString
+ 274              	.LVL27:
+  77:USER/main.c   **** 		x++;
+ 275              		.loc 1 77 0
+ 276 0190 8449     		ldr	r1, .L7+16
+ 277 0192 C822     		movs	r2, #200
+ 278 0194 0191     		str	r1, [sp, #4]
+ 279 0196 3346     		mov	r3, r6
+ 280 0198 8221     		movs	r1, #130
+ 281 019a 0096     		str	r6, [sp]
+ 282 019c 1E20     		movs	r0, #30
+ 283 019e FFF7FEFF 		bl	LCD_ShowString
+ 284              	.LVL28:
+  81:USER/main.c   **** 		delay_ms(1000);
+ 285              		.loc 1 81 0
+ 286 01a2 2B68     		ldr	r3, [r5]
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 8
+
+
+ 287              		.loc 1 82 0
+ 288 01a4 4FF47A70 		mov	r0, #1000
+  81:USER/main.c   **** 		delay_ms(1000);
+ 289              		.loc 1 81 0
+ 290 01a8 B3FA83F3 		clz	r3, r3
+ 291 01ac 5B09     		lsrs	r3, r3, #5
+ 292 01ae 2B60     		str	r3, [r5]
+ 293              		.loc 1 82 0
+ 294 01b0 FFF7FEFF 		bl	delay_ms
+ 295              	.LVL29:
+  43:USER/main.c   **** 			break;
+ 296              		.loc 1 43 0
+ 297 01b4 4046     		mov	r0, r8
+ 298 01b6 FFF7FEFF 		bl	LCD_Clear
+ 299              	.LVL30:
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 300              		.loc 1 73 0
+ 301 01ba 3B46     		mov	r3, r7
+ 302 01bc CDE9007B 		strd	r7, fp, [sp]
+ 303 01c0 C822     		movs	r2, #200
+ 304 01c2 2821     		movs	r1, #40
+ 305 01c4 1E20     		movs	r0, #30
+  72:USER/main.c   **** 		LCD_ShowString(30, 40, 200, 24, 24, (u8 *)"Mini STM32 ^_^");
+ 306              		.loc 1 72 0
+ 307 01c6 A9F80080 		strh	r8, [r9]	@ movhi
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 308              		.loc 1 73 0
+ 309 01ca FFF7FEFF 		bl	LCD_ShowString
+ 310              	.LVL31:
+  74:USER/main.c   **** 		LCD_ShowString(30, 90, 200, 16, 16, (u8 *)"ATOM@ALIENTEK");
+ 311              		.loc 1 74 0
+ 312 01ce 734B     		ldr	r3, .L7+8
+ 313 01d0 0094     		str	r4, [sp]
+ 314 01d2 0193     		str	r3, [sp, #4]
+ 315 01d4 C822     		movs	r2, #200
+ 316 01d6 2346     		mov	r3, r4
+ 317 01d8 4621     		movs	r1, #70
+ 318 01da 1E20     		movs	r0, #30
+ 319 01dc FFF7FEFF 		bl	LCD_ShowString
+ 320              	.LVL32:
+  75:USER/main.c   **** 		LCD_ShowString(30, 110, 200, 16, 16, lcd_id); //显示LCD ID
+ 321              		.loc 1 75 0
+ 322 01e0 6F4A     		ldr	r2, .L7+12
+ 323 01e2 2346     		mov	r3, r4
+ 324 01e4 0192     		str	r2, [sp, #4]
+ 325 01e6 0094     		str	r4, [sp]
+ 326 01e8 C822     		movs	r2, #200
+ 327 01ea 5A21     		movs	r1, #90
+ 328 01ec 1E20     		movs	r0, #30
+ 329 01ee FFF7FEFF 		bl	LCD_ShowString
+ 330              	.LVL33:
+  76:USER/main.c   **** 		LCD_ShowString(30, 130, 200, 12, 12, (u8 *)"2014/3/7");
+ 331              		.loc 1 76 0
+ 332 01f2 2346     		mov	r3, r4
+ 333 01f4 CDE9004A 		strd	r4, r10, [sp]
+ 334 01f8 C822     		movs	r2, #200
+ 335 01fa 6E21     		movs	r1, #110
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 9
+
+
+ 336 01fc 1E20     		movs	r0, #30
+ 337 01fe FFF7FEFF 		bl	LCD_ShowString
+ 338              	.LVL34:
+  77:USER/main.c   **** 		x++;
+ 339              		.loc 1 77 0
+ 340 0202 6849     		ldr	r1, .L7+16
+ 341 0204 C822     		movs	r2, #200
+ 342 0206 0191     		str	r1, [sp, #4]
+ 343 0208 3346     		mov	r3, r6
+ 344 020a 8221     		movs	r1, #130
+ 345 020c 0096     		str	r6, [sp]
+ 346 020e 1E20     		movs	r0, #30
+ 347 0210 FFF7FEFF 		bl	LCD_ShowString
+ 348              	.LVL35:
+  81:USER/main.c   **** 		delay_ms(1000);
+ 349              		.loc 1 81 0
+ 350 0214 2B68     		ldr	r3, [r5]
+ 351              		.loc 1 82 0
+ 352 0216 4FF47A70 		mov	r0, #1000
+  81:USER/main.c   **** 		delay_ms(1000);
+ 353              		.loc 1 81 0
+ 354 021a B3FA83F3 		clz	r3, r3
+ 355 021e 5B09     		lsrs	r3, r3, #5
+ 356 0220 2B60     		str	r3, [r5]
+ 357              		.loc 1 82 0
+ 358 0222 FFF7FEFF 		bl	delay_ms
+ 359              	.LVL36:
+  46:USER/main.c   **** 			break;
+ 360              		.loc 1 46 0
+ 361 0226 4FF61F00 		movw	r0, #63519
+ 362 022a FFF7FEFF 		bl	LCD_Clear
+ 363              	.LVL37:
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 364              		.loc 1 73 0
+ 365 022e 3B46     		mov	r3, r7
+ 366 0230 CDE9007B 		strd	r7, fp, [sp]
+ 367 0234 C822     		movs	r2, #200
+ 368 0236 2821     		movs	r1, #40
+ 369 0238 1E20     		movs	r0, #30
+  72:USER/main.c   **** 		LCD_ShowString(30, 40, 200, 24, 24, (u8 *)"Mini STM32 ^_^");
+ 370              		.loc 1 72 0
+ 371 023a A9F80080 		strh	r8, [r9]	@ movhi
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 372              		.loc 1 73 0
+ 373 023e FFF7FEFF 		bl	LCD_ShowString
+ 374              	.LVL38:
+  74:USER/main.c   **** 		LCD_ShowString(30, 90, 200, 16, 16, (u8 *)"ATOM@ALIENTEK");
+ 375              		.loc 1 74 0
+ 376 0242 564B     		ldr	r3, .L7+8
+ 377 0244 0094     		str	r4, [sp]
+ 378 0246 0193     		str	r3, [sp, #4]
+ 379 0248 C822     		movs	r2, #200
+ 380 024a 2346     		mov	r3, r4
+ 381 024c 4621     		movs	r1, #70
+ 382 024e 1E20     		movs	r0, #30
+ 383 0250 FFF7FEFF 		bl	LCD_ShowString
+ 384              	.LVL39:
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 10
+
+
+  75:USER/main.c   **** 		LCD_ShowString(30, 110, 200, 16, 16, lcd_id); //显示LCD ID
+ 385              		.loc 1 75 0
+ 386 0254 524A     		ldr	r2, .L7+12
+ 387 0256 2346     		mov	r3, r4
+ 388 0258 0192     		str	r2, [sp, #4]
+ 389 025a 0094     		str	r4, [sp]
+ 390 025c C822     		movs	r2, #200
+ 391 025e 5A21     		movs	r1, #90
+ 392 0260 1E20     		movs	r0, #30
+ 393 0262 FFF7FEFF 		bl	LCD_ShowString
+ 394              	.LVL40:
+  76:USER/main.c   **** 		LCD_ShowString(30, 130, 200, 12, 12, (u8 *)"2014/3/7");
+ 395              		.loc 1 76 0
+ 396 0266 2346     		mov	r3, r4
+ 397 0268 CDE9004A 		strd	r4, r10, [sp]
+ 398 026c C822     		movs	r2, #200
+ 399 026e 6E21     		movs	r1, #110
+ 400 0270 1E20     		movs	r0, #30
+ 401 0272 FFF7FEFF 		bl	LCD_ShowString
+ 402              	.LVL41:
+  77:USER/main.c   **** 		x++;
+ 403              		.loc 1 77 0
+ 404 0276 4B49     		ldr	r1, .L7+16
+ 405 0278 C822     		movs	r2, #200
+ 406 027a 0191     		str	r1, [sp, #4]
+ 407 027c 3346     		mov	r3, r6
+ 408 027e 8221     		movs	r1, #130
+ 409 0280 0096     		str	r6, [sp]
+ 410 0282 1E20     		movs	r0, #30
+ 411 0284 FFF7FEFF 		bl	LCD_ShowString
+ 412              	.LVL42:
+  81:USER/main.c   **** 		delay_ms(1000);
+ 413              		.loc 1 81 0
+ 414 0288 2B68     		ldr	r3, [r5]
+ 415              		.loc 1 82 0
+ 416 028a 4FF47A70 		mov	r0, #1000
+  81:USER/main.c   **** 		delay_ms(1000);
+ 417              		.loc 1 81 0
+ 418 028e B3FA83F3 		clz	r3, r3
+ 419 0292 5B09     		lsrs	r3, r3, #5
+ 420 0294 2B60     		str	r3, [r5]
+ 421              		.loc 1 82 0
+ 422 0296 FFF7FEFF 		bl	delay_ms
+ 423              	.LVL43:
+  49:USER/main.c   **** 			break;
+ 424              		.loc 1 49 0
+ 425 029a 4FF4FC60 		mov	r0, #2016
+ 426 029e FFF7FEFF 		bl	LCD_Clear
+ 427              	.LVL44:
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 428              		.loc 1 73 0
+ 429 02a2 3B46     		mov	r3, r7
+ 430 02a4 CDE9007B 		strd	r7, fp, [sp]
+ 431 02a8 C822     		movs	r2, #200
+ 432 02aa 2821     		movs	r1, #40
+ 433 02ac 1E20     		movs	r0, #30
+  72:USER/main.c   **** 		LCD_ShowString(30, 40, 200, 24, 24, (u8 *)"Mini STM32 ^_^");
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 11
+
+
+ 434              		.loc 1 72 0
+ 435 02ae A9F80080 		strh	r8, [r9]	@ movhi
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 436              		.loc 1 73 0
+ 437 02b2 FFF7FEFF 		bl	LCD_ShowString
+ 438              	.LVL45:
+  74:USER/main.c   **** 		LCD_ShowString(30, 90, 200, 16, 16, (u8 *)"ATOM@ALIENTEK");
+ 439              		.loc 1 74 0
+ 440 02b6 394B     		ldr	r3, .L7+8
+ 441 02b8 0094     		str	r4, [sp]
+ 442 02ba 0193     		str	r3, [sp, #4]
+ 443 02bc C822     		movs	r2, #200
+ 444 02be 2346     		mov	r3, r4
+ 445 02c0 4621     		movs	r1, #70
+ 446 02c2 1E20     		movs	r0, #30
+ 447 02c4 FFF7FEFF 		bl	LCD_ShowString
+ 448              	.LVL46:
+  75:USER/main.c   **** 		LCD_ShowString(30, 110, 200, 16, 16, lcd_id); //显示LCD ID
+ 449              		.loc 1 75 0
+ 450 02c8 354A     		ldr	r2, .L7+12
+ 451 02ca 2346     		mov	r3, r4
+ 452 02cc 0192     		str	r2, [sp, #4]
+ 453 02ce 0094     		str	r4, [sp]
+ 454 02d0 C822     		movs	r2, #200
+ 455 02d2 5A21     		movs	r1, #90
+ 456 02d4 1E20     		movs	r0, #30
+ 457 02d6 FFF7FEFF 		bl	LCD_ShowString
+ 458              	.LVL47:
+  76:USER/main.c   **** 		LCD_ShowString(30, 130, 200, 12, 12, (u8 *)"2014/3/7");
+ 459              		.loc 1 76 0
+ 460 02da 2346     		mov	r3, r4
+ 461 02dc CDE9004A 		strd	r4, r10, [sp]
+ 462 02e0 C822     		movs	r2, #200
+ 463 02e2 6E21     		movs	r1, #110
+ 464 02e4 1E20     		movs	r0, #30
+ 465 02e6 FFF7FEFF 		bl	LCD_ShowString
+ 466              	.LVL48:
+  77:USER/main.c   **** 		x++;
+ 467              		.loc 1 77 0
+ 468 02ea 2E49     		ldr	r1, .L7+16
+ 469 02ec C822     		movs	r2, #200
+ 470 02ee 0191     		str	r1, [sp, #4]
+ 471 02f0 3346     		mov	r3, r6
+ 472 02f2 8221     		movs	r1, #130
+ 473 02f4 0096     		str	r6, [sp]
+ 474 02f6 1E20     		movs	r0, #30
+ 475 02f8 FFF7FEFF 		bl	LCD_ShowString
+ 476              	.LVL49:
+  81:USER/main.c   **** 		delay_ms(1000);
+ 477              		.loc 1 81 0
+ 478 02fc 2B68     		ldr	r3, [r5]
+ 479              		.loc 1 82 0
+ 480 02fe 4FF47A70 		mov	r0, #1000
+  81:USER/main.c   **** 		delay_ms(1000);
+ 481              		.loc 1 81 0
+ 482 0302 B3FA83F3 		clz	r3, r3
+ 483 0306 5B09     		lsrs	r3, r3, #5
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 12
+
+
+ 484 0308 2B60     		str	r3, [r5]
+ 485              		.loc 1 82 0
+ 486 030a FFF7FEFF 		bl	delay_ms
+ 487              	.LVL50:
+  52:USER/main.c   **** 			break;
+ 488              		.loc 1 52 0
+ 489 030e 47F6FF70 		movw	r0, #32767
+ 490 0312 FFF7FEFF 		bl	LCD_Clear
+ 491              	.LVL51:
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 492              		.loc 1 73 0
+ 493 0316 3B46     		mov	r3, r7
+ 494 0318 CDE9007B 		strd	r7, fp, [sp]
+ 495 031c C822     		movs	r2, #200
+ 496 031e 2821     		movs	r1, #40
+ 497 0320 1E20     		movs	r0, #30
+  72:USER/main.c   **** 		LCD_ShowString(30, 40, 200, 24, 24, (u8 *)"Mini STM32 ^_^");
+ 498              		.loc 1 72 0
+ 499 0322 A9F80080 		strh	r8, [r9]	@ movhi
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 500              		.loc 1 73 0
+ 501 0326 FFF7FEFF 		bl	LCD_ShowString
+ 502              	.LVL52:
+  74:USER/main.c   **** 		LCD_ShowString(30, 90, 200, 16, 16, (u8 *)"ATOM@ALIENTEK");
+ 503              		.loc 1 74 0
+ 504 032a 1C4B     		ldr	r3, .L7+8
+ 505 032c 0094     		str	r4, [sp]
+ 506 032e 0193     		str	r3, [sp, #4]
+ 507 0330 C822     		movs	r2, #200
+ 508 0332 2346     		mov	r3, r4
+ 509 0334 4621     		movs	r1, #70
+ 510 0336 1E20     		movs	r0, #30
+ 511 0338 FFF7FEFF 		bl	LCD_ShowString
+ 512              	.LVL53:
+  75:USER/main.c   **** 		LCD_ShowString(30, 110, 200, 16, 16, lcd_id); //显示LCD ID
+ 513              		.loc 1 75 0
+ 514 033c 184A     		ldr	r2, .L7+12
+ 515 033e 2346     		mov	r3, r4
+ 516 0340 0192     		str	r2, [sp, #4]
+ 517 0342 0094     		str	r4, [sp]
+ 518 0344 C822     		movs	r2, #200
+ 519 0346 5A21     		movs	r1, #90
+ 520 0348 1E20     		movs	r0, #30
+ 521 034a FFF7FEFF 		bl	LCD_ShowString
+ 522              	.LVL54:
+  76:USER/main.c   **** 		LCD_ShowString(30, 130, 200, 12, 12, (u8 *)"2014/3/7");
+ 523              		.loc 1 76 0
+ 524 034e 2346     		mov	r3, r4
+ 525 0350 CDE9004A 		strd	r4, r10, [sp]
+ 526 0354 C822     		movs	r2, #200
+ 527 0356 6E21     		movs	r1, #110
+ 528 0358 1E20     		movs	r0, #30
+ 529 035a FFF7FEFF 		bl	LCD_ShowString
+ 530              	.LVL55:
+  77:USER/main.c   **** 		x++;
+ 531              		.loc 1 77 0
+ 532 035e 1149     		ldr	r1, .L7+16
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 13
+
+
+ 533 0360 C822     		movs	r2, #200
+ 534 0362 0191     		str	r1, [sp, #4]
+ 535 0364 3346     		mov	r3, r6
+ 536 0366 8221     		movs	r1, #130
+ 537 0368 0096     		str	r6, [sp]
+ 538 036a 1E20     		movs	r0, #30
+ 539 036c FFF7FEFF 		bl	LCD_ShowString
+ 540              	.LVL56:
+  81:USER/main.c   **** 		delay_ms(1000);
+ 541              		.loc 1 81 0
+ 542 0370 2B68     		ldr	r3, [r5]
+ 543              		.loc 1 82 0
+ 544 0372 4FF47A70 		mov	r0, #1000
+  81:USER/main.c   **** 		delay_ms(1000);
+ 545              		.loc 1 81 0
+ 546 0376 B3FA83F3 		clz	r3, r3
+ 547 037a 5B09     		lsrs	r3, r3, #5
+ 548 037c 2B60     		str	r3, [r5]
+ 549              		.loc 1 82 0
+ 550 037e FFF7FEFF 		bl	delay_ms
+ 551              	.LVL57:
+  56:USER/main.c   **** 			break;
+ 552              		.loc 1 56 0
+ 553 0382 4FF6E070 		movw	r0, #65504
+ 554 0386 FFF7FEFF 		bl	LCD_Clear
+ 555              	.LVL58:
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 556              		.loc 1 73 0
+ 557 038a 3B46     		mov	r3, r7
+ 558 038c CDE9007B 		strd	r7, fp, [sp]
+ 559 0390 C822     		movs	r2, #200
+ 560 0392 0FE0     		b	.L8
+ 561              	.L9:
+ 562              		.align	2
+ 563              	.L7:
+ 564 0394 00000000 		.word	lcddev
+ 565 0398 00000000 		.word	.LC0
+ 566 039c 1C000000 		.word	.LC2
+ 567 03a0 28000000 		.word	.LC3
+ 568 03a4 38000000 		.word	.LC4
+ 569 03a8 A0012142 		.word	1109459360
+ 570 03ac 00000000 		.word	POINT_COLOR
+ 571 03b0 0C000000 		.word	.LC1
+ 572              	.L8:
+ 573 03b4 2821     		movs	r1, #40
+ 574 03b6 1E20     		movs	r0, #30
+  72:USER/main.c   **** 		LCD_ShowString(30, 40, 200, 24, 24, (u8 *)"Mini STM32 ^_^");
+ 575              		.loc 1 72 0
+ 576 03b8 A9F80080 		strh	r8, [r9]	@ movhi
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 577              		.loc 1 73 0
+ 578 03bc FFF7FEFF 		bl	LCD_ShowString
+ 579              	.LVL59:
+  74:USER/main.c   **** 		LCD_ShowString(30, 90, 200, 16, 16, (u8 *)"ATOM@ALIENTEK");
+ 580              		.loc 1 74 0
+ 581 03c0 8B4B     		ldr	r3, .L10
+ 582 03c2 0094     		str	r4, [sp]
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 14
+
+
+ 583 03c4 0193     		str	r3, [sp, #4]
+ 584 03c6 C822     		movs	r2, #200
+ 585 03c8 2346     		mov	r3, r4
+ 586 03ca 4621     		movs	r1, #70
+ 587 03cc 1E20     		movs	r0, #30
+ 588 03ce FFF7FEFF 		bl	LCD_ShowString
+ 589              	.LVL60:
+  75:USER/main.c   **** 		LCD_ShowString(30, 110, 200, 16, 16, lcd_id); //显示LCD ID
+ 590              		.loc 1 75 0
+ 591 03d2 884A     		ldr	r2, .L10+4
+ 592 03d4 2346     		mov	r3, r4
+ 593 03d6 0192     		str	r2, [sp, #4]
+ 594 03d8 0094     		str	r4, [sp]
+ 595 03da C822     		movs	r2, #200
+ 596 03dc 5A21     		movs	r1, #90
+ 597 03de 1E20     		movs	r0, #30
+ 598 03e0 FFF7FEFF 		bl	LCD_ShowString
+ 599              	.LVL61:
+  76:USER/main.c   **** 		LCD_ShowString(30, 130, 200, 12, 12, (u8 *)"2014/3/7");
+ 600              		.loc 1 76 0
+ 601 03e4 2346     		mov	r3, r4
+ 602 03e6 CDE9004A 		strd	r4, r10, [sp]
+ 603 03ea C822     		movs	r2, #200
+ 604 03ec 6E21     		movs	r1, #110
+ 605 03ee 1E20     		movs	r0, #30
+ 606 03f0 FFF7FEFF 		bl	LCD_ShowString
+ 607              	.LVL62:
+  77:USER/main.c   **** 		x++;
+ 608              		.loc 1 77 0
+ 609 03f4 8049     		ldr	r1, .L10+8
+ 610 03f6 C822     		movs	r2, #200
+ 611 03f8 0191     		str	r1, [sp, #4]
+ 612 03fa 3346     		mov	r3, r6
+ 613 03fc 8221     		movs	r1, #130
+ 614 03fe 0096     		str	r6, [sp]
+ 615 0400 1E20     		movs	r0, #30
+ 616 0402 FFF7FEFF 		bl	LCD_ShowString
+ 617              	.LVL63:
+  81:USER/main.c   **** 		delay_ms(1000);
+ 618              		.loc 1 81 0
+ 619 0406 2B68     		ldr	r3, [r5]
+ 620              		.loc 1 82 0
+ 621 0408 4FF47A70 		mov	r0, #1000
+  81:USER/main.c   **** 		delay_ms(1000);
+ 622              		.loc 1 81 0
+ 623 040c B3FA83F3 		clz	r3, r3
+ 624 0410 5B09     		lsrs	r3, r3, #5
+ 625 0412 2B60     		str	r3, [r5]
+ 626              		.loc 1 82 0
+ 627 0414 FFF7FEFF 		bl	delay_ms
+ 628              	.LVL64:
+  59:USER/main.c   **** 			break;
+ 629              		.loc 1 59 0
+ 630 0418 4FF60740 		movw	r0, #64519
+ 631 041c FFF7FEFF 		bl	LCD_Clear
+ 632              	.LVL65:
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 15
+
+
+ 633              		.loc 1 73 0
+ 634 0420 3B46     		mov	r3, r7
+ 635 0422 CDE9007B 		strd	r7, fp, [sp]
+ 636 0426 C822     		movs	r2, #200
+ 637 0428 2821     		movs	r1, #40
+ 638 042a 1E20     		movs	r0, #30
+  72:USER/main.c   **** 		LCD_ShowString(30, 40, 200, 24, 24, (u8 *)"Mini STM32 ^_^");
+ 639              		.loc 1 72 0
+ 640 042c A9F80080 		strh	r8, [r9]	@ movhi
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 641              		.loc 1 73 0
+ 642 0430 FFF7FEFF 		bl	LCD_ShowString
+ 643              	.LVL66:
+  74:USER/main.c   **** 		LCD_ShowString(30, 90, 200, 16, 16, (u8 *)"ATOM@ALIENTEK");
+ 644              		.loc 1 74 0
+ 645 0434 6E4B     		ldr	r3, .L10
+ 646 0436 0094     		str	r4, [sp]
+ 647 0438 0193     		str	r3, [sp, #4]
+ 648 043a C822     		movs	r2, #200
+ 649 043c 2346     		mov	r3, r4
+ 650 043e 4621     		movs	r1, #70
+ 651 0440 1E20     		movs	r0, #30
+ 652 0442 FFF7FEFF 		bl	LCD_ShowString
+ 653              	.LVL67:
+  75:USER/main.c   **** 		LCD_ShowString(30, 110, 200, 16, 16, lcd_id); //显示LCD ID
+ 654              		.loc 1 75 0
+ 655 0446 6B4A     		ldr	r2, .L10+4
+ 656 0448 2346     		mov	r3, r4
+ 657 044a 0192     		str	r2, [sp, #4]
+ 658 044c 0094     		str	r4, [sp]
+ 659 044e C822     		movs	r2, #200
+ 660 0450 5A21     		movs	r1, #90
+ 661 0452 1E20     		movs	r0, #30
+ 662 0454 FFF7FEFF 		bl	LCD_ShowString
+ 663              	.LVL68:
+  76:USER/main.c   **** 		LCD_ShowString(30, 130, 200, 12, 12, (u8 *)"2014/3/7");
+ 664              		.loc 1 76 0
+ 665 0458 2346     		mov	r3, r4
+ 666 045a CDE9004A 		strd	r4, r10, [sp]
+ 667 045e C822     		movs	r2, #200
+ 668 0460 6E21     		movs	r1, #110
+ 669 0462 1E20     		movs	r0, #30
+ 670 0464 FFF7FEFF 		bl	LCD_ShowString
+ 671              	.LVL69:
+  77:USER/main.c   **** 		x++;
+ 672              		.loc 1 77 0
+ 673 0468 6349     		ldr	r1, .L10+8
+ 674 046a C822     		movs	r2, #200
+ 675 046c 0191     		str	r1, [sp, #4]
+ 676 046e 3346     		mov	r3, r6
+ 677 0470 8221     		movs	r1, #130
+ 678 0472 0096     		str	r6, [sp]
+ 679 0474 1E20     		movs	r0, #30
+ 680 0476 FFF7FEFF 		bl	LCD_ShowString
+ 681              	.LVL70:
+  81:USER/main.c   **** 		delay_ms(1000);
+ 682              		.loc 1 81 0
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 16
+
+
+ 683 047a 2B68     		ldr	r3, [r5]
+ 684              		.loc 1 82 0
+ 685 047c 4FF47A70 		mov	r0, #1000
+  81:USER/main.c   **** 		delay_ms(1000);
+ 686              		.loc 1 81 0
+ 687 0480 B3FA83F3 		clz	r3, r3
+ 688 0484 5B09     		lsrs	r3, r3, #5
+ 689 0486 2B60     		str	r3, [r5]
+ 690              		.loc 1 82 0
+ 691 0488 FFF7FEFF 		bl	delay_ms
+ 692              	.LVL71:
+  62:USER/main.c   **** 			break;
+ 693              		.loc 1 62 0
+ 694 048c 48F23040 		movw	r0, #33840
+ 695 0490 FFF7FEFF 		bl	LCD_Clear
+ 696              	.LVL72:
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 697              		.loc 1 73 0
+ 698 0494 3B46     		mov	r3, r7
+ 699 0496 CDE9007B 		strd	r7, fp, [sp]
+ 700 049a C822     		movs	r2, #200
+ 701 049c 2821     		movs	r1, #40
+ 702 049e 1E20     		movs	r0, #30
+  72:USER/main.c   **** 		LCD_ShowString(30, 40, 200, 24, 24, (u8 *)"Mini STM32 ^_^");
+ 703              		.loc 1 72 0
+ 704 04a0 A9F80080 		strh	r8, [r9]	@ movhi
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 705              		.loc 1 73 0
+ 706 04a4 FFF7FEFF 		bl	LCD_ShowString
+ 707              	.LVL73:
+  74:USER/main.c   **** 		LCD_ShowString(30, 90, 200, 16, 16, (u8 *)"ATOM@ALIENTEK");
+ 708              		.loc 1 74 0
+ 709 04a8 514B     		ldr	r3, .L10
+ 710 04aa 0094     		str	r4, [sp]
+ 711 04ac 0193     		str	r3, [sp, #4]
+ 712 04ae C822     		movs	r2, #200
+ 713 04b0 2346     		mov	r3, r4
+ 714 04b2 4621     		movs	r1, #70
+ 715 04b4 1E20     		movs	r0, #30
+ 716 04b6 FFF7FEFF 		bl	LCD_ShowString
+ 717              	.LVL74:
+  75:USER/main.c   **** 		LCD_ShowString(30, 110, 200, 16, 16, lcd_id); //显示LCD ID
+ 718              		.loc 1 75 0
+ 719 04ba 4E4A     		ldr	r2, .L10+4
+ 720 04bc 2346     		mov	r3, r4
+ 721 04be 0192     		str	r2, [sp, #4]
+ 722 04c0 0094     		str	r4, [sp]
+ 723 04c2 C822     		movs	r2, #200
+ 724 04c4 5A21     		movs	r1, #90
+ 725 04c6 1E20     		movs	r0, #30
+ 726 04c8 FFF7FEFF 		bl	LCD_ShowString
+ 727              	.LVL75:
+  76:USER/main.c   **** 		LCD_ShowString(30, 130, 200, 12, 12, (u8 *)"2014/3/7");
+ 728              		.loc 1 76 0
+ 729 04cc 2346     		mov	r3, r4
+ 730 04ce CDE9004A 		strd	r4, r10, [sp]
+ 731 04d2 C822     		movs	r2, #200
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 17
+
+
+ 732 04d4 6E21     		movs	r1, #110
+ 733 04d6 1E20     		movs	r0, #30
+ 734 04d8 FFF7FEFF 		bl	LCD_ShowString
+ 735              	.LVL76:
+  77:USER/main.c   **** 		x++;
+ 736              		.loc 1 77 0
+ 737 04dc 4649     		ldr	r1, .L10+8
+ 738 04de C822     		movs	r2, #200
+ 739 04e0 0191     		str	r1, [sp, #4]
+ 740 04e2 3346     		mov	r3, r6
+ 741 04e4 8221     		movs	r1, #130
+ 742 04e6 0096     		str	r6, [sp]
+ 743 04e8 1E20     		movs	r0, #30
+ 744 04ea FFF7FEFF 		bl	LCD_ShowString
+ 745              	.LVL77:
+  81:USER/main.c   **** 		delay_ms(1000);
+ 746              		.loc 1 81 0
+ 747 04ee 2B68     		ldr	r3, [r5]
+ 748              		.loc 1 82 0
+ 749 04f0 4FF47A70 		mov	r0, #1000
+  81:USER/main.c   **** 		delay_ms(1000);
+ 750              		.loc 1 81 0
+ 751 04f4 B3FA83F3 		clz	r3, r3
+ 752 04f8 5B09     		lsrs	r3, r3, #5
+ 753 04fa 2B60     		str	r3, [r5]
+ 754              		.loc 1 82 0
+ 755 04fc FFF7FEFF 		bl	delay_ms
+ 756              	.LVL78:
+  65:USER/main.c   **** 			break;
+ 757              		.loc 1 65 0
+ 758 0500 4CF21860 		movw	r0, #50712
+ 759 0504 FFF7FEFF 		bl	LCD_Clear
+ 760              	.LVL79:
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 761              		.loc 1 73 0
+ 762 0508 3B46     		mov	r3, r7
+ 763 050a CDE9007B 		strd	r7, fp, [sp]
+ 764 050e C822     		movs	r2, #200
+ 765 0510 2821     		movs	r1, #40
+ 766 0512 1E20     		movs	r0, #30
+  72:USER/main.c   **** 		LCD_ShowString(30, 40, 200, 24, 24, (u8 *)"Mini STM32 ^_^");
+ 767              		.loc 1 72 0
+ 768 0514 A9F80080 		strh	r8, [r9]	@ movhi
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 769              		.loc 1 73 0
+ 770 0518 FFF7FEFF 		bl	LCD_ShowString
+ 771              	.LVL80:
+  74:USER/main.c   **** 		LCD_ShowString(30, 90, 200, 16, 16, (u8 *)"ATOM@ALIENTEK");
+ 772              		.loc 1 74 0
+ 773 051c 344B     		ldr	r3, .L10
+ 774 051e 0094     		str	r4, [sp]
+ 775 0520 0193     		str	r3, [sp, #4]
+ 776 0522 C822     		movs	r2, #200
+ 777 0524 2346     		mov	r3, r4
+ 778 0526 4621     		movs	r1, #70
+ 779 0528 1E20     		movs	r0, #30
+ 780 052a FFF7FEFF 		bl	LCD_ShowString
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 18
+
+
+ 781              	.LVL81:
+  75:USER/main.c   **** 		LCD_ShowString(30, 110, 200, 16, 16, lcd_id); //显示LCD ID
+ 782              		.loc 1 75 0
+ 783 052e 314A     		ldr	r2, .L10+4
+ 784 0530 2346     		mov	r3, r4
+ 785 0532 0192     		str	r2, [sp, #4]
+ 786 0534 0094     		str	r4, [sp]
+ 787 0536 C822     		movs	r2, #200
+ 788 0538 5A21     		movs	r1, #90
+ 789 053a 1E20     		movs	r0, #30
+ 790 053c FFF7FEFF 		bl	LCD_ShowString
+ 791              	.LVL82:
+  76:USER/main.c   **** 		LCD_ShowString(30, 130, 200, 12, 12, (u8 *)"2014/3/7");
+ 792              		.loc 1 76 0
+ 793 0540 2346     		mov	r3, r4
+ 794 0542 CDE9004A 		strd	r4, r10, [sp]
+ 795 0546 C822     		movs	r2, #200
+ 796 0548 6E21     		movs	r1, #110
+ 797 054a 1E20     		movs	r0, #30
+ 798 054c FFF7FEFF 		bl	LCD_ShowString
+ 799              	.LVL83:
+  77:USER/main.c   **** 		x++;
+ 800              		.loc 1 77 0
+ 801 0550 2949     		ldr	r1, .L10+8
+ 802 0552 C822     		movs	r2, #200
+ 803 0554 0191     		str	r1, [sp, #4]
+ 804 0556 3346     		mov	r3, r6
+ 805 0558 8221     		movs	r1, #130
+ 806 055a 0096     		str	r6, [sp]
+ 807 055c 1E20     		movs	r0, #30
+ 808 055e FFF7FEFF 		bl	LCD_ShowString
+ 809              	.LVL84:
+  81:USER/main.c   **** 		delay_ms(1000);
+ 810              		.loc 1 81 0
+ 811 0562 2B68     		ldr	r3, [r5]
+ 812              		.loc 1 82 0
+ 813 0564 4FF47A70 		mov	r0, #1000
+  81:USER/main.c   **** 		delay_ms(1000);
+ 814              		.loc 1 81 0
+ 815 0568 B3FA83F3 		clz	r3, r3
+ 816 056c 5B09     		lsrs	r3, r3, #5
+ 817 056e 2B60     		str	r3, [r5]
+ 818              		.loc 1 82 0
+ 819 0570 FFF7FEFF 		bl	delay_ms
+ 820              	.LVL85:
+  68:USER/main.c   **** 			break;
+ 821              		.loc 1 68 0
+ 822 0574 4BF64040 		movw	r0, #48192
+ 823 0578 FFF7FEFF 		bl	LCD_Clear
+ 824              	.LVL86:
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 825              		.loc 1 73 0
+ 826 057c 3B46     		mov	r3, r7
+ 827 057e 0097     		str	r7, [sp]
+ 828 0580 CDF804B0 		str	fp, [sp, #4]
+ 829 0584 C822     		movs	r2, #200
+ 830 0586 2821     		movs	r1, #40
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 19
+
+
+ 831 0588 1E20     		movs	r0, #30
+  72:USER/main.c   **** 		LCD_ShowString(30, 40, 200, 24, 24, (u8 *)"Mini STM32 ^_^");
+ 832              		.loc 1 72 0
+ 833 058a A9F80080 		strh	r8, [r9]	@ movhi
+  73:USER/main.c   **** 		LCD_ShowString(30, 70, 200, 16, 16, (u8 *)"TFTLCD TEST");
+ 834              		.loc 1 73 0
+ 835 058e FFF7FEFF 		bl	LCD_ShowString
+ 836              	.LVL87:
+  74:USER/main.c   **** 		LCD_ShowString(30, 90, 200, 16, 16, (u8 *)"ATOM@ALIENTEK");
+ 837              		.loc 1 74 0
+ 838 0592 174B     		ldr	r3, .L10
+ 839 0594 0094     		str	r4, [sp]
+ 840 0596 0193     		str	r3, [sp, #4]
+ 841 0598 C822     		movs	r2, #200
+ 842 059a 2346     		mov	r3, r4
+ 843 059c 4621     		movs	r1, #70
+ 844 059e 1E20     		movs	r0, #30
+ 845 05a0 FFF7FEFF 		bl	LCD_ShowString
+ 846              	.LVL88:
+  75:USER/main.c   **** 		LCD_ShowString(30, 110, 200, 16, 16, lcd_id); //显示LCD ID
+ 847              		.loc 1 75 0
+ 848 05a4 134A     		ldr	r2, .L10+4
+ 849 05a6 2346     		mov	r3, r4
+ 850 05a8 0192     		str	r2, [sp, #4]
+ 851 05aa 0094     		str	r4, [sp]
+ 852 05ac C822     		movs	r2, #200
+ 853 05ae 5A21     		movs	r1, #90
+ 854 05b0 1E20     		movs	r0, #30
+ 855 05b2 FFF7FEFF 		bl	LCD_ShowString
+ 856              	.LVL89:
+  76:USER/main.c   **** 		LCD_ShowString(30, 130, 200, 12, 12, (u8 *)"2014/3/7");
+ 857              		.loc 1 76 0
+ 858 05b6 2346     		mov	r3, r4
+ 859 05b8 0094     		str	r4, [sp]
+ 860 05ba CDF804A0 		str	r10, [sp, #4]
+ 861 05be C822     		movs	r2, #200
+ 862 05c0 6E21     		movs	r1, #110
+ 863 05c2 1E20     		movs	r0, #30
+ 864 05c4 FFF7FEFF 		bl	LCD_ShowString
+ 865              	.LVL90:
+  77:USER/main.c   **** 		x++;
+ 866              		.loc 1 77 0
+ 867 05c8 0B49     		ldr	r1, .L10+8
+ 868 05ca 3346     		mov	r3, r6
+ 869 05cc 0191     		str	r1, [sp, #4]
+ 870 05ce 0096     		str	r6, [sp]
+ 871 05d0 C822     		movs	r2, #200
+ 872 05d2 8221     		movs	r1, #130
+ 873 05d4 1E20     		movs	r0, #30
+ 874 05d6 FFF7FEFF 		bl	LCD_ShowString
+ 875              	.LVL91:
+  81:USER/main.c   **** 		delay_ms(1000);
+ 876              		.loc 1 81 0
+ 877 05da 2B68     		ldr	r3, [r5]
+ 878              		.loc 1 82 0
+ 879 05dc 4FF47A70 		mov	r0, #1000
+  81:USER/main.c   **** 		delay_ms(1000);
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 20
+
+
+ 880              		.loc 1 81 0
+ 881 05e0 B3FA83F3 		clz	r3, r3
+ 882 05e4 5B09     		lsrs	r3, r3, #5
+ 883 05e6 2B60     		str	r3, [r5]
+ 884              		.loc 1 82 0
+ 885 05e8 FFF7FEFF 		bl	delay_ms
+ 886              	.LVL92:
+ 887 05ec 30E5     		b	.L3
+ 888              	.L11:
+ 889 05ee 00BF     		.align	2
+ 890              	.L10:
+ 891 05f0 1C000000 		.word	.LC2
+ 892 05f4 28000000 		.word	.LC3
+ 893 05f8 38000000 		.word	.LC4
+ 894              		.cfi_endproc
+ 895              	.LFE32:
+ 897              		.section	.rodata.main.str1.4,"aMS",%progbits,1
+ 898              		.align	2
+ 899              	.LC0:
+ 900 0000 4C434420 		.ascii	"LCD ID:%04X\000"
+ 900      49443A25 
+ 900      30345800 
+ 901              	.LC1:
+ 902 000c 4D696E69 		.ascii	"Mini STM32 ^_^\000"
+ 902      2053544D 
+ 902      3332205E 
+ 902      5F5E00
+ 903 001b 00       		.space	1
+ 904              	.LC2:
+ 905 001c 5446544C 		.ascii	"TFTLCD TEST\000"
+ 905      43442054 
+ 905      45535400 
+ 906              	.LC3:
+ 907 0028 41544F4D 		.ascii	"ATOM@ALIENTEK\000"
+ 907      40414C49 
+ 907      454E5445 
+ 907      4B00
+ 908 0036 0000     		.space	2
+ 909              	.LC4:
+ 910 0038 32303134 		.ascii	"2014/3/7\000"
+ 910      2F332F37 
+ 910      00
+ 911              		.text
+ 912              	.Letext0:
+ 913              		.file 2 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\machine\\_default_t
+ 914              		.file 3 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\sys\\_stdint.h"
+ 915              		.file 4 "SYSTEM/sys/core_cm3.h"
+ 916              		.file 5 "SYSTEM/sys/system_stm32f10x.h"
+ 917              		.file 6 "SYSTEM/sys/stm32f10x.h"
+ 918              		.file 7 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\sys\\lock.h"
+ 919              		.file 8 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\sys\\_types.h"
+ 920              		.file 9 "d:\\gnu tools arm embedded\\7 2018-q2-update\\lib\\gcc\\arm-none-eabi\\7.3.1\\include\\st
+ 921              		.file 10 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\sys\\reent.h"
+ 922              		.file 11 "SYSTEM/usart/usart.h"
+ 923              		.file 12 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\stdlib.h"
+ 924              		.file 13 "HARDWARE/LCD/lcd.h"
+ 925              		.file 14 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\time.h"
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 21
+
+
+ 926              		.file 15 "SYSTEM/sys/sys.h"
+ 927              		.file 16 "SYSTEM/delay/delay.h"
+ 928              		.file 17 "HARDWARE/LED/led.h"
+ 929              		.file 18 "USER/snake.h"
+ 930              		.file 19 "d:\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include\\stdio.h"
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\cclZENHS.s 			page 22
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+C:\Users\czsta\AppData\Local\Temp\cclZENHS.s:16     .text.startup.main:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\cclZENHS.s:24     .text.startup.main:00000000 main
+C:\Users\czsta\AppData\Local\Temp\cclZENHS.s:564    .text.startup.main:00000394 $d
+C:\Users\czsta\AppData\Local\Temp\cclZENHS.s:573    .text.startup.main:000003b4 $t
+C:\Users\czsta\AppData\Local\Temp\cclZENHS.s:891    .text.startup.main:000005f0 $d
+C:\Users\czsta\AppData\Local\Temp\cclZENHS.s:898    .rodata.main.str1.4:00000000 $d
+
+UNDEFINED SYMBOLS
+Stm32_Clock_Init
+uart_init
+delay_init
+LED_Init
+LCD_Init
+initialize
+gamewithai
+sprintf
+LCD_Clear
+LCD_ShowString
+delay_ms
+lcddev
+POINT_COLOR
