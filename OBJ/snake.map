@@ -1258,27 +1258,27 @@ OUTPUT(OBJ/snake.elf elf32-littlearm)
  .debug_line    0x0000591a      0x13e OBJ/led.o
  .debug_line    0x00005a58       0x72 OBJ/startup_stm32f103xe.o
 
-.debug_str      0x00000000     0x11b0
- .debug_str     0x00000000      0x3ee OBJ/sys.o
-                                0x438 (size before relaxing)
- .debug_str     0x000003ee      0x4d2 OBJ/main.o
-                                0x698 (size before relaxing)
- .debug_str     0x000008c0       0x50 OBJ/delay.o
-                                0x1f8 (size before relaxing)
- .debug_str     0x00000910      0x432 OBJ/usart.o
-                                0xa5a (size before relaxing)
- .debug_str     0x00000d42       0x9a OBJ/system_stm32f10x.o
-                                0x2df (size before relaxing)
- .debug_str     0x00000ddc       0xa4 OBJ/AI.o
-                                0x5f2 (size before relaxing)
- .debug_str     0x00000e80       0x6b OBJ/snake.o
-                                0x6cc (size before relaxing)
- .debug_str     0x00000eeb      0x28e OBJ/ILI93xx.o
-                                0x938 (size before relaxing)
- .debug_str     0x00001179       0x13 OBJ/led.o
-                                0x1db (size before relaxing)
- .debug_str     0x0000118c       0x24 OBJ/startup_stm32f103xe.o
-                                 0x42 (size before relaxing)
+.debug_str      0x00000000     0x11b2
+ .debug_str     0x00000000      0x3f0 OBJ/sys.o
+                                0x43a (size before relaxing)
+ .debug_str     0x000003f0      0x4d2 OBJ/main.o
+                                0x69a (size before relaxing)
+ .debug_str     0x000008c2       0x50 OBJ/delay.o
+                                0x1fa (size before relaxing)
+ .debug_str     0x00000912      0x432 OBJ/usart.o
+                                0xa5c (size before relaxing)
+ .debug_str     0x00000d44       0x9a OBJ/system_stm32f10x.o
+                                0x2e1 (size before relaxing)
+ .debug_str     0x00000dde       0xa4 OBJ/AI.o
+                                0x5f4 (size before relaxing)
+ .debug_str     0x00000e82       0x6b OBJ/snake.o
+                                0x6ce (size before relaxing)
+ .debug_str     0x00000eed      0x28e OBJ/ILI93xx.o
+                                0x93a (size before relaxing)
+ .debug_str     0x0000117b       0x13 OBJ/led.o
+                                0x1dd (size before relaxing)
+ .debug_str     0x0000118e       0x24 OBJ/startup_stm32f103xe.o
+                                 0x44 (size before relaxing)
 
 .comment        0x00000000       0x7f
  .comment       0x00000000       0x7f OBJ/sys.o

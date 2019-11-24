@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
   30:SYSTEM/sys/system_stm32f10x.c ****   *    function will do nothing and HSI still used as system clock source. User can 
   31:SYSTEM/sys/system_stm32f10x.c ****   *    add some code to deal with this issue inside the SetSysClock() function.
   32:SYSTEM/sys/system_stm32f10x.c ****   *
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 2
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 2
 
 
   33:SYSTEM/sys/system_stm32f10x.c ****   * 4. The default value of HSE crystal is set to 8 MHz (or 25 MHz, depedning on
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
   87:SYSTEM/sys/system_stm32f10x.c ****    ============== 
   88:SYSTEM/sys/system_stm32f10x.c ****    1. After each device reset the HSI is used as System clock source.
   89:SYSTEM/sys/system_stm32f10x.c **** 
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 3
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 3
 
 
   90:SYSTEM/sys/system_stm32f10x.c ****    2. Please make sure that the selected System clock doesn't exceed your device's
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  144:SYSTEM/sys/system_stm32f10x.c **** /** @addtogroup STM32F10x_System_Private_Variables
  145:SYSTEM/sys/system_stm32f10x.c ****   * @{
  146:SYSTEM/sys/system_stm32f10x.c ****   */
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 4
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 4
 
 
  147:SYSTEM/sys/system_stm32f10x.c **** 
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  201:SYSTEM/sys/system_stm32f10x.c ****   * @{
  202:SYSTEM/sys/system_stm32f10x.c ****   */
  203:SYSTEM/sys/system_stm32f10x.c **** 
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 5
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 5
 
 
  204:SYSTEM/sys/system_stm32f10x.c **** /**
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  245:SYSTEM/sys/system_stm32f10x.c ****   RCC->CIR = 0x009F0000;
  246:SYSTEM/sys/system_stm32f10x.c **** 
  247:SYSTEM/sys/system_stm32f10x.c ****   /* Reset CFGR2 register */
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 6
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 6
 
 
  248:SYSTEM/sys/system_stm32f10x.c ****   RCC->CFGR2 = 0x00000000;      
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  302:SYSTEM/sys/system_stm32f10x.c ****   *           value for HSE crystal.
  303:SYSTEM/sys/system_stm32f10x.c ****   * @param  None
  304:SYSTEM/sys/system_stm32f10x.c ****   * @retval None
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 7
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 7
 
 
  305:SYSTEM/sys/system_stm32f10x.c ****   */
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  359:SYSTEM/sys/system_stm32f10x.c ****  #endif
  360:SYSTEM/sys/system_stm32f10x.c ****       }
  361:SYSTEM/sys/system_stm32f10x.c **** #else
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 8
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 8
 
 
  362:SYSTEM/sys/system_stm32f10x.c ****       pllmull = pllmull >> 18;
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  416:SYSTEM/sys/system_stm32f10x.c ****   * @param  None
  417:SYSTEM/sys/system_stm32f10x.c ****   * @retval None
  418:SYSTEM/sys/system_stm32f10x.c ****   */
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 9
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 9
 
 
  419:SYSTEM/sys/system_stm32f10x.c **** static void SetSysClock(void)
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  473:SYSTEM/sys/system_stm32f10x.c ****   GPIOD->CRH = 0xBBBBBBBB;
  474:SYSTEM/sys/system_stm32f10x.c **** 
  475:SYSTEM/sys/system_stm32f10x.c ****   GPIOE->CRL = 0xB44444BB;  
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 10
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 10
 
 
  476:SYSTEM/sys/system_stm32f10x.c ****   GPIOE->CRH = 0xBBBBBBBB;
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  530:SYSTEM/sys/system_stm32f10x.c **** 
  531:SYSTEM/sys/system_stm32f10x.c ****     /* Flash 0 wait state */
  532:SYSTEM/sys/system_stm32f10x.c ****     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 11
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 11
 
 
  533:SYSTEM/sys/system_stm32f10x.c **** 
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  587:SYSTEM/sys/system_stm32f10x.c ****   /* Wait till HSE is ready and if Time out is reached exit */
  588:SYSTEM/sys/system_stm32f10x.c ****   do
  589:SYSTEM/sys/system_stm32f10x.c ****   {
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 12
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 12
 
 
  590:SYSTEM/sys/system_stm32f10x.c ****     HSEStatus = RCC->CR & RCC_CR_HSERDY;
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  644:SYSTEM/sys/system_stm32f10x.c ****     /*  PLL configuration:  = (HSE / 2) * 6 = 24 MHz */
  645:SYSTEM/sys/system_stm32f10x.c ****     RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLMULL));
  646:SYSTEM/sys/system_stm32f10x.c ****     RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_PREDIV1 | RCC_CFGR_PLLXTPRE_PREDIV1_Div2 | RCC_CFGR_PLL
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 13
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 13
 
 
  647:SYSTEM/sys/system_stm32f10x.c **** #else    
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  701:SYSTEM/sys/system_stm32f10x.c ****   }
  702:SYSTEM/sys/system_stm32f10x.c ****   else
  703:SYSTEM/sys/system_stm32f10x.c ****   {
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 14
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 14
 
 
  704:SYSTEM/sys/system_stm32f10x.c ****     HSEStatus = (uint32_t)0x00;
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  758:SYSTEM/sys/system_stm32f10x.c ****     while((RCC->CR & RCC_CR_PLLRDY) == 0)
  759:SYSTEM/sys/system_stm32f10x.c ****     {
  760:SYSTEM/sys/system_stm32f10x.c ****     }
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 15
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 15
 
 
  761:SYSTEM/sys/system_stm32f10x.c **** 
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  815:SYSTEM/sys/system_stm32f10x.c ****     FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_1;    
  816:SYSTEM/sys/system_stm32f10x.c ****  
  817:SYSTEM/sys/system_stm32f10x.c ****     /* HCLK = SYSCLK */
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 16
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 16
 
 
  818:SYSTEM/sys/system_stm32f10x.c ****     RCC->CFGR |= (uint32_t)RCC_CFGR_HPRE_DIV1;
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  872:SYSTEM/sys/system_stm32f10x.c ****   { /* If HSE fails to start-up, the application will have wrong clock 
  873:SYSTEM/sys/system_stm32f10x.c ****          configuration. User can add here some code to deal with this error */
  874:SYSTEM/sys/system_stm32f10x.c ****   } 
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 17
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 17
 
 
  875:SYSTEM/sys/system_stm32f10x.c **** }
@@ -1018,7 +1018,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  929:SYSTEM/sys/system_stm32f10x.c ****     /* PLL2 configuration: PLL2CLK = (HSE / 5) * 8 = 40 MHz */
  930:SYSTEM/sys/system_stm32f10x.c ****     /* PREDIV1 configuration: PREDIV1CLK = PLL2 / 5 = 8 MHz */
  931:SYSTEM/sys/system_stm32f10x.c ****         
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 18
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 18
 
 
  932:SYSTEM/sys/system_stm32f10x.c ****     RCC->CFGR2 &= (uint32_t)~(RCC_CFGR2_PREDIV2 | RCC_CFGR2_PLL2MUL |
@@ -1078,7 +1078,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  986:SYSTEM/sys/system_stm32f10x.c ****   */
  987:SYSTEM/sys/system_stm32f10x.c **** static void SetSysClockTo72(void)
  988:SYSTEM/sys/system_stm32f10x.c **** {
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 19
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 19
 
 
  989:SYSTEM/sys/system_stm32f10x.c ****   __IO uint32_t StartUpCounter = 0, HSEStatus = 0;
@@ -1138,7 +1138,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
   75 0020 21F08471 		bic	r1, r1, #17301504
   76 0024 21F48031 		bic	r1, r1, #65536
   77 0028 1960     		str	r1, [r3]
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 20
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 20
 
 
  229:SYSTEM/sys/system_stm32f10x.c **** 
@@ -1198,7 +1198,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  121 006a 13F40033 		ands	r3, r3, #131072
 1003:SYSTEM/sys/system_stm32f10x.c ****   {
 1004:SYSTEM/sys/system_stm32f10x.c ****     HSEStatus = (uint32_t)0x01;
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 21
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 21
 
 
  122              		.loc 1 1004 0
@@ -1258,7 +1258,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
 1020:SYSTEM/sys/system_stm32f10x.c ****  
 1021:SYSTEM/sys/system_stm32f10x.c ****     /* HCLK = SYSCLK */
 1022:SYSTEM/sys/system_stm32f10x.c ****     RCC->CFGR |= (uint32_t)RCC_CFGR_HPRE_DIV1;
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 22
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 22
 
 
  159              		.loc 1 1022 0
@@ -1318,7 +1318,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  169 0096 0868     		ldr	r0, [r1]
  170 0098 20F00300 		bic	r0, r0, #3
  171 009c 0860     		str	r0, [r1]
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 23
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 23
 
 
 1018:SYSTEM/sys/system_stm32f10x.c **** 
@@ -1378,7 +1378,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  209 00dc 5360     		str	r3, [r2, #4]
 1069:SYSTEM/sys/system_stm32f10x.c ****     RCC->CFGR |= (uint32_t)RCC_CFGR_SW_PLL;    
  210              		.loc 1 1069 0
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 24
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 24
 
 
  211 00de 5368     		ldr	r3, [r2, #4]
@@ -1438,7 +1438,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  333:SYSTEM/sys/system_stm32f10x.c ****       
  263              		.loc 1 333 0
  264 000e 5168     		ldr	r1, [r2, #4]
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 25
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 25
 
 
  265              	.LVL4:
@@ -1498,7 +1498,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  307              	.LVL12:
  308              	.L26:
  353:SYSTEM/sys/system_stm32f10x.c ****         }
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 26
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 26
 
 
  309              		.loc 1 353 0
@@ -1550,20 +1550,20 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 1
  360              		.file 4 "SYSTEM/sys/core_cm3.h"
  361              		.file 5 "SYSTEM/sys/system_stm32f10x.h"
  362              		.file 6 "SYSTEM/sys/stm32f10x.h"
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s 			page 27
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s 			page 27
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 system_stm32f10x.c
-C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s:16     .text.SystemInit:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s:24     .text.SystemInit:00000000 SystemInit
-C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s:224    .text.SystemInit:000000f4 $d
-C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s:235    .text.SystemCoreClockUpdate:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s:243    .text.SystemCoreClockUpdate:00000000 SystemCoreClockUpdate
-C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s:317    .text.SystemCoreClockUpdate:00000048 $d
-C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s:332    .data.AHBPrescTable:00000000 AHBPrescTable
-C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s:354    .data.SystemCoreClock:00000000 SystemCoreClock
-C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s:328    .data.AHBPrescTable:00000000 $d
-C:\Users\czsta\AppData\Local\Temp\ccv1n4Vb.s:350    .data.SystemCoreClock:00000000 $d
+C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s:16     .text.SystemInit:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s:24     .text.SystemInit:00000000 SystemInit
+C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s:224    .text.SystemInit:000000f4 $d
+C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s:235    .text.SystemCoreClockUpdate:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s:243    .text.SystemCoreClockUpdate:00000000 SystemCoreClockUpdate
+C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s:317    .text.SystemCoreClockUpdate:00000048 $d
+C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s:332    .data.AHBPrescTable:00000000 AHBPrescTable
+C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s:354    .data.SystemCoreClock:00000000 SystemCoreClock
+C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s:328    .data.AHBPrescTable:00000000 $d
+C:\Users\czsta\AppData\Local\Temp\ccMJ7YcR.s:350    .data.SystemCoreClock:00000000 $d
 
 NO UNDEFINED SYMBOLS

@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
   30:SYSTEM/sys/sys.c **** //2,修改WFI_SET/INTX_DISABLE/INTX_ENABLE等函数的实现方式
   31:SYSTEM/sys/sys.c **** //V2.0 20150322
   32:SYSTEM/sys/sys.c **** //修改SYSTEM_SUPPORT_UCOS为SYSTEM_SUPPORT_OS
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 2
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 2
 
 
   33:SYSTEM/sys/sys.c **** //////////////////////////////////////////////////////////////////////////////////
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
   50:SYSTEM/sys/sys.c **** 	temp = SCB->AIRCR;  //读取先前的设置
   51:SYSTEM/sys/sys.c **** 	temp &= 0X0000F8FF; //清空先前分组
   66              		.loc 1 51 0
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 3
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 3
 
 
   67 0000 4FF6FF01 		movw	r1, #63743
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
   57:SYSTEM/sys/sys.c **** //NVIC_PreemptionPriority:抢占优先级
   58:SYSTEM/sys/sys.c **** //NVIC_SubPriority       :响应优先级
   59:SYSTEM/sys/sys.c **** //NVIC_Channel           :中断编号
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 4
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 4
 
 
   60:SYSTEM/sys/sys.c **** //NVIC_Group             :中断分组 0~4
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
  144              		.loc 1 50 0
  145 0012 DCF80C50 		ldr	r5, [ip, #12]
  146              	.LVL10:
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 5
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 5
 
 
   49:SYSTEM/sys/sys.c **** 	temp = SCB->AIRCR;  //读取先前的设置
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
  190 0058 B040     		lsls	r0, r0, r6
  191              	.LVL19:
  192              		.loc 1 77 0
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 6
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 6
 
 
  193 005a 92F80013 		ldrb	r1, [r2, #768]	@ zero_extendqisi2
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
  236              		.cfi_offset 6, -8
  237              		.cfi_offset 7, -4
   89:SYSTEM/sys/sys.c **** 	u8 EXTADDR;
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 7
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 7
 
 
   90:SYSTEM/sys/sys.c **** 	u8 EXTOFFSET;
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
  275 003e 2360     		str	r3, [r4]
  276              		.loc 1 99 0
  277 0040 02D5     		bpl	.L13
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 8
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 8
 
 
  100:SYSTEM/sys/sys.c **** 		EXTI->FTSR |= 1 << BITx; //line BITx上事件下降沿触发
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
  108:SYSTEM/sys/sys.c **** 	RCC->APB1RSTR = 0x00000000; //复位结束
  326              		.loc 1 108 0
  327 0000 0022     		movs	r2, #0
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 9
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 9
 
 
  109:SYSTEM/sys/sys.c **** 	RCC->APB2RSTR = 0x00000000;
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
  364              		.loc 1 114 0
  365 001c 40F00100 		orr	r0, r0, #1
  366 0020 1860     		str	r0, [r3]
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 10
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 10
 
 
  367              		.loc 1 115 0
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
  410              		.section	.text.WFI_SET,"ax",%progbits
  411              		.align	1
  412              		.p2align 2,,3
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 11
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 11
 
 
  413              		.global	WFI_SET
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
  436              	.LFE34:
  438              		.section	.text.INTX_DISABLE,"ax",%progbits
  439              		.align	1
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 12
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 12
 
 
  440              		.p2align 2,,3
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
  170:SYSTEM/sys/sys.c **** 	__asm__ __volatile__("CPSIE   I");
  486              		.loc 1 170 0
  487              		.syntax unified
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 13
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 13
 
 
  488              	@ 170 "SYSTEM/sys/sys.c" 1
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
  536              		.align	1
  537              		.p2align 2,,3
  538              		.global	Sys_Standby
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 14
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 14
 
 
  539              		.syntax unified
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
  581              		.syntax unified
  582              	@ 157 "SYSTEM/sys/sys.c" 1
  583 002e 30BF     		WFI
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 15
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 15
 
 
  584              	@ 0 "" 2
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
  634              		.syntax unified
  635              		.thumb
  636              		.thumb_func
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 16
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 16
 
 
  637              		.fpu softvfp
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
  678              		.syntax unified
  679              		.thumb
  680              		.thumb_func
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 17
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 17
 
 
  681              		.fpu softvfp
@@ -1018,7 +1018,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
  721              		.loc 1 111 0
  722 0012 5C61     		str	r4, [r3, #20]
  112:SYSTEM/sys/sys.c **** 	RCC->APB1ENR = 0x00000000;
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 18
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 18
 
 
  723              		.loc 1 112 0
@@ -1078,7 +1078,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
  765              	.LVL35:
  766              	.LBE31:
  767              	.LBE33:
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 19
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 19
 
 
  768              	.LBE34:
@@ -1138,7 +1138,7 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
  809 0084 1360     		str	r3, [r2]
  810              	.L43:
  811              		.loc 1 225 0 discriminator 1
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 20
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 20
 
 
  812 0086 0B68     		ldr	r3, [r1]
@@ -1195,45 +1195,45 @@ ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 1
  854              		.file 4 "SYSTEM/sys/core_cm3.h"
  855              		.file 5 "SYSTEM/sys/system_stm32f10x.h"
  856              		.file 6 "SYSTEM/sys/stm32f10x.h"
-ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s 			page 21
+ARM GAS  C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s 			page 21
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 sys.c
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:16     .text.MY_NVIC_SetVectorTable:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:24     .text.MY_NVIC_SetVectorTable:00000000 MY_NVIC_SetVectorTable
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:45     .text.MY_NVIC_SetVectorTable:00000010 $d
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:50     .text.MY_NVIC_PriorityGroupConfig:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:58     .text.MY_NVIC_PriorityGroupConfig:00000000 MY_NVIC_PriorityGroupConfig
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:98     .text.MY_NVIC_PriorityGroupConfig:00000020 $d
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:103    .text.MY_NVIC_Init:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:111    .text.MY_NVIC_Init:00000000 MY_NVIC_Init
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:210    .text.MY_NVIC_Init:0000006c $d
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:215    .text.Ex_NVIC_Config:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:223    .text.Ex_NVIC_Config:00000000 Ex_NVIC_Config
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:305    .text.Ex_NVIC_Config:00000058 $d
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:311    .text.MYRCC_DeInit:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:319    .text.MYRCC_DeInit:00000000 MYRCC_DeInit
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:404    .text.MYRCC_DeInit:0000004c $d
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:411    .text.WFI_SET:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:419    .text.WFI_SET:00000000 WFI_SET
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:439    .text.INTX_DISABLE:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:447    .text.INTX_DISABLE:00000000 INTX_DISABLE
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:471    .text.INTX_ENABLE:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:479    .text.INTX_ENABLE:00000000 INTX_ENABLE
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:503    .text.MSR_MSP:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:511    .text.MSR_MSP:00000000 MSR_MSP
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:536    .text.Sys_Standby:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:544    .text.Sys_Standby:00000000 Sys_Standby
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:594    .text.Sys_Standby:00000034 $d
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:601    .text.Sys_Soft_Reset:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:609    .text.Sys_Soft_Reset:00000000 Sys_Soft_Reset
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:625    .text.Sys_Soft_Reset:00000008 $d
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:631    .text.JTAG_Set:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:639    .text.JTAG_Set:00000000 JTAG_Set
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:669    .text.JTAG_Set:00000020 $d
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:675    .text.Stm32_Clock_Init:00000000 $t
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:683    .text.Stm32_Clock_Init:00000000 Stm32_Clock_Init
-C:\Users\czsta\AppData\Local\Temp\ccJhQTIm.s:843    .text.Stm32_Clock_Init:000000a4 $d
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:16     .text.MY_NVIC_SetVectorTable:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:24     .text.MY_NVIC_SetVectorTable:00000000 MY_NVIC_SetVectorTable
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:45     .text.MY_NVIC_SetVectorTable:00000010 $d
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:50     .text.MY_NVIC_PriorityGroupConfig:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:58     .text.MY_NVIC_PriorityGroupConfig:00000000 MY_NVIC_PriorityGroupConfig
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:98     .text.MY_NVIC_PriorityGroupConfig:00000020 $d
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:103    .text.MY_NVIC_Init:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:111    .text.MY_NVIC_Init:00000000 MY_NVIC_Init
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:210    .text.MY_NVIC_Init:0000006c $d
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:215    .text.Ex_NVIC_Config:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:223    .text.Ex_NVIC_Config:00000000 Ex_NVIC_Config
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:305    .text.Ex_NVIC_Config:00000058 $d
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:311    .text.MYRCC_DeInit:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:319    .text.MYRCC_DeInit:00000000 MYRCC_DeInit
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:404    .text.MYRCC_DeInit:0000004c $d
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:411    .text.WFI_SET:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:419    .text.WFI_SET:00000000 WFI_SET
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:439    .text.INTX_DISABLE:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:447    .text.INTX_DISABLE:00000000 INTX_DISABLE
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:471    .text.INTX_ENABLE:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:479    .text.INTX_ENABLE:00000000 INTX_ENABLE
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:503    .text.MSR_MSP:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:511    .text.MSR_MSP:00000000 MSR_MSP
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:536    .text.Sys_Standby:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:544    .text.Sys_Standby:00000000 Sys_Standby
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:594    .text.Sys_Standby:00000034 $d
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:601    .text.Sys_Soft_Reset:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:609    .text.Sys_Soft_Reset:00000000 Sys_Soft_Reset
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:625    .text.Sys_Soft_Reset:00000008 $d
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:631    .text.JTAG_Set:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:639    .text.JTAG_Set:00000000 JTAG_Set
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:669    .text.JTAG_Set:00000020 $d
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:675    .text.Stm32_Clock_Init:00000000 $t
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:683    .text.Stm32_Clock_Init:00000000 Stm32_Clock_Init
+C:\Users\czsta\AppData\Local\Temp\ccPhz7qp.s:843    .text.Stm32_Clock_Init:000000a4 $d
 
 NO UNDEFINED SYMBOLS

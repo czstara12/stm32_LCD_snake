@@ -1,0 +1,36 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "ARM Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "miDebuggerPath": "D:/GNU Tools Arm Embedded/7 2018-q2-update/bin/arm-none-eabi-gdb.exe",
+            "targetArchitecture": "arm",
+            "program": "${workspaceFolder}/OBJ/snake.elf",
+            "setupCommands": [
+                {
+                    "text": "file D:/Documents/GitHub/TFTLCDsnake/OBJ/snake.elf"
+                },
+                {
+                    "text": "target remote localhost:3333"
+                },
+                {
+                    "text": "monitor reset"
+                },
+                {
+                    "text": "monitor halt"
+                },
+                {
+                    "text": "load"
+                }
+            ],
+            "launchCompleteCommand": "None",
+            "externalConsole": true,
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
