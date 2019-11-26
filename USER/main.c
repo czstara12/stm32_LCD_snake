@@ -2,7 +2,7 @@
 #include "usart.h"
 #include "delay.h"
 #include "led.h"
-#include "lcd.h"
+#include "LCD.h"
 #include "snake.h"
 //ALIENTEK Mini STM32开发板范例代码11
 //TFTLCD显示实验
